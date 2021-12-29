@@ -1,0 +1,107 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Приборы</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="hidePlantDeviceModal()"
+  ></button>
+</div>
+<div class="modal-body">
+  <form
+    class="form d-flex gap-3 flex-column"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="row">
+      <div class="col">
+        <label for="nameDevice" class="form-label"
+          >Наименование измерительного прибора
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nameDevice"
+          id="nameDevice"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="identificationNumber" class="form-label"
+          >Расположение
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="identificationNumber"
+          id="identificationNumber"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="unitDevice" class="form-label">единица измерений </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="unitDevice"
+          id="unitDevice"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="lowerLimit" class="form-label">нижний предел </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="lowerLimit"
+          id="lowerLimit"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="upperLimit" class="form-label">верхний предел </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="upperLimit"
+          id="upperLimit"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="specifiedUncertainty" class="form-label"
+          >Указанная неопределенность
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="specifiedUncertainty"
+          id="specifiedUncertainty"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-flex gap-3 justify-content-end align-items-center">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="hidePlantDeviceModal()"
+        >
+          Отмена
+        </button>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</div>
