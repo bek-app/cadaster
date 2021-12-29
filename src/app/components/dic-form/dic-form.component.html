@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{ dicTitle }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="hideDicFormModal()"
+  ></button>
+</div>
+<div class="modal-body">
+  <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row d-flex gap-3 flex-column">
+      <div class="col">
+        <label for="name" class="form-label"> {{ dicLabel }}</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          (keypress)="checkValue($event)"
+          (paste)="checkValue($event)"
+          [ngClass]="{
+            'is-invalid': submitted && f.name.errors
+          }"
+        />
+        <div
+          class="text-danger"
+          *ngIf="(f.name.touched || submitted) && f.name.errors?.required"
+        >
+          <small>Поле обязательно для заполнения</small>
+        </div>
+      </div>
+      <div class="col d-flex align-items-end justify-content-end">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+    </div>
+  </form>
+</div>
