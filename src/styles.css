@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+.slickgrid-container .grid-canvas .slick-cell {
+  border: 1px solid rgb(231, 228, 228) !important;
+
+}
+
+.slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
+  font-size: 12px;
+  border: 1px solid rgb(231, 228, 228) !important;
+}
+
+
+
+.slickgrid-container .slick-preheader-panel.ui-state-default .slick-header-columns .slick-header-column {
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}

@@ -22,14 +22,31 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
-              "src/styles.css"
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.css",
+              "./node_modules/font-awesome/css/font-awesome.css",
+              "./node_modules/flatpickr/dist/flatpickr.css",
+              "./node_modules/multiple-select-modified/src/multiple-select.css",
+              "./node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/slickgrid/plugins/slick.cellrangedecorator.js",
+              "./node_modules/jquery-ui-dist/jquery-ui.min.js",
+              "./node_modules/slickgrid/lib/jquery.event.drag-2.3.0.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.js",
+              "./node_modules/multiple-select-modified/src/multiple-select.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "angular-slickgrid",
+              "assign-deep",
+              "excel-builder-webpacker",
+              "jquery-ui",
+              "stream"
+            ]
           },
           "configurations": {
             "production": {
@@ -66,6 +83,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "cadaster:build",
+            "proxyConfig": "src/proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "browserTarget": "cadaster:build:production"
@@ -89,13 +110,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.css"],
             "scripts": []
           }
         }
