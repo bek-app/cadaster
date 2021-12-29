@@ -1,0 +1,28 @@
+<div class="row mt-2">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <button
+          class="btn btn-outline-primary mb-2"
+          (click)="openPlantProcessModal()"
+          *ngIf="plantId"
+        >
+          Создать
+        </button>
+      </div>
+      <div class="col">
+        <h3>{{ namePlant }}</h3>
+      </div>
+     </div>
+    <div id="demo-container">
+      <angular-slickgrid
+        gridId="plant-process-grid"
+        [columnDefinitions]="columnDefinitions"
+        [gridOptions]="gridOptions"
+        [dataset]="dataset"
+        (onAngularGridCreated)="angularGridReady($any($event).detail)"
+      >
+      </angular-slickgrid>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,186 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Приборы</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="hidePlantProcessModal()"
+  ></button>
+</div>
+<div class="modal-body">
+  <form
+    class="form d-flex gap-3 flex-column"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="row">
+      <div class="col">
+        <label for="dicProcessId" class="form-label"
+          >Наименование производственного процесса
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select
+          [items]="dicProcessList"
+          bindValue="id"
+          bindLabel="name"
+          [hideSelected]="true"
+          [minTermLength]="2"
+          typeToSearchText="Пожалуйста, введите 2 или более символов"
+          formControlName="dicProcessId"
+          [ngClass]="{ invalid: submitted && f.dicProcessId.errors }"
+        >
+          <ng-template ng-footer-tmp>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="openPlantProcessModal('dicProcess')"
+            >
+              Добавить не существующий в списке
+            </button>
+          </ng-template>
+        </ng-select>
+        <div
+          class="text-danger"
+          *ngIf="
+            (f.dicProcessId.touched || submitted) &&
+            f.dicProcessId.errors?.required
+          "
+        >
+          <small>Поле обязательно для заполнения</small>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="materials" class="form-label"
+          >Наименование топлива или сырья
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select
+          [items]="dicMaterialsList"
+          bindValue="id"
+          bindLabel="name"
+          [hideSelected]="true"
+          [minTermLength]="2"
+          [multiple]="true"
+          typeToSearchText="Пожалуйста, введите 2 или более символов"
+          formControlName="materials"
+          [closeOnSelect]="false"
+          [ngClass]="{ invalid: submitted && f.materials.errors }"
+        >
+          <ng-template ng-footer-tmp>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="openPlantProcessModal('dicMaterial')"
+            >
+              Добавить не существующий в списке
+            </button>
+          </ng-template>
+        </ng-select>
+
+        <div
+          class="text-danger"
+          *ngIf="
+            (f.materials.touched || submitted) &&
+            f.materials.errors?.required
+          "
+        >
+          <small>Поле обязательно для заполнения</small>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="oddsLevel" class="form-label"
+          >Уровень коэффициентов выбросов парниковых газов
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="oddsLevel"
+          id="oddsLevel"
+          [ngClass]="{ 'is-invalid': submitted && f.oddsLevel.errors }"
+        />
+        <div *ngIf="submitted && f.oddsLevel.errors" class="invalid-feedback">
+          <div *ngIf="f.oddsLevel.errors.required">
+            Поле обязательно для заполнения
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="amountConsumed" class="form-label"
+          >Источник данных о количестве потребляемого топлива или сырья
+        </label>
+        <textarea
+          class="form-control"
+          formControlName="amountConsumed"
+          id="amountConsumed"
+          cols="5"
+          rows="2"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="calculatingCalorific" class="form-label"
+          >Источник данных для расчета коэффициента низшей теплоты сгорания
+        </label>
+        <textarea
+          class="form-control"
+          formControlName="calculatingCalorific"
+          id="calculatingCalorific"
+          cols="5"
+          rows="2"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="calculatingConversion" class="form-label"
+          >Источник данных для расчета коэффициента преобразования (в случае
+          промышленных процессов)
+        </label>
+        <textarea
+          class="form-control"
+          formControlName="calculatingConversion"
+          id="calculatingConversion"
+          cols="5"
+          rows="2"
+        ></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="calculatingCarbon" class="form-label"
+          >Источник данных для расчета коэффициента содержания углерода
+        </label>
+        <textarea
+          class="form-control"
+          formControlName="calculatingCarbon"
+          id="calculatingCarbon"
+          cols="5"
+          rows="2"
+        ></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-flex gap-3 justify-content-end align-items-center">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="hidePlantProcessModal()"
+        >
+          Отмена
+        </button>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</div>
