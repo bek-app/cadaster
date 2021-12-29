@@ -1,0 +1,205 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Приборы</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="hideSamplingModal()"
+  ></button>
+</div>
+<div class="modal-body">
+  <form
+    class="form d-flex gap-3 flex-column"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="row">
+      <div class="col">
+        <label for="nameSampling" class="form-label"
+          >Точка отбора проб (обозначение)
+          <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nameSampling"
+          id="nameSampling"
+          [ngClass]="{ 'is-invalid': submitted && f.nameSampling.errors }"
+        />
+        <div
+          *ngIf="submitted && f.nameSampling.errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f.nameSampling.errors.required">
+            Поле обязательно для заполнения
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="materials" class="form-label"
+          >Вид топлива, сырья или продукции
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select
+          [items]="dicMaterialsList"
+          bindValue="id"
+          bindLabel="name"
+          [hideSelected]="true"
+          [minTermLength]="2"
+          [multiple]="true"
+          typeToSearchText="Пожалуйста, введите 2 или более символов"
+          formControlName="materials"
+          [closeOnSelect]="false"
+          [ngClass]="{ invalid: submitted && f.materials.errors }"
+        >
+          <ng-template ng-footer-tmp>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="openDicFormModal('dicMaterial')"
+            >
+              Добавить не существующий в списке
+            </button>
+          </ng-template>
+        </ng-select>
+
+        <div
+          class="text-danger"
+          *ngIf="
+            (f.materials.touched || submitted) && f.materials.errors?.required
+          "
+        >
+          <small>Поле обязательно для заполнения</small>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="param" class="form-label"
+          >Параметр отбора проб
+          <span class="text-danger">*</span>
+        </label>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="param"
+          id="param"
+          rows="2"
+          [ngClass]="{ 'is-invalid': submitted && f.param.errors }"
+        >
+
+        >
+        </textarea>
+        <div *ngIf="submitted && f.param.errors" class="invalid-feedback">
+          <div *ngIf="f.param.errors.required">
+            Поле обязательно для заполнения
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="methodSampling" class="form-label"
+          >Метод отбора проб (краткое описание)
+
+          <span class="text-danger">*</span>
+        </label>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="methodSampling"
+          id="methodSampling"
+          rows="2"
+          [ngClass]="{ 'is-invalid': submitted && f.methodSampling.errors }"
+        >
+        </textarea>
+        <div
+          *ngIf="submitted && f.methodSampling.errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f.methodSampling.errors.required">
+            Поле обязательно для заполнения
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="frequencySampling" class="form-label"
+          >Периодичность отбора проб
+          <span class="text-danger">*</span>
+        </label>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="frequencySampling"
+          id="frequencySampling"
+          rows="2"
+          [ngClass]="{ 'is-invalid': submitted && f.frequencySampling.errors }"
+        >
+        </textarea>
+        <div
+          *ngIf="submitted && f.frequencySampling.errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f.frequencySampling.errors.required">
+            Поле обязательно для заполнения
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="periodTransmission" class="form-label"
+          >Периодичность передачи данных для расчетов выбросов парниковых газов
+          <span class="text-danger">*</span>
+        </label>
+
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="periodTransmission"
+          id="periodTransmission"
+          rows="2"
+          [ngClass]="{
+            'is-invalid':
+              (submitted && f.periodTransmission.errors) ||
+              (!f.periodTransmission.pristine && f.periodTransmission.invalid)
+          }"
+        >
+        </textarea>
+
+        <!-- Validation messages -->
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            (submitted && f.periodTransmission.errors) ||
+            (!f.periodTransmission.pristine && f.periodTransmission.invalid)
+          "
+        >
+          <div *ngIf="f.periodTransmission.errors?.required">
+            Поле обязательно для заполнения
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col d-flex gap-3 justify-content-end align-items-center">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="hideSamplingModal()"
+        >
+          Отмена
+        </button>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</div>
