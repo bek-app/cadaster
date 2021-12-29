@@ -40,7 +40,6 @@
           class="form-select"
           id="oblastId"
           formControlName="oblastId"
-          aria-label="Default select example"
           (ngModelChange)="oblastChange($event)"
           [ngClass]="{ 'is-invalid': submitted && f.oblastId.errors }"
         >
@@ -104,7 +103,6 @@
           formControlName="villageId"
           (ngModelChange)="villageChange($event)"
         >
-
           <option *ngFor="let vil of village" [ngValue]="vil.id">
             {{ vil.name }}
           </option>
@@ -121,8 +119,7 @@
           class="form-control"
           formControlName="address"
           id="address"
-          [(ngModel)]="address"
-         />
+        />
       </div>
     </div>
     <div class="row">
