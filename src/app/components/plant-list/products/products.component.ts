@@ -11,14 +11,13 @@ import {
 import { PlantSourceModel } from 'src/app/models/plant-source.model';
 import { PlantSourceService } from 'src/app/services/plant-source.service';
 import { PlantService } from 'src/app/services/plant.service';
-import { SourceFormComponent } from './source-form/source-form.component';
+import { SourceFormComponent } from '../plant-source-list/source-form/source-form.component';
 @Component({
-  selector: 'app-plant-source-list',
-  templateUrl: './plant-source-list.component.html',
-  styleUrls: ['./plant-source-list.component.css'],
-  providers: [NgbModalConfig, NgbModal],
+  selector: 'app-products',
+  templateUrl: './products.component.html',
+  styleUrls: ['./products.component.css'],
 })
-export class PlantSourceListComponent implements OnInit {
+export class ProductsComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
@@ -71,9 +70,10 @@ export class PlantSourceListComponent implements OnInit {
     this.ref.componentInstance.onPlantSourceAdded.subscribe(
       (data: PlantSourceModel) => {
         const newData = { id: 0, plantId: this.plantId, ...data };
-        this.plantSourceService
-          .addPlantSource(newData)
-          .subscribe((res) => this.refreshList(this.plantId));
+        this.plantSourceService.addPlantSource(newData).subscribe((data) => {
+          this.refreshList(this.plantId);
+          console.log(data);
+        });
       }
     );
   }
@@ -86,9 +86,9 @@ export class PlantSourceListComponent implements OnInit {
           plantId: this.plantId,
           ...data,
         };
-        this.plantSourceService
-          .updatePlantSource(newData)
-          .subscribe((res) => this.refreshList(this.plantId));
+        this.plantSourceService.updatePlantSource(newData).subscribe((data) => {
+          this.refreshList(this.plantId);
+        });
       }
     );
   }
@@ -97,21 +97,21 @@ export class PlantSourceListComponent implements OnInit {
     this.columnDefinitions = [
       {
         id: 'nameSource',
-        name: 'Наименование источника',
+        name: 'Вид продукции',
         field: 'nameSource',
         filterable: true,
         sortable: true,
       },
       {
         id: 'characteristic',
-        name: 'Характеристика используемой технологии ',
+        name: 'Объем продукции',
         field: 'characteristic',
         filterable: true,
         sortable: true,
       },
       {
         id: 'installedCapacity',
-        name: 'Установленная мощность  (единицы измерения)    (при наличии) ',
+        name: ' Единица измерения (тонн, МВт-ч., Гкал)**',
         field: 'installedCapacity',
         filterable: true,
         sortable: true,
@@ -119,7 +119,7 @@ export class PlantSourceListComponent implements OnInit {
 
       {
         id: 'workinHours',
-        name: 'Время работы',
+        name: ' Объем выбросов парниковых газов (в эквиваленте тонны двуокиси углерода)*)',
         field: 'workinHours',
       },
 

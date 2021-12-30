@@ -76,11 +76,11 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
       if (this.oblastName) {
         this.form.controls.address.setValue(this.oblastName);
         this.form.controls.regionId.setValue(null);
+        this.subRegion = [];
+        this.village = [];
       }
       this.dicKatoService.getDicKato(oblastId).subscribe((region) => {
         this.region = region;
-        this.subRegion = [];
-        this.village = [];
       });
     }
   }
@@ -96,12 +96,11 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
       if (this.oblastName && this.regionName) {
         this.address = `${this.oblastName}, ${this.regionName}`;
         this.form.controls.address.setValue(this.address);
-        this.form.controls.subRegionId.setValue(null);
+        this.village = [];
       }
 
       this.dicKatoService.getDicKato(regionId).subscribe((subRegion) => {
         this.subRegion = subRegion;
-        this.village = [];
       });
     }
   }

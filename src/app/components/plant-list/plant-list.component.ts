@@ -10,7 +10,7 @@ import {
   OnEventArgs,
   Subscription,
 } from 'angular-slickgrid';
- import { PlantModel } from 'src/app/models/plant.model';
+import { PlantModel } from 'src/app/models/plant.model';
 import { PlantService } from 'src/app/services/plant.service';
 import { PlantFormComponent } from './plant-form/plant-form.component';
 
@@ -66,7 +66,11 @@ export class PlantListComponent implements OnInit {
         name: 'device',
         title: 'Приборы',
       },
-
+      {
+        id: 5,
+        name: 'products',
+        title: 'Продукты',
+      },
     ];
   }
 
@@ -143,7 +147,8 @@ export class PlantListComponent implements OnInit {
       {
         id: 'address',
         name: 'Географическое место',
-        field: 'address',   filterable: true,
+        field: 'address',
+        filterable: true,
         sortable: true,
       },
       {
