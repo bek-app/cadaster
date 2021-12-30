@@ -6,6 +6,7 @@ import { PlantProcessListComponent } from './components/plant-list/plant-process
 import { PlantSamplingListComponent } from './components/plant-list/plant-sampling-list/plant-sampling-list.component';
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
 import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
+import { ProductsComponent } from './components/plant-list/products/products.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -30,6 +31,10 @@ const routes: Routes = [
       {
         path: 'sampling',
         component: PlantSamplingListComponent,
+      },
+      {
+        path: 'products',
+        component: ProductsComponent,
       },
     ],
   },

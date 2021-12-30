@@ -1,10 +1,9 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -22,7 +21,7 @@ import { PlantService } from 'src/app/services/plant.service';
   templateUrl: './plant-form.component.html',
   styleUrls: ['./plant-form.component.css'],
 })
-export class PlantFormComponent implements OnInit {
+export class PlantFormComponent implements OnInit, AfterViewInit {
   isActive = false;
   form: FormGroup;
   submitted?: boolean;
@@ -36,11 +35,9 @@ export class PlantFormComponent implements OnInit {
   regionName!: string;
   subRegionName!: string;
   villageName!: string;
-
-  address!: string;
+  address: string = '';
   @Output() addPlant: EventEmitter<any> = new EventEmitter();
   @Output() updatePlant: EventEmitter<any> = new EventEmitter();
-
   constructor(
     private plantService: PlantService,
     private activeModal: NgbActiveModal,
@@ -53,7 +50,7 @@ export class PlantFormComponent implements OnInit {
       regionId: new FormControl('', Validators.required),
       subRegionId: new FormControl(),
       villageId: new FormControl(),
-      address: new FormControl({ disabled: true }),
+      address: new FormControl(),
       inactive: new FormControl(true, Validators.required),
     });
   }
@@ -63,87 +60,70 @@ export class PlantFormComponent implements OnInit {
       this.oblast = oblast;
     });
   }
-
-  formValueChanges() {
-    // this.form.controls['oblastId'].valueChanges.subscribe((oblastId) => {
-    //   console.log(this.oblast);
-    // });
-    // this.form.controls['regionId'].valueChanges.subscribe((regionId) => {
-    //   if (regionId) {
-    //     this.regionName = this.region.find((reg) => reg.id === regionId);
-    //     if (this.oblastName && this.regionName) {
-    //       this.address = `${this.oblastName}, ${this.regionName}`;
-    //     }
-    //     this.dicKatoService
-    //       .getDicKato(regionId)
-    //       .subscribe((subRegion) => (this.subRegion = subRegion));
-    //   }
-    // });
-    // this.form.controls['subRegionId'].valueChanges.subscribe((subRegionId) => {
-    //   if (subRegionId !== null) {
-    //     this.subRegion
-    //       .filter((subReg) => subReg.id === subRegionId)
-    //       .map((subReg) => (this.subRegionName = subReg.name));
-    //     if (this.oblastName && this.regionName && this.subRegionName) {
-    //       this.address = `${this.oblastName}, ${this.regionName}, ${this.subRegionName} `;
-    //     }
-    //     this.dicKatoService.getDicKato(subRegionId).subscribe((village) => {
-    //       this.village = village;
-    //     });
-    //   }
-    // });
-    // this.form.controls['villageId'].valueChanges.subscribe((villageId) => {
-    //   if (villageId !== null) {
-    //     this.village
-    //       .filter((vill) => vill.id === villageId)
-    //       .map((vill) => (this.villageName = vill.name));
-    //     if (
-    //       this.oblastName &&
-    //       this.regionName &&
-    //       this.subRegionName &&
-    //       this.villageName
-    //     ) {
-    //       this.address = `${this.oblastName}, ${this.regionName}, ${this.subRegionName}, ${this.villageName}`;
-    //     }
-    //   }
-    // });
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    // this.selectOblast.unsubscribe();
+    // console.log(this.selectOblast);
   }
 
   oblastChange(oblastId: number) {
     if (oblastId) {
-      this.oblastName = this.oblast.find((obl) => obl.id === oblastId)?.name;
-      this.oblastName ? (this.address = this.oblastName) : '';
-      this.region = [];
-      this.dicKatoService
-        .getDicKato(oblastId)
-        .subscribe((region) => (this.region = region));
-      this.subRegion = [];
-      this.village = [];
+      this.oblastName = this.oblast.find(
+        (obl) => obl.id === this.form.value.oblastId
+      )?.name;
+
+      if (this.oblastName) {
+        this.form.controls.address.setValue(this.oblastName);
+        this.form.controls.regionId.setValue(null);
+        this.subRegion = [];
+        this.village = [];
+      }
+      this.dicKatoService.getDicKato(oblastId).subscribe((region) => {
+        this.region = region;
+      });
     }
   }
 
   regionChange(regionId: number) {
     if (regionId) {
+      this.oblastName = this.oblast.find(
+        (obl) => obl.id === this.form.value.oblastId
+      )?.name;
+
       this.regionName = this.region.find((reg) => reg.id === regionId)?.name;
-     
+
       if (this.oblastName && this.regionName) {
         this.address = `${this.oblastName}, ${this.regionName}`;
+        this.form.controls.address.setValue(this.address);
+        this.village = [];
       }
-      this.dicKatoService
-        .getDicKato(regionId)
-        .subscribe((subRegion) => (this.subRegion = subRegion));
+
+      this.dicKatoService.getDicKato(regionId).subscribe((subRegion) => {
+        this.subRegion = subRegion;
+      });
     }
-    this.village = [];
   }
 
   subRegionChange(subRegionId: number) {
     if (subRegionId) {
-      this.subRegion
-        .filter((subReg) => subReg.id === subRegionId)
-        .map((subReg) => (this.subRegionName = subReg.name));
+      this.subRegionName = this.subRegion.find(
+        (subReg) => subReg.id === subRegionId
+      )?.name;
+
+      if (!this.oblastName)
+        this.oblastName = this.oblast.find(
+          (obl) => obl.id === this.form.value.oblastId
+        )?.name;
+
+      if (!this.regionName)
+        this.regionName = this.region.find(
+          (reg) => reg.id === this.form.value.regionId
+        )?.name;
 
       if (this.oblastName && this.regionName && this.subRegionName) {
         this.address = `${this.oblastName}, ${this.regionName}, ${this.subRegionName} `;
+        this.form.controls.address.setValue(this.address);
       }
       this.dicKatoService.getDicKato(subRegionId).subscribe((village) => {
         this.village = village;
@@ -153,14 +133,37 @@ export class PlantFormComponent implements OnInit {
 
   villageChange(villageId: number) {
     if (villageId) {
-      this.village
-        .filter((vill) => vill.id === villageId)
-        .map((vill) => (this.villageName = vill.name));
-      if (this.oblastName && this.regionName) {
+      this.villageName = this.village.find(
+        (vill) => vill.id === villageId
+      )?.name;
+
+      if (!this.oblastName)
+        this.oblastName = this.oblast.find(
+          (obl) => obl.id === this.form.value.oblastId
+        )?.name;
+
+      if (!this.regionName)
+        this.regionName = this.region.find(
+          (reg) => reg.id === this.form.value.regionId
+        )?.name;
+
+      if (!this.subRegionName)
+        this.subRegionName = this.subRegion.find(
+          (subReg) => subReg.id === this.form.value.subRegionId
+        )?.name;
+
+      if (
+        this.oblastName &&
+        this.regionName &&
+        this.subRegionName &&
+        this.villageName
+      ) {
         this.address = `${this.oblastName}, ${this.regionName}, ${this.subRegionName}, ${this.villageName}`;
+        this.form.controls.address.setValue(this.address);
       }
     }
   }
+
   onSubmit() {
     this.submitted = true;
     if (this.form.invalid) {
@@ -179,9 +182,9 @@ export class PlantFormComponent implements OnInit {
 
   editForm(id: number) {
     this.isActive = true;
-    this.plantService.getPlantById(id).subscribe((data) => {
-      this.form.patchValue(data);
-    });
+    this.plantService
+      .getPlantById(id)
+      .subscribe((data: any) => this.form.patchValue(data));
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;

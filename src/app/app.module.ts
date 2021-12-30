@@ -21,6 +21,7 @@ import { PlantSamplingListComponent } from './components/plant-list/plant-sampli
 import { SamplingFormComponent } from './components/plant-list/plant-sampling-list/sampling-form/sampling-form.component';
   import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
 import { CadasterReportFormComponent } from './components/cadaster-report-list/cadaster-report-form/cadaster-report-form.component';
+import { ProductsComponent } from './components/plant-list/products/products.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { CadasterReportFormComponent } from './components/cadaster-report-list/c
      PlantSamplingListComponent,
      SamplingFormComponent,
      CadasterReportListComponent,
-     CadasterReportFormComponent
+     CadasterReportFormComponent,
+     ProductsComponent
 
   ],
   imports: [
