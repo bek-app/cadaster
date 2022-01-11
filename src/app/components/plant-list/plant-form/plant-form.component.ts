@@ -21,7 +21,7 @@ import { PlantService } from 'src/app/services/plant.service';
   templateUrl: './plant-form.component.html',
   styleUrls: ['./plant-form.component.css'],
 })
-export class PlantFormComponent implements OnInit, AfterViewInit {
+export class PlantFormComponent implements OnInit {
   isActive = false;
   form: FormGroup;
   submitted?: boolean;
@@ -36,8 +36,10 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
   subRegionName!: string;
   villageName!: string;
   address: string = '';
+
   @Output() addPlant: EventEmitter<any> = new EventEmitter();
   @Output() updatePlant: EventEmitter<any> = new EventEmitter();
+
   constructor(
     private plantService: PlantService,
     private activeModal: NgbActiveModal,
@@ -59,12 +61,6 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
     this.dicKatoService.getDicKato(1).subscribe((oblast) => {
       this.oblast = oblast;
     });
-  }
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    // this.selectOblast.unsubscribe();
-    // console.log(this.selectOblast);
   }
 
   oblastChange(oblastId: number) {
@@ -96,6 +92,8 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
       if (this.oblastName && this.regionName) {
         this.address = `${this.oblastName}, ${this.regionName}`;
         this.form.controls.address.setValue(this.address);
+        this.form.value.villageId = null;
+        this.form.value.subRegionId = null;
         this.village = [];
       }
 

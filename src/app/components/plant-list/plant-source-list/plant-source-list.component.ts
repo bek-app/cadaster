@@ -121,6 +121,8 @@ export class PlantSourceListComponent implements OnInit {
         id: 'workinHours',
         name: 'Время работы',
         field: 'workinHours',
+        filterable: true,
+        sortable: true,
       },
 
       {
