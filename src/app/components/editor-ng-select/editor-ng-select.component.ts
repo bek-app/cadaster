@@ -40,8 +40,8 @@ export class EditorNgSelectComponent implements OnInit {
       size: 'md',
     });
     if (name === 'dicUnit') {
-      this.ref.componentInstance.dicTitle = 'Добавить';
-      // this.ref.componentInstance.dicLabel = 'Материал';
+      this.ref.componentInstance.dicTitle = 'Добавить eдиница измерения';
+       this.ref.componentInstance.dicLabel = 'Единица измерения ';
       this.dicUnitAdded();
     }
   }

@@ -11,6 +11,7 @@ import { ActualEmissionComponent } from './components/cadaster-report-list/actua
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
 import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
 import { DicUnitResolverService } from './services/dic-unit-resolver.service';
+import { ParameterGasComponent } from './components/cadaster-report-list/parameter-gas/parameter-gas.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -55,6 +56,11 @@ const routes: Routes = [
       {
         path: 'parameter-calc',
         component: ParameterCalcComponent,
+        resolve: { dicUnit: DicUnitResolverService },
+      },
+      {
+        path: 'parameter-gas',
+        component: ParameterGasComponent,
         resolve: { dicUnit: DicUnitResolverService },
       },
     ],
