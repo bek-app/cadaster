@@ -9,19 +9,23 @@ import { PlantListComponent } from './components/plant-list/plant-list.component
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
- import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
+import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
 import { PlantDeviceListComponent } from './components/plant-list/plant-device-list/plant-device-list.component';
 import { DicFormComponent } from './components/dic-form/dic-form.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DeviceFormComponent } from './components/plant-list/plant-device-list/device-form/device-form.component';
 import { ProcessFormComponent } from './components/plant-list/plant-process-list/process-form/process-form.component';
 import { PlantFormComponent } from './components/plant-list/plant-form/plant-form.component';
- import { SourceFormComponent } from './components/plant-list/plant-source-list/source-form/source-form.component';
+import { SourceFormComponent } from './components/plant-list/plant-source-list/source-form/source-form.component';
 import { PlantSamplingListComponent } from './components/plant-list/plant-sampling-list/plant-sampling-list.component';
 import { SamplingFormComponent } from './components/plant-list/plant-sampling-list/sampling-form/sampling-form.component';
-  import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
-import { CadasterReportFormComponent } from './components/cadaster-report-list/cadaster-report-form/cadaster-report-form.component';
+import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
 import { ProductsComponent } from './components/plant-list/products/products.component';
+import { ActualEmissionComponent } from './components/cadaster-report-list/actual-emission/actual-emission.component';
+import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
+import { CadasterReportFormComponent } from './components/cadaster-report/cadaster-report-form/cadaster-report-form.component';
+import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
+import { EditorNgSelectComponent } from './components/editor-ng-select/editor-ng-select.component';
 
 @NgModule({
   declarations: [
@@ -36,13 +40,16 @@ import { ProductsComponent } from './components/plant-list/products/products.com
     DeviceFormComponent,
     ProcessFormComponent,
     PlantFormComponent,
-     SourceFormComponent,
-     PlantSamplingListComponent,
-     SamplingFormComponent,
-     CadasterReportListComponent,
-     CadasterReportFormComponent,
-     ProductsComponent
-
+    SourceFormComponent,
+    PlantSamplingListComponent,
+    SamplingFormComponent,
+    CadasterReportListComponent,
+    ProductsComponent,
+    ActualEmissionComponent,
+    CadasterReportComponent,
+    CadasterReportFormComponent,
+    ParameterCalcComponent,
+    EditorNgSelectComponent,
   ],
   imports: [
     BrowserModule,

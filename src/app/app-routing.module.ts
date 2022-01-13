@@ -7,6 +7,10 @@ import { PlantSamplingListComponent } from './components/plant-list/plant-sampli
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
 import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
 import { ProductsComponent } from './components/plant-list/products/products.component';
+import { ActualEmissionComponent } from './components/cadaster-report-list/actual-emission/actual-emission.component';
+import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
+import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
+import { DicUnitResolverService } from './services/dic-unit-resolver.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -38,7 +42,23 @@ const routes: Routes = [
       },
     ],
   },
-  { path: 'cadaster-report', component: CadasterReportListComponent },
+  {
+    path: 'cadaster-report',
+    component: CadasterReportComponent,
+  },
+  {
+    path: 'cadaster-report-list/:id',
+    component: CadasterReportListComponent,
+    children: [
+      { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
+      { path: 'actual-emission', component: ActualEmissionComponent },
+      {
+        path: 'parameter-calc',
+        component: ParameterCalcComponent,
+        resolve: { dicUnit: DicUnitResolverService },
+      },
+    ],
+  },
 ];
 
 @NgModule({

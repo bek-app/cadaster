@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col">
+    <div class="mb-5">
+      <h2>
+        Параметры, использованные для расчета коэффициентов окисления топлива
+      </h2>
+    </div>
+    <angular-slickgrid
+      gridId="parameter-calc"
+      [columnDefinitions]="columnDefinitions"
+      [gridOptions]="gridOptions"
+      [datasetHierarchical]="dataset"
+      (onAngularGridCreated)="angularGridReady($any($event).detail)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>

@@ -9,9 +9,10 @@
 </div>
 <div class="modal-body">
   <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row d-flex gap-3 flex-column">
-      <div class="col">
-        <label for="name" class="form-label"> {{ dicLabel }}</label>
+    <div class="row">
+      <label for="name" class="form-label"> {{ dicLabel }}</label>
+
+      <div class="input-group">
         <input
           type="text"
           class="form-control"
@@ -22,15 +23,15 @@
             'is-invalid': submitted && f.name.errors
           }"
         />
-        <div
-          class="text-danger"
-          *ngIf="(f.name.touched || submitted) && f.name.errors?.required"
-        >
-          <small>Поле обязательно для заполнения</small>
-        </div>
+
+        <button type="submit" class="btn btn-success">Добавить</button>
       </div>
-      <div class="col d-flex align-items-end justify-content-end">
-        <button type="submit" class="btn btn-primary">Добавить</button>
+
+      <div
+        class="text-danger"
+        *ngIf="(f.name.touched || submitted) && f.name.errors?.required"
+      >
+        <small>Поле обязательно для заполнения</small>
       </div>
     </div>
   </form>

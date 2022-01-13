@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -13,6 +14,7 @@ import {
   OnEventArgs,
   SlickDataView,
 } from 'angular-slickgrid';
+import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 import { ActualEmissionService } from '../../../services/actual-emission.service';
 @Component({
   selector: 'app-actual-emission',
@@ -24,7 +26,6 @@ export class ActualEmissionComponent implements OnInit {
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: any[] = [];
-  cadasterId!: number;
   gridObj: any;
   dataViewObj: any;
 
@@ -43,7 +44,11 @@ export class ActualEmissionComponent implements OnInit {
       return true;
     });
   }
-  constructor(private actualEmissionService: ActualEmissionService) {}
+  constructor(
+    private actualEmissionService: ActualEmissionService,
+
+    private cadasterService: CadasterReportService
+  ) {}
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -55,8 +60,6 @@ export class ActualEmissionComponent implements OnInit {
     this.actualEmissionService
       .getActualEmissionById(reportId)
       .subscribe((data) => {
-        console.log(data);
-
         data.forEach((items) => {
           items.materials.forEach((material: any) => {
             Object.assign(material, {
@@ -76,7 +79,7 @@ export class ActualEmissionComponent implements OnInit {
         field: 'processName',
         type: FieldType.string,
         width: 120,
-        formatter: treeFormatter,
+        formatter: reportCadasterTreeFormatter,
         filterable: true,
         sortable: true,
       },
@@ -323,7 +326,7 @@ export class ActualEmissionComponent implements OnInit {
   }
 }
 
-export const treeFormatter: Formatter = (
+export const reportCadasterTreeFormatter: Formatter = (
   _row,
   _cell,
   value,
