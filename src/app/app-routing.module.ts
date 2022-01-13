@@ -6,7 +6,7 @@ import { PlantProcessListComponent } from './components/plant-list/plant-process
 import { PlantSamplingListComponent } from './components/plant-list/plant-sampling-list/plant-sampling-list.component';
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
 import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
-import { ProductsComponent } from './components/plant-list/products/products.component';
+import { PlantProductListComponent } from './components/plant-list/plant-product-list/plant-product-list.component';
 import { ActualEmissionComponent } from './components/cadaster-report-list/actual-emission/actual-emission.component';
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
 import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
@@ -38,8 +38,8 @@ const routes: Routes = [
         component: PlantSamplingListComponent,
       },
       {
-        path: 'products',
-        component: ProductsComponent,
+        path: 'product',
+        component: PlantProductListComponent,
       },
     ],
   },

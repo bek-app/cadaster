@@ -4,7 +4,7 @@
       <div class="col">
         <button
           class="btn btn-outline-primary mb-2"
-          (click)="openPlantSourceModal()"
+          (click)="openPlantProductModal()"
           *ngIf="plantId"
         >
           Создать
@@ -16,7 +16,7 @@
     </div>
     <div id="demo-container">
       <angular-slickgrid
-        gridId="products-grid"
+        gridId="product-grid"
         [columnDefinitions]="columnDefinitions"
         [gridOptions]="gridOptions"
         [dataset]="dataset"

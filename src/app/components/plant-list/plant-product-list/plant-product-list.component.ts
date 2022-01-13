@@ -8,22 +8,26 @@ import {
   Observable,
   OnEventArgs,
 } from 'angular-slickgrid';
+import { PlantProcessModel } from 'src/app/models/plant-process.model ';
+import { PlantProductModel } from 'src/app/models/plant-product.model';
 import { PlantSourceModel } from 'src/app/models/plant-source.model';
+import { PlantProductService } from 'src/app/services/plant-product.service';
 import { PlantSourceService } from 'src/app/services/plant-source.service';
 import { PlantService } from 'src/app/services/plant.service';
 import { SourceFormComponent } from '../plant-source-list/source-form/source-form.component';
+import { PlantProductFormComponent } from './plant-product-form/plant-product-form.component';
 @Component({
-  selector: 'app-products',
-  templateUrl: './products.component.html',
-  styleUrls: ['./products.component.css'],
+  selector: 'app-plant-product-list',
+  templateUrl: './plant-product-list.component.html',
+  styleUrls: ['./plant-product-list.component.css'],
 })
-export class ProductsComponent implements OnInit {
+export class PlantProductListComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
-  dataset: any[] = [];
+  dataset: PlantProductModel[] = [];
   plantId!: number;
-  plantSourceId!: number;
+  plantProductId!: number;
   gridObj: any;
   dataViewObj: any;
   ref: any;
@@ -36,7 +40,7 @@ export class ProductsComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     config: NgbModalConfig,
-    private plantSourceService: PlantSourceService,
+    private plantProductService: PlantProductService,
     private plantService: PlantService
   ) {
     config.backdrop = 'static';
@@ -46,7 +50,6 @@ export class ProductsComponent implements OnInit {
     this.prepareGrid();
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
       this.plantId = item.id;
-      // this.namePlant = item.namePlant;
       this.refreshList(this.plantId);
     });
   }
@@ -57,38 +60,40 @@ export class ProductsComponent implements OnInit {
   }
 
   refreshList(id: number) {
-    this.plantSourceService.getPlantSourceList(id).subscribe((data) => {
-      this.dataset = data;
+    this.plantProductService.getPlantProductList(id).subscribe((product) => {
+      console.log(product);
+      this.dataset = product;
     });
   }
-  openPlantSourceModal() {
-    this.ref = this.modalService.open(SourceFormComponent, { size: 'xl' });
-    this.onPlantSourceAdded();
-    this.onPlantSourceUpdated();
+  openPlantProductModal() {
+    this.ref = this.modalService.open(PlantProductFormComponent, {
+      size: 'lg',
+    });
+    this.onProductAdded();
+    this.onProductUpdated();
   }
-  onPlantSourceAdded() {
-    this.ref.componentInstance.onPlantSourceAdded.subscribe(
-      (data: PlantSourceModel) => {
+  onProductAdded() {
+    this.ref.componentInstance.addProduct.subscribe(
+      (data: PlantProductModel) => {
         const newData = { id: 0, plantId: this.plantId, ...data };
-        this.plantSourceService.addPlantSource(newData).subscribe((data) => {
-          this.refreshList(this.plantId);
-          console.log(data);
-        });
+        this.plantProductService
+          .addPlantProduct(newData)
+          .subscribe((result) => this.refreshList(this.plantId));
       }
     );
   }
 
-  onPlantSourceUpdated() {
-    this.ref.componentInstance.onPlantSourceUpdated.subscribe(
-      (data: PlantSourceModel) => {
+  onProductUpdated() {
+    this.ref.componentInstance.updateProduct.subscribe(
+      (data: PlantProductModel) => {
         const newData = {
-          id: this.plantSourceId,
+          id: this.plantProductId,
           plantId: this.plantId,
           ...data,
         };
-        this.plantSourceService.updatePlantSource(newData).subscribe((data) => {
-          this.refreshList(this.plantId);
-        });
+        this.plantProductService
+          .updatePlantProduct(newData)
+          .subscribe((result) => this.refreshList(this.plantId));
       }
     );
   }
@@ -96,31 +101,18 @@ export class ProductsComponent implements OnInit {
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'nameSource',
-        name: 'Вид продукции',
-        field: 'nameSource',
+        id: 'dicProductName',
+        name: 'Вид',
+        field: 'dicProductName',
         filterable: true,
         sortable: true,
       },
       {
-        id: 'characteristic',
-        name: 'Объем продукции',
-        field: 'characteristic',
+        id: 'dicUnitName',
+        name: 'Ед. измерения',
+        field: 'dicUnitName',
         filterable: true,
         sortable: true,
-      },
-      {
-        id: 'installedCapacity',
-        name: ' Единица измерения (тонн, МВт-ч., Гкал)**',
-        field: 'installedCapacity',
-        filterable: true,
-        sortable: true,
-      },
-
-      {
-        id: 'workinHours',
-        name: ' Объем выбросов парниковых газов (в эквиваленте тонны двуокиси углерода)*)',
-        field: 'workinHours',
       },
 
       {
@@ -133,9 +125,9 @@ export class ProductsComponent implements OnInit {
         minWidth: 30,
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
-          this.plantSourceId = args.dataContext.id;
-          this.openPlantSourceModal();
-          this.ref.componentInstance.editForm(this.plantSourceId);
+          this.plantProductId = args.dataContext.id;
+          this.openPlantProductModal();
+          this.ref.componentInstance.editForm(this.plantProductId);
         },
       },
       {
@@ -150,9 +142,11 @@ export class ProductsComponent implements OnInit {
         onCellClick: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
           if (confirm('Уверены ли вы?')) {
-            this.plantSourceService.deletePlantSource(id).subscribe((data) => {
-              this.refreshList(this.plantId);
-            });
+            this.plantProductService
+              .deletePlantProduct(id)
+              .subscribe((data) => {
+                this.refreshList(this.plantId);
+              });
           }
         },
       },

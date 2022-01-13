@@ -1,0 +1,103 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Продукт</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="hideProductModal()"
+  ></button>
+</div>
+<div class="modal-body">
+  <form
+    class="form d-flex gap-3 flex-column"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="row">
+      <div class="col">
+        <label for="dicProductId" class="form-label">
+          Вид
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select
+          [items]="dicProductList"
+          bindValue="id"
+          bindLabel="name"
+          [hideSelected]="true"
+          [minTermLength]="2"
+          typeToSearchText="Пожалуйста, введите 2 или более символов"
+          formControlName="dicProductId"
+          [ngClass]="{ invalid: submitted && f.dicProductId.errors }"
+        >
+          <ng-template ng-footer-tmp>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="openDicModal('dicProduct')"
+            >
+              Добавить не существующий в списке
+            </button>
+          </ng-template>
+        </ng-select>
+        <div
+          class="text-danger"
+          *ngIf="
+            (f.dicProductId.touched || submitted) &&
+            f.dicProductId.errors?.required
+          "
+        >
+          <small>Поле обязательно для заполнения</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label for="dicUnitId" class="form-label">
+          Ед. измерения
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select
+          [items]="dicUnitList"
+          bindValue="id"
+          bindLabel="name"
+          [hideSelected]="true"
+          [minTermLength]="2"
+          typeToSearchText="Пожалуйста, введите 2 или более символов"
+          formControlName="dicUnitId"
+          [ngClass]="{ invalid: submitted && f.dicUnitId.errors }"
+        >
+          <ng-template ng-footer-tmp>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="openDicModal('dicUnit')"
+            >
+              Добавить не существующий в списке
+            </button>
+          </ng-template>
+        </ng-select>
+        <div
+          class="text-danger"
+          *ngIf="
+            (f.dicUnitId.touched || submitted) && f.dicUnitId.errors?.required
+          "
+        >
+          <small>Поле обязательно для заполнения</small>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-flex justify-content-end gap-3">
+        <button
+          class="btn btn-secondary"
+          type="button"
+          (click)="hideProductModal()"
+        >
+          Отмена
+        </button>
+        <button class="btn btn-success" type="submit">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</div>

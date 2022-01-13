@@ -68,7 +68,7 @@ export class PlantListComponent implements OnInit {
       },
       {
         id: 5,
-        name: 'products',
+        name: 'product',
         title: 'Продукты',
       },
     ];
