@@ -26,9 +26,9 @@ import { CadasterReportFormComponent } from './components/cadaster-report/cadast
 import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
 import { EditorNgSelectComponent } from './components/editor-ng-select/editor-ng-select.component';
 import { ParameterGasComponent } from './components/cadaster-report-list/parameter-gas/parameter-gas.component';
-import { ProductComponent } from './components/cadaster-report-list/product/product.component';
 import { PlantProductListComponent } from './components/plant-list/plant-product-list/plant-product-list.component';
 import { PlantProductFormComponent } from './components/plant-list/plant-product-list/plant-product-form/plant-product-form.component';
+import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 
 @NgModule({
   declarations: [
@@ -51,9 +51,9 @@ import { PlantProductFormComponent } from './components/plant-list/plant-product
     ParameterCalcComponent,
     EditorNgSelectComponent,
     ParameterGasComponent,
-    ProductComponent,
     PlantProductListComponent,
     PlantProductFormComponent,
+    ReportProductComponent,
   ],
   imports: [
     BrowserModule,

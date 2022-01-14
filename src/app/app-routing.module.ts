@@ -12,6 +12,7 @@ import { CadasterReportComponent } from './components/cadaster-report/cadaster-r
 import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
 import { DicUnitResolverService } from './services/dic-unit-resolver.service';
 import { ParameterGasComponent } from './components/cadaster-report-list/parameter-gas/parameter-gas.component';
+import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -62,6 +63,10 @@ const routes: Routes = [
         path: 'parameter-gas',
         component: ParameterGasComponent,
         resolve: { dicUnit: DicUnitResolverService },
+      },
+      {
+        path: 'report-product',
+        component: ReportProductComponent,
       },
     ],
   },
