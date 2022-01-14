@@ -7,11 +7,11 @@ import { PlantSamplingListComponent } from './components/plant-list/plant-sampli
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
 import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
 import { PlantProductListComponent } from './components/plant-list/plant-product-list/plant-product-list.component';
-import { ActualEmissionComponent } from './components/cadaster-report-list/actual-emission/actual-emission.component';
+import { ReportActualEmissionComponent } from './components/cadaster-report-list/report-actual-emission/report-actual-emission.component';
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
-import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
+import { ReportParameterCalcComponent } from './components/cadaster-report-list/report-parameter-calc/report-parameter-calc.component';
 import { DicUnitResolverService } from './services/dic-unit-resolver.service';
-import { ParameterGasComponent } from './components/cadaster-report-list/parameter-gas/parameter-gas.component';
+import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 
 const routes: Routes = [
@@ -53,15 +53,15 @@ const routes: Routes = [
     component: CadasterReportListComponent,
     children: [
       { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
-      { path: 'actual-emission', component: ActualEmissionComponent },
+      { path: 'actual-emission', component: ReportActualEmissionComponent },
       {
         path: 'parameter-calc',
-        component: ParameterCalcComponent,
+        component: ReportParameterCalcComponent,
         resolve: { dicUnit: DicUnitResolverService },
       },
       {
         path: 'parameter-gas',
-        component: ParameterGasComponent,
+        component: ReportParameterGasComponent,
         resolve: { dicUnit: DicUnitResolverService },
       },
       {

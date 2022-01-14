@@ -17,11 +17,11 @@ import {
 import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 import { ActualEmissionService } from '../../../services/actual-emission.service';
 @Component({
-  selector: 'app-actual-emission',
-  templateUrl: './actual-emission.component.html',
-  styleUrls: ['./actual-emission.component.css'],
+  selector: 'app-report-actual-emission',
+  templateUrl: './report-actual-emission.component.html',
+  styleUrls: ['./report-actual-emission.component.css'],
 })
-export class ActualEmissionComponent implements OnInit {
+export class ReportActualEmissionComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};

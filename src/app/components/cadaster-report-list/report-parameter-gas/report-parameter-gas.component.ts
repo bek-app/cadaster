@@ -1,4 +1,4 @@
-import { reportCadasterTreeFormatter } from './../actual-emission/actual-emission.component';
+import { reportCadasterTreeFormatter } from '../report-actual-emission/report-actual-emission.component';
 import {
   Component,
   Input,
@@ -26,23 +26,22 @@ import {
   OperatorType,
   SlickDataView,
 } from 'angular-slickgrid';
-import { ParameterCalc } from 'src/app/models/parameter-calc.model';
-import { ParameterCalcService } from 'src/app/services/parameter-calc.service';
 import { ActivatedRoute } from '@angular/router';
 import { CustomAngularComponentEditor } from '../custom-angular-editor';
 import { EditorNgSelectComponent } from '../../editor-ng-select/editor-ng-select.component';
 import { DicUnitService } from 'src/app/services/dic-unit.service';
+import { ParameterGasService } from 'src/app/services/parameter-gas.service';
+import { ParameterGasModel } from 'src/app/models/parameter-gas.model';
 @Component({
-  selector: 'app-parameter-calc',
-  templateUrl: './parameter-calc.component.html',
-  styleUrls: ['./parameter-calc.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  selector: 'app-report-parameter-gas',
+  templateUrl: './report-parameter-gas.component.html',
+  styleUrls: ['./report-parameter-gas.component.css'],
 })
-export class ParameterCalcComponent implements OnInit {
+export class ReportParameterGasComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
-  dataset: ParameterCalc[] = [];
+  dataset: ParameterGasModel[] = [];
   cadasterId!: number;
   gridObj: any;
   dataViewObj: any;
@@ -74,7 +73,7 @@ export class ParameterCalcComponent implements OnInit {
     });
   }
   constructor(
-    private parameterCalcService: ParameterCalcService,
+    private parameterGasService: ParameterGasService,
     private activatedRoute: ActivatedRoute,
     private angularUtilService: AngularUtilService,
     private dicUnitService: DicUnitService
@@ -92,23 +91,24 @@ export class ParameterCalcComponent implements OnInit {
     this.refreshList(id);
   }
   refreshList(reportId: number) {
-    this.parameterCalcService
-      .getParameterCalcById(reportId)
-      .subscribe((data) => {
-        data.forEach((items) => {
-          items.materials.forEach((material: any) => {
-            Object.assign(material, {
-              processName: material.dicMaterialName,
-              item: {
-                id: material.paramCalcUnitId,
-                name: material.paramCalcUnitName,
-              },
-            });
+    this.parameterGasService.getParameterGasById(reportId).subscribe((data) => {
+      data.forEach((items) => {
+        items.materials.forEach((material: any) => {
+          Object.assign(material, {
+            processName: material.dicMaterialName,
+            gasCh4Unit: {
+              id: material.gasCh4UnitId,
+              name: material.gasCh4UnitName,
+            },
+            gasN2OUnit: {
+              id: material.gasN2OUnitId,
+              name: material.gasN2OUnitName,
+            },
           });
         });
-        console.log(data);
-        this.dataset = data;
       });
+      this.dataset = data;
+    });
   }
 
   prepareGrid() {
@@ -125,10 +125,10 @@ export class ParameterCalcComponent implements OnInit {
       },
 
       {
-        id: 'q4',
-        name: 'Потеря тепла вследствии механической неполнотой сгорания (q4), %',
-        field: 'q4',
-        columnGroup: 'Вариант А',
+        id: 'gasCh4',
+        name: 'Измеренная объемная концентрация метана',
+        field: 'gasCh4',
+        columnGroup: 'Коэффициент выбросов',
         headerCssClass: 'text',
         filterable: true,
         sortable: true,
@@ -136,72 +136,27 @@ export class ParameterCalcComponent implements OnInit {
         editor: { model: Editors.integer },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const q4 = args.dataContext.q4;
+          const gasCh4 = args.dataContext.gasCh4;
           const data = {
             id,
-            nameField: 'Q4',
-            valueField: q4.toString(),
+            nameField: 'GasCh4',
+            valueField: gasCh4.toString(),
           };
-          this.parameterCalcService
-            .addParameterCalc(data)
+          this.parameterGasService
+            .addParameterGas(data)
             .subscribe((res: any) => {});
         },
       },
       {
-        id: 'q3',
-        name: 'Потеря тепла вследствии химической неполнотой сгорания (q3), %',
-        field: 'q3',
-        columnGroup: 'Вариант А',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const q3 = args.dataContext.q3;
-          const data = {
-            id,
-            nameField: 'Q3',
-            valueField: q3.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => {});
-        },
-      },
-
-      {
-        id: 'slagCarbon',
-        name: 'Содержание углерода в шлаке',
-        field: 'slagCarbon',
-        columnGroup: 'Вариант Б',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const slagCarbon = args.dataContext.slagCarbon;
-          const data = {
-            id,
-            nameField: 'SlagCarbon',
-            valueField: slagCarbon.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => {});
-        },
-      },
-      {
-        id: 'item',
+        id: 'gasCh4Unit',
         name: 'Единица измерения ',
-        field: 'item',
-        columnGroup: 'Вариант Б',
+        field: 'gasCh4Unit',
+        columnGroup: 'Коэффициент выбросов',
         filterable: true,
         sortable: true,
         formatter: Formatters.complexObject,
         params: {
-          complexFieldLabel: 'item.name',
+          complexFieldLabel: 'gasCh4Unit.name',
         },
         exportWithFormatter: true,
         editor: {
@@ -213,59 +168,157 @@ export class ParameterCalcComponent implements OnInit {
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const item = args.dataContext.item;
+          const gasCh4Unit = args.dataContext.gasCh4Unit;
           const data = {
             id,
-            nameField: 'ParamCalcUnitId',
-            valueField: item.id.toString(),
+            nameField: 'GasCh4UnitId',
+            valueField: gasCh4Unit.id.toString(),
           };
-          this.parameterCalcService
-            .addParameterCalc(data)
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
+        },
+      },
+      {
+        id: 'gasN2O',
+        name: 'Измеренная объемная концентрация закиси азота',
+        field: 'gasN2O',
+        columnGroup: 'Коэффициент выбросов',
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const gasN2O = args.dataContext.gasN2O;
+          const data = {
+            id,
+            nameField: 'GasN2O',
+            valueField: gasN2O.toString(),
+          };
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
+        },
+      },
+      {
+        id: 'gasN2OUnit',
+        name: 'Единица измерения ',
+        field: 'gasN2OUnit',
+        columnGroup: 'Коэффициент выбросов',
+        filterable: true,
+        sortable: true,
+        formatter: Formatters.complexObject,
+        params: {
+          complexFieldLabel: 'gasN2OUnit.name',
+        },
+        exportWithFormatter: true,
+        editor: {
+          model: CustomAngularComponentEditor,
+          collection: this.complexityLevelList,
+          params: {
+            component: EditorNgSelectComponent,
+          },
+        },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const gasN2OUnit = args.dataContext.gasN2OUnit;
+          const data = {
+            id,
+            nameField: 'GasN2OUnitId',
+            valueField: gasN2OUnit.id.toString(),
+          };
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
+        },
+      },
+      {
+        id: 'gasProcО2',
+        name: 'Измеренная концентрация кислорода (О2)',
+        field: 'gasProcО2',
+        columnGroup: 'Коэффициент выбросов',
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const gasProcО2 = args.dataContext.gasProcО2;
+          const data = {
+            id,
+            nameField: 'GasProcО2',
+            valueField: gasProcО2.toString(),
+          };
+          this.parameterGasService
+            .addParameterGas(data)
             .subscribe((res: any) => {});
         },
       },
 
       {
-        id: 'slagAmount',
-        name: ' Количество шлака, образованного за период z, тонн',
-        field: 'slagAmount',
-        columnGroup: 'Вариант Б',
+        id: 'gasKoeffFuelNature',
+        name: 'Коэффициент, учитывающий характер топлива',
+        field: 'gasKoeffFuelNature',
+        columnGroup: 'Коэффициент выбросов',
         filterable: true,
         sortable: true,
         type: FieldType.number,
         editor: { model: Editors.integer },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const slagAmount = args.dataContext.slagAmount;
+          const gasKoeffFuelNature = args.dataContext.gasKoeffFuelNature;
           const data = {
             id,
-            nameField: 'SlagAmount',
-            valueField: slagAmount.toString(),
+            nameField: 'GasKoeffFuelNature',
+            valueField: gasKoeffFuelNature.toString(),
           };
-          this.parameterCalcService
-          .addParameterCalc(data)
-          .subscribe((res: any) => {});
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
         },
       },
       {
-        id: 'fuelConsumption',
-        name: 'Расход топлива в натуральном виде за период z, тонн',
-        field: 'fuelConsumption',
-        columnGroup: 'Вариант Б',
+        id: 'gasWeightN2O',
+        name: 'Удельная масса загрязняющих веществ,закись азота (N2O), кг/нм^3',
+        field: 'gasWeightN2O',
+        columnGroup: 'Коэффициент выбросов',
         filterable: true,
         sortable: true,
         type: FieldType.number,
         editor: { model: Editors.integer },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const fuelConsumption = args.dataContext.fuelConsumption;
+          const gasWeightN2O = args.dataContext.gasWeightN2O;
           const data = {
             id,
-            nameField: 'FuelConsumption',
-            valueField: fuelConsumption.toString(),
+            nameField: 'GasWeightN2O',
+            valueField: gasWeightN2O.toString(),
           };
-          this.parameterCalcService
-            .addParameterCalc(data)
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
+        },
+      },
+      {
+        id: 'gasWeightCh4',
+        name: 'Удельная масса загрязняющих веществ, метан (CH4)',
+        field: 'gasWeightCh4',
+        columnGroup: 'Коэффициент выбросов',
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const gasWeightCh4 = args.dataContext.gasWeightCh4;
+          const data = {
+            id,
+            nameField: 'GasWeightCh4',
+            valueField: gasWeightCh4.toString(),
+          };
+          this.parameterGasService
+            .addParameterGas(data)
             .subscribe((res: any) => {});
         },
       },

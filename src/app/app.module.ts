@@ -20,15 +20,16 @@ import { SourceFormComponent } from './components/plant-list/plant-source-list/s
 import { PlantSamplingListComponent } from './components/plant-list/plant-sampling-list/plant-sampling-list.component';
 import { SamplingFormComponent } from './components/plant-list/plant-sampling-list/sampling-form/sampling-form.component';
 import { CadasterReportListComponent } from './components/cadaster-report-list/cadaster-report-list.component';
-import { ActualEmissionComponent } from './components/cadaster-report-list/actual-emission/actual-emission.component';
+import { ReportActualEmissionComponent } from './components/cadaster-report-list/report-actual-emission/report-actual-emission.component';
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
 import { CadasterReportFormComponent } from './components/cadaster-report/cadaster-report-form/cadaster-report-form.component';
-import { ParameterCalcComponent } from './components/cadaster-report-list/parameter-calc/parameter-calc.component';
+import { ReportParameterCalcComponent } from './components/cadaster-report-list/report-parameter-calc/report-parameter-calc.component';
 import { EditorNgSelectComponent } from './components/editor-ng-select/editor-ng-select.component';
-import { ParameterGasComponent } from './components/cadaster-report-list/parameter-gas/parameter-gas.component';
+import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { PlantProductListComponent } from './components/plant-list/plant-product-list/plant-product-list.component';
 import { PlantProductFormComponent } from './components/plant-list/plant-product-list/plant-product-form/plant-product-form.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
+import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
 
 @NgModule({
   declarations: [
@@ -45,15 +46,16 @@ import { ReportProductComponent } from './components/cadaster-report-list/report
     PlantSamplingListComponent,
     SamplingFormComponent,
     CadasterReportListComponent,
-    ActualEmissionComponent,
+    ReportActualEmissionComponent,
     CadasterReportComponent,
     CadasterReportFormComponent,
-    ParameterCalcComponent,
+    ReportParameterCalcComponent,
     EditorNgSelectComponent,
-    ParameterGasComponent,
     PlantProductListComponent,
     PlantProductFormComponent,
     ReportProductComponent,
+    ReportParameterKoefComponent,
+    ReportParameterGasComponent,
   ],
   imports: [
     BrowserModule,

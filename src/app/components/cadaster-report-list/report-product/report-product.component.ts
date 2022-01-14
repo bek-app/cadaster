@@ -1,5 +1,5 @@
 import { ReportProductModel } from './../../../models/report-product.model';
-import { reportCadasterTreeFormatter } from './../actual-emission/actual-emission.component';
+import { reportCadasterTreeFormatter } from '../report-actual-emission/report-actual-emission.component';
 import {
   Component,
   Input,
