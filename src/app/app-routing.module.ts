@@ -13,6 +13,7 @@ import { ReportParameterCalcComponent } from './components/cadaster-report-list/
 import { DicUnitResolverService } from './services/dic-unit-resolver.service';
 import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
+import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -67,6 +68,11 @@ const routes: Routes = [
       {
         path: 'report-product',
         component: ReportProductComponent,
+      },
+      {
+        path: 'parameter-koef',
+        component: ReportParameterKoefComponent,
+        resolve: { dicUnit: DicUnitResolverService },
       },
     ],
   },

@@ -47,7 +47,7 @@ export class ReportParameterGasComponent implements OnInit {
   dataViewObj: any;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  complexityLevelList: any[] = [];
+  dicUnitList: any[] = [];
   private _commandQueue: any[] = [];
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -80,11 +80,10 @@ export class ReportParameterGasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe((response: any) => {
-      this.complexityLevelList = response.dicUnit;
-    });
+    this.activatedRoute.data.subscribe(
+      (res: any) => (this.dicUnitList = res.dicUnit)
+    );
     this.prepareGrid();
-    this.refreshList(5);
   }
 
   anyFunction(id: number) {
@@ -161,7 +160,7 @@ export class ReportParameterGasComponent implements OnInit {
         exportWithFormatter: true,
         editor: {
           model: CustomAngularComponentEditor,
-          collection: this.complexityLevelList,
+          collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
           },
@@ -215,7 +214,7 @@ export class ReportParameterGasComponent implements OnInit {
         exportWithFormatter: true,
         editor: {
           model: CustomAngularComponentEditor,
-          collection: this.complexityLevelList,
+          collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
           },

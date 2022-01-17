@@ -48,7 +48,7 @@ export class ReportParameterCalcComponent implements OnInit {
   dataViewObj: any;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  complexityLevelList: any[] = [];
+  dicUnitList: any[] = [];
   private _commandQueue: any[] = [];
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -76,16 +76,14 @@ export class ReportParameterCalcComponent implements OnInit {
   constructor(
     private parameterCalcService: ParameterCalcService,
     private activatedRoute: ActivatedRoute,
-    private angularUtilService: AngularUtilService,
-    private dicUnitService: DicUnitService
+    private angularUtilService: AngularUtilService
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe((response: any) => {
-      this.complexityLevelList = response.dicUnit;
-    });
+    this.activatedRoute.data.subscribe(
+      (res: any) => (this.dicUnitList = res.dicUnit)
+    );
     this.prepareGrid();
-    this.refreshList(5);
   }
 
   anyFunction(id: number) {
@@ -106,7 +104,6 @@ export class ReportParameterCalcComponent implements OnInit {
             });
           });
         });
-        console.log(data);
         this.dataset = data;
       });
   }
@@ -206,7 +203,7 @@ export class ReportParameterCalcComponent implements OnInit {
         exportWithFormatter: true,
         editor: {
           model: CustomAngularComponentEditor,
-          collection: this.complexityLevelList,
+          collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
           },
@@ -243,8 +240,8 @@ export class ReportParameterCalcComponent implements OnInit {
             valueField: slagAmount.toString(),
           };
           this.parameterCalcService
-          .addParameterCalc(data)
-          .subscribe((res: any) => {});
+            .addParameterCalc(data)
+            .subscribe((res: any) => {});
         },
       },
       {

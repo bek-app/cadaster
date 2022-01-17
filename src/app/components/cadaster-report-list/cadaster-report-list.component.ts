@@ -7,14 +7,43 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 })
 export class CadasterReportListComponent implements OnInit {
   reportCadasterId!: number;
+  cdrReportRoute: any;
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((param: Params) => {
-      this.reportCadasterId = +param['id'];
-      console.log(this.reportCadasterId);
+    this.route.params.subscribe(
+      (param: Params) => (this.reportCadasterId = +param['id'])
+    );
 
-    });
+    this.cdrReportRoute = [
+      {
+        id: this.reportCadasterId,
+        name: 'actual-emission',
+        title: ' Фактический объем выбросов',
+      },
+
+      {
+        id: this.reportCadasterId,
+        name: 'parameter-calc',
+        title: ' Окисления топлива',
+      },
+
+      {
+        id: this.reportCadasterId,
+        name: 'parameter-gas',
+        title: 'Парниковый газ',
+      },
+      {
+        id: this.reportCadasterId,
+        name: 'report-product',
+        title: 'Продукт',
+      },
+      {
+        id: this.reportCadasterId,
+        name: 'parameter-koef',
+        title: 'Коэффициенты',
+      },
+    ];
   }
 
   onActivate(componentReference: any) {

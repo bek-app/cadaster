@@ -1,31 +1,12 @@
 import { ReportProductModel } from './../../../models/report-product.model';
-import { reportCadasterTreeFormatter } from '../report-actual-emission/report-actual-emission.component';
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AngularGridInstance,
-  AngularUtilService,
-  AutocompleteOption,
-  BsDropDownService,
   Column,
   Editors,
-  ExcelExportService,
   FieldType,
-  Filters,
-  Formatter,
-  Formatters,
   GridOption,
-  MultipleSelectOption,
-  Observable,
   OnEventArgs,
-  OperatorType,
-  SlickDataView,
 } from 'angular-slickgrid';
 import { ActivatedRoute } from '@angular/router';
 import { ReportProductService } from '../../../services/report-product.service';
@@ -44,8 +25,7 @@ export class ReportProductComponent implements OnInit {
   dataViewObj: any;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  complexityLevelList: any[] = [];
-  private _commandQueue: any[] = [];
+  dicUnitList: any[] = [];
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -69,16 +49,9 @@ export class ReportProductComponent implements OnInit {
       return true;
     });
   }
-  constructor(
-    private reportProductService: ReportProductService,
-    private activatedRoute: ActivatedRoute,
-    private angularUtilService: AngularUtilService
-  ) {}
+  constructor(private reportProductService: ReportProductService) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe((response: any) => {
-      this.complexityLevelList = response.dicUnit;
-    });
     this.prepareGrid();
   }
 

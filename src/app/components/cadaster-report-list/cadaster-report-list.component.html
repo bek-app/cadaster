@@ -1,56 +1,22 @@
-<div class="row mt-5">
-  <div class="col-2">
-    <ul class="list-group list-group">
-      <a
-        class="list-group-item list-group-item-action"
-        aria-current="true"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        [routerLink]="[
-          '/cadaster-report-list',
-          reportCadasterId,
-          'actual-emission'
-        ]"
-      >
-        Фактический объем выбросов
-      </a>
-      <a
-        class="list-group-item list-group-item-action"
-        routerLinkActive="active"
-        [routerLink]="[
-          '/cadaster-report-list',
-          reportCadasterId,
-          'parameter-calc'
-        ]"
-      >
-        Окисления топлива
-      </a>
-      <a
-        class="list-group-item list-group-item-action"
-        routerLinkActive="active"
-        [routerLink]="[
-          '/cadaster-report-list',
-          reportCadasterId,
-          'parameter-gas'
-        ]"
-      >
-        Парниковый газ
-      </a>
-      <a
-        class="list-group-item list-group-item-action"
-        routerLinkActive="active"
-        [routerLink]="[
-          '/cadaster-report-list',
-          reportCadasterId,
-          'report-product'
-        ]"
-      >
-        Продукт
-      </a>
-    </ul>
-  </div>
-
+<div class="row mt-3">
   <div class="col">
-    <router-outlet (activate)="onActivate($event)"></router-outlet>
+    <div class="row">
+      <ul class="nav nav-tabs">
+        <li class="nav-item" *ngFor="let report of cdrReportRoute">
+          <a
+            class="nav-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active"
+            aria-current="page"
+            [routerLink]="[report.name]"
+          >
+            {{ report.title }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="row">
+      <router-outlet (activate)="onActivate($event)"></router-outlet>
+    </div>
   </div>
 </div>
