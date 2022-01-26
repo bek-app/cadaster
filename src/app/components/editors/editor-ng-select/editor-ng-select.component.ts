@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,10 +7,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { Subject } from 'rxjs';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { DicUnitService } from 'src/app/services/dic-unit.service';
-import { DicFormComponent } from '../dic-form/dic-form.component';
+import { DicFormComponent } from '../../dic-form/dic-form.component';
 
 @Component({
   selector: 'app-editor-ng-select',
@@ -25,15 +26,24 @@ export class EditorNgSelectComponent implements OnInit {
   onItemChanged = new Subject<any>(); // object
   ref: any;
   dicUnit!: string;
-
+  clearStatus: boolean = false;
   constructor(
     private modalService: NgbModal,
     private dicUnitService: DicUnitService
   ) {}
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.selectedId) {
+      this.clearStatus = !this.clearStatus;
+    }
+  }
   onChange(item: any) {
-    this.selectedItem = item;
-    this.onItemChanged.next(item);
+    if (item !== undefined) {
+      this.selectedItem = item;
+      this.onItemChanged.next(item);
+    }
+  }
+  clearValue() {
+    this.onChange({ id: null, name: '' });
   }
   openModal(name: string) {
     this.ref = this.modalService.open(DicFormComponent, {
@@ -41,7 +51,7 @@ export class EditorNgSelectComponent implements OnInit {
     });
     if (name === 'dicUnit') {
       this.ref.componentInstance.dicTitle = 'Добавить eдиница измерения';
-       this.ref.componentInstance.dicLabel = 'Единица измерения ';
+      this.ref.componentInstance.dicLabel = 'Единица измерения ';
       this.dicUnitAdded();
     }
   }

@@ -10,10 +10,12 @@ import { PlantProductListComponent } from './components/plant-list/plant-product
 import { ReportActualEmissionComponent } from './components/cadaster-report-list/report-actual-emission/report-actual-emission.component';
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
 import { ReportParameterCalcComponent } from './components/cadaster-report-list/report-parameter-calc/report-parameter-calc.component';
-import { DicUnitResolverService } from './services/dic-unit-resolver.service';
+import { DicUnitResolver } from './services/dic-unit.resolver';
 import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
+import { EditorTextAreaComponent } from './components/editors/editor-textarea/editor-textarea.component';
+import { ReportSharedService } from './services/report-shared.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -22,7 +24,7 @@ const routes: Routes = [
     path: 'plant',
     component: PlantListComponent,
     children: [
-      { path: '', redirectTo: 'source', pathMatch: 'full' },
+      // { path: '', redirectTo: 'source', pathMatch: 'full' },
       {
         path: 'source',
         component: PlantSourceListComponent,
@@ -53,17 +55,17 @@ const routes: Routes = [
     path: 'cadaster-report-list/:id',
     component: CadasterReportListComponent,
     children: [
-      { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
+      //   { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
       { path: 'actual-emission', component: ReportActualEmissionComponent },
       {
         path: 'parameter-calc',
         component: ReportParameterCalcComponent,
-        resolve: { dicUnit: DicUnitResolverService },
+        resolve: { dicUnit: DicUnitResolver },
       },
       {
         path: 'parameter-gas',
         component: ReportParameterGasComponent,
-        resolve: { dicUnit: DicUnitResolverService },
+        resolve: { dicUnit: DicUnitResolver },
       },
       {
         path: 'report-product',
@@ -72,7 +74,7 @@ const routes: Routes = [
       {
         path: 'parameter-koef',
         component: ReportParameterKoefComponent,
-        resolve: { dicUnit: DicUnitResolverService },
+        resolve: { dicUnit: DicUnitResolver },
       },
     ],
   },

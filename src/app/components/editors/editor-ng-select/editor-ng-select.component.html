@@ -5,9 +5,11 @@
   bindValue="id"
   bindLabel="name"
   appendTo="body"
-  [clearable]="false"
   (change)="onChange($event)"
+  [clearable]="false"
   [(ngModel)]="selectedId"
+  [clearable]="clearStatus"
+  (clear)="clearValue()"
 >
   <ng-template ng-footer-tmp>
     <div class="d-flex justify-content-center">

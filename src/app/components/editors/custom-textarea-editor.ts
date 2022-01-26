@@ -1,22 +1,18 @@
 import { ComponentRef } from '@angular/core';
-import { Subscription } from 'rxjs';
 import {
   AngularUtilService,
   Column,
   ColumnEditor,
   Editor,
-  EditorValidator,
+  EditorArguments,
   EditorValidationResult,
+  EditorValidator,
   GridOption,
   SlickGrid,
-  unsubscribeAllObservables,
+  Subscription,
 } from 'angular-slickgrid';
 
-/*
- * An example of a 'detached' editor.
- * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
- */
-export class CustomAngularComponentEditor implements Editor {
+export class CustomTextAreaEditor implements Editor {
   private _subscriptions: Subscription[] = [];
 
   /** Angular Component Reference */
@@ -38,26 +34,37 @@ export class CustomAngularComponentEditor implements Editor {
 
   /** Angular Util Service (could be inside the Grid Options Params or the Editor Params ) */
   get angularUtilService(): AngularUtilService {
-    let angularUtilService = this.gridOptions && this.gridOptions.params && this.gridOptions.params.angularUtilService;
-    if (!angularUtilService || !(angularUtilService instanceof AngularUtilService)) {
-      angularUtilService = this.columnEditor && this.columnEditor.params && this.columnEditor.params.angularUtilService;
+    let angularUtilService =
+      this.gridOptions &&
+      this.gridOptions.params &&
+      this.gridOptions.params.angularUtilService;
+    if (
+      !angularUtilService ||
+      !(angularUtilService instanceof AngularUtilService)
+    ) {
+      angularUtilService =
+        this.columnEditor &&
+        this.columnEditor.params &&
+        this.columnEditor.params.angularUtilService;
     }
     return angularUtilService;
   }
 
   /** Get the Collection */
   get collection(): any[] {
-    return this.columnDef && this.columnDef.internalColumnEditor!.collection || [];
+    return (
+      (this.columnDef && this.columnDef.internalColumnEditor!.collection) || []
+    );
   }
 
   /** Get Column Definition object */
   get columnDef(): Column {
-    return this.args && this.args.column || {};
+    return (this.args && this.args.column) || {};
   }
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return (this.columnDef && this.columnDef.internalColumnEditor) || {};
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -73,25 +80,39 @@ export class CustomAngularComponentEditor implements Editor {
   get validator(): EditorValidator | undefined {
     return this.columnEditor.validator || this.columnDef.validator;
   }
-
+  get editMode(): any {
+    return this.componentRef.instance.editMode;
+  }
   init() {
-    if (!this.columnEditor || !this.columnEditor.params.component || !(this.angularUtilService instanceof AngularUtilService)) {
+    if (
+      !this.columnEditor ||
+      !this.columnEditor.params.component ||
+      !(this.angularUtilService instanceof AngularUtilService)
+    ) {
       throw new Error(`[Angular-Slickgrid] For Editor with Angular Component to work properly, you need to provide your component to the "component" property and make sure to add it to your "entryComponents" array.
       You also need to provide the "AngularUtilService" via the Editor Params OR the Grid Options Params
       Example: this.columnDefs = [{ id: 'title', field: 'title', editor: { model: CustomAngularComponentEditor, collection: [...], params: { component: MyComponent, angularUtilService: this.angularUtilService }}];
       OR this.columnDefs = [{ id: 'title', field: 'title', editor: { model: CustomAngularComponentEditor, collection: [...] }]; this.gridOptions = { params: { angularUtilService: this.angularUtilService }}`);
     }
     if (this.columnEditor && this.columnEditor.params.component) {
-      const componentOutput = this.angularUtilService.createAngularComponentAppendToDom(this.columnEditor.params.component, this.args.container);
+      const componentOutput =
+        this.angularUtilService.createAngularComponentAppendToDom(
+          this.columnEditor.params.component,
+          this.args.container
+        );
       this.componentRef = componentOutput && componentOutput.componentRef;
 
       // here we override the collection object of the Angular Component
       // but technically you can pass any values you wish to your Component
-      Object.assign(this.componentRef.instance, { collection: this.collection });
+      Object.assign(this.componentRef.instance, {
+        collection: this.collection,
+      });
 
       // when our model (item object) changes, we'll call a save of the slickgrid editor
       this._subscriptions.push(
-        this.componentRef.instance.onItemChanged.subscribe((item: any) => this.save())
+        this.componentRef.instance.onItemChanged.subscribe((item: any) =>
+          this.save()
+        )
       );
     }
   }
@@ -117,14 +138,22 @@ export class CustomAngularComponentEditor implements Editor {
 
   /** optional, implement a hide method on your Angular Component */
   hide() {
-    if (this.componentRef && this.componentRef.instance && typeof this.componentRef.instance.hide === 'function') {
+    if (
+      this.componentRef &&
+      this.componentRef.instance &&
+      typeof this.componentRef.instance.hide === 'function'
+    ) {
       this.componentRef.instance.hide();
     }
   }
 
   /** optional, implement a show method on your Angular Component */
   show() {
-    if (this.componentRef && this.componentRef.instance && typeof this.componentRef.instance.show === 'function') {
+    if (
+      this.componentRef &&
+      this.componentRef.instance &&
+      typeof this.componentRef.instance.show === 'function'
+    ) {
       this.componentRef.instance.show();
     }
   }
@@ -141,18 +170,17 @@ export class CustomAngularComponentEditor implements Editor {
 
   /** optional, implement a focus method on your Angular Component */
   focus() {
-    if (this.componentRef && this.componentRef.instance && typeof this.componentRef.instance.focus === 'function') {
+    if (
+      this.componentRef &&
+      this.componentRef.instance &&
+      typeof this.componentRef.instance.focus === 'function'
+    ) {
       this.componentRef.instance.focus();
     }
   }
 
   applyValue(item: any, state: any) {
-    // console.log(item);
-    // console.log(state);
-    // console.log( item[this.columnDef.field] );
     item[this.columnDef.field] = state;
-
-
   }
 
   getValue() {
@@ -161,9 +189,8 @@ export class CustomAngularComponentEditor implements Editor {
 
   loadValue(item: any) {
     const itemObject = item && item[this.columnDef.field];
-    // console.log(itemObject);
-
-    this.componentRef.instance.selectedId = itemObject && itemObject.id || '';
+    // this.componentRef.instance.comment= item;
+    this.componentRef.instance.selectedId = itemObject || '';
     this.componentRef.instance.selectedItem = itemObject && itemObject;
   }
 
@@ -172,7 +199,12 @@ export class CustomAngularComponentEditor implements Editor {
   }
 
   isValueChanged() {
-    return (!(this.componentRef.instance.selectedId === '' && (this.defaultId === null || this.defaultId === undefined))) && (this.componentRef.instance.selectedId !== this.defaultId);
+    return (
+      !(
+        this.componentRef.instance.selectedId === '' &&
+        (this.defaultId === null || this.defaultId === undefined)
+      ) && this.componentRef.instance.selectedId !== this.defaultId
+    );
   }
 
   validate(): EditorValidationResult {
@@ -185,7 +217,7 @@ export class CustomAngularComponentEditor implements Editor {
     // if user want it to be required, he would have to provide his own validator
     return {
       valid: true,
-      msg: null
+      msg: null,
     };
   }
 }
