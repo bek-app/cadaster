@@ -24,13 +24,15 @@ import { ReportActualEmissionComponent } from './components/cadaster-report-list
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
 import { CadasterReportFormComponent } from './components/cadaster-report/cadaster-report-form/cadaster-report-form.component';
 import { ReportParameterCalcComponent } from './components/cadaster-report-list/report-parameter-calc/report-parameter-calc.component';
-import { EditorNgSelectComponent } from './components/editor-ng-select/editor-ng-select.component';
+import { EditorNgSelectComponent } from './components/editors/editor-ng-select/editor-ng-select.component';
 import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { PlantProductListComponent } from './components/plant-list/plant-product-list/plant-product-list.component';
 import { PlantProductFormComponent } from './components/plant-list/plant-product-list/plant-product-form/plant-product-form.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
-
+import { EditorTextAreaComponent } from './components/editors/editor-textarea/editor-textarea.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+ 
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,6 +58,7 @@ import { ReportParameterKoefComponent } from './components/cadaster-report-list/
     ReportProductComponent,
     ReportParameterKoefComponent,
     ReportParameterGasComponent,
+    EditorTextAreaComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,6 +70,7 @@ import { ReportParameterKoefComponent } from './components/cadaster-report-list/
     NgSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    FontAwesomeModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
