@@ -1,5 +1,4 @@
-import { reportCadasterTreeFormatter } from '../report-actual-emission/report-actual-emission.component';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -11,16 +10,26 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid';
 import { ActivatedRoute } from '@angular/router';
-import { CustomAngularComponentEditor } from '../custom-angular-editor';
-import { EditorNgSelectComponent } from '../../editor-ng-select/editor-ng-select.component';
+import { CustomNgSelectEditor } from '../../editors/custom-ngselect-editor';
+import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
 import { ParameterKoefModel } from 'src/app/models/parameter-koef.model';
 import { ParameterKoefService } from 'src/app/services/parameter-koef.service';
+import {
+  koefCaseBurningFormatter,
+  koefCh4Formatter,
+  koefCo2Formatter,
+  koefLowerCalorificFormatter,
+  koefN2OFormatter,
+  koefOperatingWeightFormatter,
+  koefPerfluorocarbonsFormatter,
+  koefVolumeFormatter,
+} from '../../formatters/parameterKoefFormatter';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 @Component({
   selector: 'app-report-parameter-koef',
   templateUrl: './report-parameter-koef.component.html',
   styleUrls: ['./report-parameter-koef.component.css'],
   encapsulation: ViewEncapsulation.None,
-
 })
 export class ReportParameterKoefComponent implements OnInit {
   angularGrid!: AngularGridInstance;
@@ -67,7 +76,8 @@ export class ReportParameterKoefComponent implements OnInit {
     this.activatedRoute.data.subscribe((response: any) => {
       this.dicUnitList = response.dicUnit;
     });
-    this.prepareGrid(); 
+    this.refreshList(4);
+    this.prepareGrid();
   }
 
   anyFunction(id: number) {
@@ -126,7 +136,14 @@ export class ReportParameterKoefComponent implements OnInit {
         this.dataset = data;
       });
   }
-
+  addGridService(data: any) {
+    this.angularGrid.gridService.addItem(
+      { ...data },
+      {
+        highlightRow: false,
+      }
+    );
+  }
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -146,6 +163,7 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Фактический объем',
         field: 'koefVolume',
         columnGroup: 'Наименование сырья',
+        formatter: koefVolumeFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -160,7 +178,7 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -176,7 +194,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -184,15 +202,15 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const dicUnit = args.dataContext.dicUnit.id;
+          const dicUnit = args.dataContext.dicUnit;
           const data = {
             id,
             nameField: 'DicUnitId',
-            valueField: dicUnit.toString(),
+            valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
@@ -202,6 +220,7 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Содержание углерода  ',
         field: 'koefOperatingWeight',
         columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefOperatingWeightFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -216,7 +235,7 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -232,7 +251,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -240,18 +259,20 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const koefOperatingWeightUnitId =
-            args.dataContext.koefOperatingWeightUnit.id;
+          const koefOperatingWeightUnit =
+            args.dataContext.koefOperatingWeightUnit;
           const data = {
             id,
             nameField: 'KoefOperatingWeightUnitId',
-            valueField: koefOperatingWeightUnitId.toString(),
+            valueField:
+              koefOperatingWeightUnit.id != null
+                ? koefOperatingWeightUnit.id.toString()
+                : koefOperatingWeightUnit.id,
           };
-          console.log(data);
 
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
@@ -261,6 +282,7 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Коэффициент низшей теплоты сгорания',
         field: 'koefLowerCalorific',
         columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefLowerCalorificFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -275,7 +297,7 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -291,7 +313,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -300,15 +322,18 @@ export class ReportParameterKoefComponent implements OnInit {
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
           const koefLowerCalorificUnit =
-            args.dataContext.koefLowerCalorificUnit.id;
+            args.dataContext.koefLowerCalorificUnit;
           const data = {
             id,
             nameField: 'KoefLowerCalorificUnitId',
-            valueField: koefLowerCalorificUnit.toString(),
+            valueField:
+              koefLowerCalorificUnit.id != null
+                ? koefLowerCalorificUnit.id.toString()
+                : koefLowerCalorificUnit.id,
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
@@ -318,6 +343,7 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Коэффициент окисления',
         field: 'koefCaseBurning',
         columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefCaseBurningFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -332,7 +358,9 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {
+              this.addGridService(args.dataContext);
+            });
         },
       },
       {
@@ -348,7 +376,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -356,16 +384,18 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const koefCaseBurningUnit =
-            args.dataContext.koefCaseBurningUnit.id;
+          const koefCaseBurningUnit = args.dataContext.koefCaseBurningUnit;
           const data = {
             id,
             nameField: 'KoefCaseBurningUnitId',
-            valueField: koefCaseBurningUnit.toString(),
+            valueField:
+              koefCaseBurningUnit.id != null
+                ? koefCaseBurningUnit.id.toString()
+                : koefCaseBurningUnit.id,
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
@@ -375,6 +405,7 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Двуокись углерода (СО2)',
         field: 'koefCo2',
         columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefCo2Formatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -389,7 +420,7 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -405,7 +436,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -413,16 +444,18 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const koefCo2Unit =
-            args.dataContext.koefCo2Unit.id;
+          const koefCo2Unit = args.dataContext.koefCo2Unit;
           const data = {
             id,
             nameField: 'KoefCo2UnitId',
-            valueField: koefCo2Unit.toString(),
+            valueField:
+              koefCo2Unit.id != null
+                ? koefCo2Unit.id.toString()
+                : koefCo2Unit.id,
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
@@ -432,6 +465,7 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Метан (СН4)',
         field: 'koefCh4',
         columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefCh4Formatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -446,7 +480,7 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -462,7 +496,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -470,82 +504,88 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const koefCh4Unit =
-            args.dataContext.koefCh4Unit.id;
+          const koefCh4Unit = args.dataContext.koefCh4Unit;
           const data = {
             id,
             nameField: 'KoefCh4UnitId',
-            valueField: koefCh4Unit.toString(),
+            valueField:
+              koefCh4Unit.id != null
+                ? koefCh4Unit.id.toString()
+                : koefCh4Unit.id,
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
-        // Закиси азота (N2O)
-        {
-          id: 'koefN2O',
-          name: 'Закиси азота (N2O)',
-          field: 'koefN2O',
-          columnGroup: 'Коэффициенты, использованные для расчетов',
-          filterable: true,
-          sortable: true,
-          type: FieldType.number,
-          editor: { model: Editors.integer },
-          onCellChange: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id;
-            const koefN2O = args.dataContext.koefN2O;
-            const data = {
-              id,
-              nameField: 'KoefN2O',
-              valueField: koefN2O.toString(),
-            };
-            this.parameterKoefService
-              .addParameterKoef(data)
-              .subscribe((res: any) => {});
-          },
+      // Закиси азота (N2O)
+      {
+        id: 'koefN2O',
+        name: 'Закиси азота (N2O)',
+        field: 'koefN2O',
+        columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefN2OFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const koefN2O = args.dataContext.koefN2O;
+          const data = {
+            id,
+            nameField: 'KoefN2O',
+            valueField: koefN2O.toString(),
+          };
+          this.parameterKoefService
+            .addParameterKoef(data)
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
-        {
-          id: 'koefN2OUnit',
-          name: 'Ед.измерения',
-          field: 'koefN2OUnit',
-          columnGroup: 'Коэффициенты, использованные для расчетов',
-          filterable: true,
-          sortable: true,
-          formatter: Formatters.complexObject,
+      },
+      {
+        id: 'koefN2OUnit',
+        name: 'Ед.измерения',
+        field: 'koefN2OUnit',
+        columnGroup: 'Коэффициенты, использованные для расчетов',
+        filterable: true,
+        sortable: true,
+        formatter: Formatters.complexObject,
+        params: {
+          complexFieldLabel: 'koefN2OUnit.name',
+        },
+        exportWithFormatter: true,
+        editor: {
+          model: CustomNgSelectEditor,
+          collection: this.dicUnitList,
           params: {
-            complexFieldLabel: 'koefN2OUnit.name',
-          },
-          exportWithFormatter: true,
-          editor: {
-            model: CustomAngularComponentEditor,
-            collection: this.dicUnitList,
-            params: {
-              component: EditorNgSelectComponent,
-            },
-          },
-          onCellChange: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id;
-            const koefN2OUnit =
-              args.dataContext.koefN2OUnit.id;
-            const data = {
-              id,
-              nameField: 'KoefN2OUnitId',
-              valueField: koefN2OUnit.toString(),
-            };
-            this.parameterKoefService
-              .addParameterKoef(data)
-              .subscribe((res: any) => {});
+            component: EditorNgSelectComponent,
           },
         },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const koefN2OUnit = args.dataContext.koefN2OUnit;
+          const data = {
+            id,
+            nameField: 'KoefN2OUnitId',
+            valueField:
+              koefN2OUnit.id != null
+                ? koefN2OUnit.id.toString()
+                : koefN2OUnit.id,
+          };
+          this.parameterKoefService
+            .addParameterKoef(data)
+            .subscribe((res: any) => this.addGridService(args.dataContext));
+        },
+      },
 
-          // Перфторуглероды
+      // Перфторуглероды
       {
         id: 'koefPerfluorocarbons',
         name: 'Перфторуглероды',
         field: 'koefPerfluorocarbons',
         columnGroup: 'Коэффициенты, использованные для расчетов',
+        formatter: koefPerfluorocarbonsFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -560,7 +600,7 @@ export class ReportParameterKoefComponent implements OnInit {
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -576,7 +616,7 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -585,15 +625,18 @@ export class ReportParameterKoefComponent implements OnInit {
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
           const koefPerfluorocarbonsUnit =
-            args.dataContext.koefPerfluorocarbonsUnit.id;
+            args.dataContext.koefPerfluorocarbonsUnit;
           const data = {
             id,
             nameField: 'KoefPerfluorocarbonsUnitId',
-            valueField: koefPerfluorocarbonsUnit.toString(),
+            valueField:
+              koefPerfluorocarbonsUnit.id != null
+                ? koefPerfluorocarbonsUnit.id.toString()
+                : koefPerfluorocarbonsUnit.id,
           };
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
     ];
@@ -610,28 +653,11 @@ export class ReportParameterKoefComponent implements OnInit {
         exportWithFormatter: true,
         sanitizeDataExport: true,
       },
-
-      rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true,
-      },
-      headerRowHeight: 45,
-      rowHeight: 45, // increase row height so that the ng-select fits in the cell
-      editable: true,
-      enableCellMenu: true,
-      enableCellNavigation: true,
-      enableColumnPicker: true,
-      enableExcelCopyBuffer: true,
-      enableFiltering: true,
-      enableAsyncPostRender: true, // for the Angular PostRenderer, don't forget to enable it
-      asyncPostRenderDelay: 0, // also make sure to remove any delay to render it
-
-      params: {
-        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
-      },
       autoEdit: true,
       autoCommitEdit: true,
-
+      enableCellNavigation: true,
+      editable: true,
+      enableFiltering: true,
       enableGrouping: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
@@ -645,8 +671,12 @@ export class ReportParameterKoefComponent implements OnInit {
         autoApproveParentItemWhenTreeColumnIsValid:
           this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
+      params: {
+        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
+      },
       // change header/cell row height for salesforce theme
-
+      headerRowHeight: 45,
+      rowHeight: 45,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)

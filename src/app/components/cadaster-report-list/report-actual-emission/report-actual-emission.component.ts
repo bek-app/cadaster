@@ -1,21 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
 import {
   AngularGridInstance,
   AngularUtilService,
   Column,
   Editors,
-  ExcelExportService,
   FieldType,
-  Filters,
-  Formatter,
-  Formatters,
   GridOption,
   OnEventArgs,
-  SlickDataView,
 } from 'angular-slickgrid';
-import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 import { ActualEmissionService } from '../../../services/actual-emission.service';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 @Component({
   selector: 'app-report-actual-emission',
   templateUrl: './report-actual-emission.component.html',
@@ -28,15 +22,25 @@ export class ReportActualEmissionComponent implements OnInit {
   dataset: any[] = [];
   gridObj: any;
   dataViewObj: any;
-
+  actualEmissionId!: number;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
-
+  editMode = false;
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
     this.dataViewObj = angularGrid.dataView;
-
+    this.dataViewObj.getItemMetadata = (row: any) => {
+      const newCssClass = 'bg-secondary bg-opacity-50 text-white';
+      const item = this.dataViewObj.getItem(row);
+      if (item.__hasChildren) {
+        return {
+          cssClasses: newCssClass,
+        };
+      } else {
+        return '';
+      }
+    };
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
         return false;
@@ -45,15 +49,17 @@ export class ReportActualEmissionComponent implements OnInit {
     });
   }
   constructor(
-    private actualEmissionService: ActualEmissionService,
-
-    private cadasterService: CadasterReportService
+    private angularUtilService: AngularUtilService,
+    private actualEmissionService: ActualEmissionService
   ) {}
 
   ngOnInit(): void {
     this.prepareGrid();
+    this.refreshList(4);
   }
+
   anyFunction(id: number) {
+    this.actualEmissionId = id;
     this.refreshList(id);
   }
   refreshList(reportId: number) {
@@ -70,7 +76,14 @@ export class ReportActualEmissionComponent implements OnInit {
         this.dataset = data;
       });
   }
-
+  addGridService(data: any) {
+    this.angularGrid.gridService.addItem(
+      { ...data },
+      {
+        highlightRow: false,
+      }
+    );
+  }
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -90,19 +103,21 @@ export class ReportActualEmissionComponent implements OnInit {
         field: 'carbonDioxide',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        type: FieldType.string,
+        editor: {
+          model: Editors.longText,
+        },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
           const carbonDioxide = args.dataContext.carbonDioxide;
           const data = {
             id,
             nameField: 'CarbonDioxide',
-            valueField: carbonDioxide.toString(),
+            valueField: carbonDioxide,
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
       {
@@ -124,7 +139,7 @@ export class ReportActualEmissionComponent implements OnInit {
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
       {
@@ -146,7 +161,7 @@ export class ReportActualEmissionComponent implements OnInit {
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
 
@@ -169,7 +184,7 @@ export class ReportActualEmissionComponent implements OnInit {
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
       {
@@ -191,7 +206,7 @@ export class ReportActualEmissionComponent implements OnInit {
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
       {
@@ -213,7 +228,7 @@ export class ReportActualEmissionComponent implements OnInit {
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
       {
@@ -236,23 +251,17 @@ export class ReportActualEmissionComponent implements OnInit {
           };
           this.actualEmissionService
             .addActualEmission(data)
-            .subscribe((res) => {});
+            .subscribe((res) => this.refreshList(this.actualEmissionId));
         },
       },
-      // {
-      //   id: 'totalTon',
-      //   name: 'totalTon',
-      //   field: 'totalTon',
-      //   filterable: true,
-      //   sortable: true,
-      // },
-      // {
-      //   id: 'totalCo2',
-      //   name: 'totalCo2',
-      //   field: 'totalCo2',
-      //   filterable: true,
-      //   sortable: true,
-      // },
+
+      {
+        id: 'totalCo2',
+        name: 'totalCo2',
+        field: 'totalCo2',
+        filterable: true,
+        sortable: true,
+      },
     ];
 
     this.gridOptions = {
@@ -285,9 +294,13 @@ export class ReportActualEmissionComponent implements OnInit {
         autoApproveParentItemWhenTreeColumnIsValid:
           this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
+      params: {
+        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
+      },
+
       // change header/cell row height for salesforce theme
-      headerRowHeight: 35,
-      rowHeight: 33,
+      headerRowHeight: 45,
+      rowHeight: 45,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
@@ -324,54 +337,22 @@ export class ReportActualEmissionComponent implements OnInit {
       },
     };
   }
-}
-
-export const reportCadasterTreeFormatter: Formatter = (
-  _row,
-  _cell,
-  value,
-  _columnDef,
-  dataContext,
-  grid
-) => {
-  const gridOptions = grid.getOptions() as GridOption;
-  const treeLevelPropName =
-    (gridOptions.treeDataOptions &&
-      gridOptions.treeDataOptions.levelPropName) ||
-    '__treeLevel';
-  if (value === null || value === undefined || dataContext === undefined) {
-    return '';
-  }
-  const dataView = grid.getData();
-  const data = dataView.getItems();
-  const identifierPropName = dataView.getIdPropertyName() || 'id';
-  const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
-
-  value = value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-  const spacer = `<span style="display:inline-block; width:${
-    15 * dataContext[treeLevelPropName]
-  }px;"></span>`;
-
-  if (
-    data[idx + 1] &&
-    data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]
+  renderAngularComponent(
+    cellNode: HTMLElement,
+    row: number,
+    dataContext: any,
+    colDef: Column
   ) {
-    const folderPrefix = `<span class="mdi icon color-alt-warning ${
-      dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'
-    }"></span>`;
+    if (colDef.params.component) {
+      const componentOutput = this.angularUtilService.createAngularComponent(
+        colDef.params.component
+      );
+      Object.assign(componentOutput.componentRef.instance, {
+        item: dataContext,
+      });
 
-    const folderPrefix2 = `<i class="bi bi-arrow-up-right-square${
-      dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'
-    }"></i>`;
-    if (dataContext.__collapsed) {
-      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} &nbsp;${value}`;
-    } else {
-      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix}  &nbsp;${value}`;
+      // use a delay to make sure Angular ran at least a full cycle and make sure it finished rendering the Component
+      setTimeout(() => $(cellNode).empty().html(componentOutput.domElement));
     }
-  } else {
-    return `${spacer} <span class="slick-group-toggle" level="${dataContext[treeLevelPropName]}"></span> &nbsp;${value}`;
   }
-};
+}

@@ -1,37 +1,32 @@
-import { reportCadasterTreeFormatter } from '../report-actual-emission/report-actual-emission.component';
 import {
   Component,
-  Input,
-  OnChanges,
+  ComponentRef,
   OnInit,
-  SimpleChanges,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import {
   AngularGridInstance,
   AngularUtilService,
-  AutocompleteOption,
-  BsDropDownService,
   Column,
   Editors,
-  ExcelExportService,
   FieldType,
-  Filters,
-  Formatter,
   Formatters,
   GridOption,
-  MultipleSelectOption,
-  Observable,
   OnEventArgs,
-  OperatorType,
-  SlickDataView,
+  SharedService,
 } from 'angular-slickgrid';
 import { ParameterCalc } from 'src/app/models/parameter-calc.model';
 import { ParameterCalcService } from 'src/app/services/parameter-calc.service';
-import { ActivatedRoute } from '@angular/router';
-import { CustomAngularComponentEditor } from '../custom-angular-editor';
-import { EditorNgSelectComponent } from '../../editor-ng-select/editor-ng-select.component';
-import { DicUnitService } from 'src/app/services/dic-unit.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CustomNgSelectEditor } from '../../editors/custom-ngselect-editor';
+import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
+import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
+import { CustomTextAreaEditor } from '../../editors/custom-textarea-editor';
+import { EditorTextAreaComponent } from '../../editors/editor-textarea/editor-textarea.component';
+import { ReportSharedService } from 'src/app/services/report-shared.service';
+import { ReportCommentService } from 'src/app/services/report-comment.service';
 @Component({
   selector: 'app-report-parameter-calc',
   templateUrl: './report-parameter-calc.component.html',
@@ -49,12 +44,16 @@ export class ReportParameterCalcComponent implements OnInit {
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   dicUnitList: any[] = [];
-  private _commandQueue: any[] = [];
-
+  editMode = false;
+  cdrReportId!: number;
+  list: any[] = [];
+  textArea!: EditorTextAreaComponent;
+  @ViewChild(EditorTextAreaComponent) editTextArea!: EditorTextAreaComponent;
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
     this.dataViewObj = angularGrid.dataView;
+
     this.dataViewObj.getItemMetadata = (row: any) => {
       const newCssClass = 'bg-secondary bg-opacity-50 text-white';
       const item = this.dataViewObj.getItem(row);
@@ -62,31 +61,38 @@ export class ReportParameterCalcComponent implements OnInit {
         return {
           cssClasses: newCssClass,
         };
-      } else {
-        return '';
       }
+      return '';
     };
+
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
-        return false;
+      if (!args.item.__hasChildren) {
+        // this.editTextArea.comments(args.item);
+        return true;
       }
-      return true;
+      return false;
     });
   }
+
   constructor(
     private parameterCalcService: ParameterCalcService,
     private activatedRoute: ActivatedRoute,
-    private angularUtilService: AngularUtilService
+    private angularUtilService: AngularUtilService,
+    private reportSharedService: ReportSharedService,
+    private router: Router,
+    private reportCommentService: ReportCommentService
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(
-      (res: any) => (this.dicUnitList = res.dicUnit)
-    );
+    this.activatedRoute.data.subscribe((res: any) => {
+      this.dicUnitList = res.dicUnit;
+    });
+    this.refreshList(4);
     this.prepareGrid();
   }
 
   anyFunction(id: number) {
+    this.cdrReportId = id;
     this.refreshList(id);
   }
   refreshList(reportId: number) {
@@ -97,7 +103,7 @@ export class ReportParameterCalcComponent implements OnInit {
           items.materials.forEach((material: any) => {
             Object.assign(material, {
               processName: material.dicMaterialName,
-              item: {
+              dicUnit: {
                 id: material.paramCalcUnitId,
                 name: material.paramCalcUnitName,
               },
@@ -108,6 +114,14 @@ export class ReportParameterCalcComponent implements OnInit {
       });
   }
 
+  addGridService(data: any) {
+    this.angularGrid.gridService.addItem(
+      { ...data },
+      {
+        highlightRow: false,
+      }
+    );
+  }
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -126,14 +140,37 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Потеря тепла вследствии механической неполнотой сгорания (q4), %',
         field: 'q4',
         columnGroup: 'Вариант А',
-        headerCssClass: 'text',
+        formatter: parameterCalcFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
-        editor: { model: Editors.integer },
+        editor: {
+          model: CustomTextAreaEditor,
+          params: {
+            component: EditorTextAreaComponent,
+          },
+        },
+        onCellClick: (e: Event, args: OnEventArgs) => {
+          const { id, q4 } = args.dataContext;
+          const newComment = {
+            id: 0,
+            note: q4,
+            recordId: id.toString(),
+            controlId: 'Q4',
+            controlValue: 'string',
+            discriminator: 'calc',
+            isMark: true,
+            isActive: true,
+            reportId: this.cdrReportId,
+          };
+          console.log(EditorTextAreaComponent);
+
+          this.reportSharedService.setMessage(newComment);
+        },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
           const q4 = args.dataContext.q4;
+
           const data = {
             id,
             nameField: 'Q4',
@@ -141,7 +178,9 @@ export class ReportParameterCalcComponent implements OnInit {
           };
           this.parameterCalcService
             .addParameterCalc(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {
+              this.addGridService(args.dataContext);
+            });
         },
       },
       {
@@ -149,6 +188,8 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Потеря тепла вследствии химической неполнотой сгорания (q3), %',
         field: 'q3',
         columnGroup: 'Вариант А',
+        formatter: parameterCalcFormatter,
+
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -163,7 +204,7 @@ export class ReportParameterCalcComponent implements OnInit {
           };
           this.parameterCalcService
             .addParameterCalc(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
 
@@ -172,6 +213,8 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Содержание углерода в шлаке',
         field: 'slagCarbon',
         columnGroup: 'Вариант Б',
+        formatter: parameterCalcFormatter,
+
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -186,39 +229,41 @@ export class ReportParameterCalcComponent implements OnInit {
           };
           this.parameterCalcService
             .addParameterCalc(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
-        id: 'item',
+        id: 'dicUnit',
         name: 'Единица измерения ',
-        field: 'item',
+        field: 'dicUnit',
         columnGroup: 'Вариант Б',
         filterable: true,
         sortable: true,
         formatter: Formatters.complexObject,
         params: {
-          complexFieldLabel: 'item.name',
+          complexFieldLabel: 'dicUnit.name',
         },
-        exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
           },
         },
+        exportWithFormatter: true,
+
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
-          const item = args.dataContext.item;
+          const dicUnit = args.dataContext.dicUnit;
+
           const data = {
             id,
             nameField: 'ParamCalcUnitId',
-            valueField: item.id.toString(),
+            valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
           };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => {});
+          this.parameterCalcService.addParameterCalc(data).subscribe((res) => {
+            this.addGridService(args.dataContext);
+          });
         },
       },
 
@@ -241,7 +286,7 @@ export class ReportParameterCalcComponent implements OnInit {
           };
           this.parameterCalcService
             .addParameterCalc(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
       {
@@ -263,7 +308,7 @@ export class ReportParameterCalcComponent implements OnInit {
           };
           this.parameterCalcService
             .addParameterCalc(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
     ];
@@ -280,31 +325,11 @@ export class ReportParameterCalcComponent implements OnInit {
         exportWithFormatter: true,
         sanitizeDataExport: true,
       },
-      editCommandHandler: (item, column, editCommand) => {
-        this._commandQueue.push(editCommand);
-        editCommand.execute();
-      },
-      rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true,
-      },
-      headerRowHeight: 45,
-      rowHeight: 45, // increase row height so that the ng-select fits in the cell
-      editable: true,
-      enableCellMenu: true,
-      enableCellNavigation: true,
-      enableColumnPicker: true,
-      enableExcelCopyBuffer: true,
-      enableFiltering: true,
-      enableAsyncPostRender: true, // for the Angular PostRenderer, don't forget to enable it
-      asyncPostRenderDelay: 0, // also make sure to remove any delay to render it
-
-      params: {
-        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
-      },
       autoEdit: true,
       autoCommitEdit: true,
-
+      enableCellNavigation: true,
+      editable: true,
+      enableFiltering: true,
       enableGrouping: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
@@ -318,8 +343,12 @@ export class ReportParameterCalcComponent implements OnInit {
         autoApproveParentItemWhenTreeColumnIsValid:
           this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
+      params: {
+        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
+      },
       // change header/cell row height for salesforce theme
-
+      headerRowHeight: 45,
+      rowHeight: 45,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
@@ -355,5 +384,23 @@ export class ReportParameterCalcComponent implements OnInit {
         iconColumnHideCommand: 'mdi mdi-close',
       },
     };
+  }
+  renderAngularComponent(
+    cellNode: HTMLElement,
+    row: number,
+    dataContext: any,
+    colDef: Column
+  ) {
+    if (colDef.params.component) {
+      const componentOutput = this.angularUtilService.createAngularComponent(
+        colDef.params.component
+      );
+      Object.assign(componentOutput.componentRef.instance, {
+        item: dataContext,
+      });
+
+      // use a delay to make sure Angular ran at least a full cycle and make sure it finished rendering the Component
+      setTimeout(() => $(cellNode).empty().html(componentOutput.domElement));
+    }
   }
 }

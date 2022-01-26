@@ -1,37 +1,24 @@
-import { reportCadasterTreeFormatter } from '../report-actual-emission/report-actual-emission.component';
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
+ import { Component, OnInit } from '@angular/core';
 import {
   AngularGridInstance,
   AngularUtilService,
-  AutocompleteOption,
-  BsDropDownService,
   Column,
   Editors,
-  ExcelExportService,
   FieldType,
-  Filters,
-  Formatter,
   Formatters,
   GridOption,
-  MultipleSelectOption,
-  Observable,
   OnEventArgs,
-  OperatorType,
-  SlickDataView,
 } from 'angular-slickgrid';
 import { ActivatedRoute } from '@angular/router';
-import { CustomAngularComponentEditor } from '../custom-angular-editor';
-import { EditorNgSelectComponent } from '../../editor-ng-select/editor-ng-select.component';
-import { DicUnitService } from 'src/app/services/dic-unit.service';
+import { CustomNgSelectEditor } from '../../editors/custom-ngselect-editor';
+import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
 import { ParameterGasService } from 'src/app/services/parameter-gas.service';
 import { ParameterGasModel } from 'src/app/models/parameter-gas.model';
+import {
+  gasCh4Formatter,
+  gasN2OFormatter,
+} from '../../formatters/parameterGasFormatter';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 @Component({
   selector: 'app-report-parameter-gas',
   templateUrl: './report-parameter-gas.component.html',
@@ -48,7 +35,6 @@ export class ReportParameterGasComponent implements OnInit {
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   dicUnitList: any[] = [];
-  private _commandQueue: any[] = [];
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -61,28 +47,25 @@ export class ReportParameterGasComponent implements OnInit {
         return {
           cssClasses: newCssClass,
         };
-      } else {
-        return '';
       }
+      return '';
     };
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
-        return false;
-      }
+      if (args.item.__hasChildren) return false;
       return true;
     });
   }
   constructor(
     private parameterGasService: ParameterGasService,
     private activatedRoute: ActivatedRoute,
-    private angularUtilService: AngularUtilService,
-    private dicUnitService: DicUnitService
+    private angularUtilService: AngularUtilService
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(
       (res: any) => (this.dicUnitList = res.dicUnit)
     );
+    this.refreshList(5);
     this.prepareGrid();
   }
 
@@ -109,7 +92,14 @@ export class ReportParameterGasComponent implements OnInit {
       this.dataset = data;
     });
   }
-
+  addGridService(data: any) {
+    this.angularGrid.gridService.addItem(
+      { ...data },
+      {
+        highlightRow: false,
+      }
+    );
+  }
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -123,12 +113,13 @@ export class ReportParameterGasComponent implements OnInit {
         sortable: true,
       },
 
+      // Измеренная объемная концентрация метана (CH4) в выхлопных газах при коэффициенте избытка воздуха α
       {
         id: 'gasCh4',
-        name: 'Измеренная объемная концентрация метана',
+        name: 'Концентрация метана',
         field: 'gasCh4',
         columnGroup: 'Коэффициент выбросов',
-        headerCssClass: 'text',
+        formatter: gasCh4Formatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -143,7 +134,14 @@ export class ReportParameterGasComponent implements OnInit {
           };
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {
+              this.angularGrid.gridService.addItem(
+                { ...args.dataContext },
+                {
+                  highlightRow: false,
+                }
+              );
+            });
         },
       },
       {
@@ -159,7 +157,7 @@ export class ReportParameterGasComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -171,18 +169,24 @@ export class ReportParameterGasComponent implements OnInit {
           const data = {
             id,
             nameField: 'GasCh4UnitId',
-            valueField: gasCh4Unit.id.toString(),
+            valueField:
+              gasCh4Unit.id != null ? gasCh4Unit.id.toString() : gasCh4Unit.id,
           };
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {
+              this.addGridService(args.dataContext);
+            });
         },
       },
+
+      /// Измеренная объемная концентрация закиси азота (N2O) в выхлопных газах при коэффициенте избытка воздуха α
       {
         id: 'gasN2O',
-        name: 'Измеренная объемная концентрация закиси азота',
+        name: 'Концентрация закиси азота',
         field: 'gasN2O',
         columnGroup: 'Коэффициент выбросов',
+        formatter: gasN2OFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
@@ -197,7 +201,14 @@ export class ReportParameterGasComponent implements OnInit {
           };
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {
+              this.angularGrid.gridService.addItem(
+                { ...args.dataContext },
+                {
+                  highlightRow: false,
+                }
+              );
+            });
         },
       },
       {
@@ -213,7 +224,7 @@ export class ReportParameterGasComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomAngularComponentEditor,
+          model: CustomNgSelectEditor,
           collection: this.dicUnitList,
           params: {
             component: EditorNgSelectComponent,
@@ -225,16 +236,19 @@ export class ReportParameterGasComponent implements OnInit {
           const data = {
             id,
             nameField: 'GasN2OUnitId',
-            valueField: gasN2OUnit.id.toString(),
+            valueField:
+              gasN2OUnit.id != null ? gasN2OUnit.id.toString() : gasN2OUnit.id,
           };
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
+
+      /// Измеренная концентрация кислорода (О2) в месте отбора пробы дымовых газов, %
       {
         id: 'gasProcО2',
-        name: 'Измеренная концентрация кислорода (О2)',
+        name: 'Концентрация кислорода (О2)',
         field: 'gasProcО2',
         columnGroup: 'Коэффициент выбросов',
         filterable: true,
@@ -255,9 +269,10 @@ export class ReportParameterGasComponent implements OnInit {
         },
       },
 
+      /// Коэффициент, учитывающий характер топлива
       {
         id: 'gasKoeffFuelNature',
-        name: 'Коэффициент, учитывающий характер топлива',
+        name: 'учитывающий характер топлива',
         field: 'gasKoeffFuelNature',
         columnGroup: 'Коэффициент выбросов',
         filterable: true,
@@ -274,9 +289,11 @@ export class ReportParameterGasComponent implements OnInit {
           };
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
+
+      /// Удельная масса загрязняющих веществ ,закись азота (N2O), кг/нм^3
       {
         id: 'gasWeightN2O',
         name: 'Удельная масса загрязняющих веществ,закись азота (N2O), кг/нм^3',
@@ -299,6 +316,8 @@ export class ReportParameterGasComponent implements OnInit {
             .subscribe((res: any) => {});
         },
       },
+
+      /// Удельная масса загрязняющих веществ, метан (CH4), кг/нм^3
       {
         id: 'gasWeightCh4',
         name: 'Удельная масса загрязняющих веществ, метан (CH4)',
@@ -318,7 +337,7 @@ export class ReportParameterGasComponent implements OnInit {
           };
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
     ];
@@ -335,31 +354,11 @@ export class ReportParameterGasComponent implements OnInit {
         exportWithFormatter: true,
         sanitizeDataExport: true,
       },
-      editCommandHandler: (item, column, editCommand) => {
-        this._commandQueue.push(editCommand);
-        editCommand.execute();
-      },
-      rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true,
-      },
-      headerRowHeight: 45,
-      rowHeight: 45, // increase row height so that the ng-select fits in the cell
-      editable: true,
-      enableCellMenu: true,
-      enableCellNavigation: true,
-      enableColumnPicker: true,
-      enableExcelCopyBuffer: true,
-      enableFiltering: true,
-      enableAsyncPostRender: true, // for the Angular PostRenderer, don't forget to enable it
-      asyncPostRenderDelay: 0, // also make sure to remove any delay to render it
-
-      params: {
-        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
-      },
       autoEdit: true,
       autoCommitEdit: true,
-
+      enableCellNavigation: true,
+      editable: true,
+      enableFiltering: true,
       enableGrouping: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
@@ -373,8 +372,12 @@ export class ReportParameterGasComponent implements OnInit {
         autoApproveParentItemWhenTreeColumnIsValid:
           this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
+      params: {
+        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
+      },
       // change header/cell row height for salesforce theme
-
+      headerRowHeight: 45,
+      rowHeight: 45,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
