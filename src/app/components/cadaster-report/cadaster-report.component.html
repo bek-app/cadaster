@@ -9,18 +9,19 @@
           Создать
         </button>
       </div>
-      <div class="col d-flex justify-content-end"><h3>Кадастр</h3></div>
+      <div class="col d-flex justify-content-end"><h3>Отчет</h3></div>
     </div>
-    <div class="div" id="demo-container">
-      <angular-slickgrid
-        gridId="cadaster-report"
-        [columnDefinitions]="columnDefinitions"
-        [gridOptions]="gridOptions"
-        [dataset]="dataset"
-        (onAngularGridCreated)="angularGridReady($any($event).detail)"
-      >
-      </angular-slickgrid>
+    <div class="row">
+      <div class="col" id="demo-container">
+        <angular-slickgrid
+          gridId="cadaster-report"
+          [columnDefinitions]="columnDefinitions"
+          [gridOptions]="gridOptions"
+          [dataset]="dataset"
+          (onAngularGridCreated)="angularGridReady($any($event).detail)"
+        >
+        </angular-slickgrid>
+      </div>
     </div>
   </div>
 </div>
- 

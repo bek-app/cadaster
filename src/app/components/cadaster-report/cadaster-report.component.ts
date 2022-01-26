@@ -162,7 +162,7 @@ export class CadasterReportComponent implements OnInit {
       enableTranslate: true,
       enableColumnReorder: false,
       enableColumnPicker: false,
-      enableCheckboxSelector: true,
+      enableCheckboxSelector: false,
       enableRowSelection: true,
       columnPicker: {
         hideForceFitButton: true,

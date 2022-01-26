@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 
 @Component({
   selector: 'app-cadaster-report-form',
@@ -20,15 +21,14 @@ export class CadasterReportFormComponent implements OnInit {
 
   @Output() addPlant: EventEmitter<any> = new EventEmitter();
   @Output() updatePlant: EventEmitter<any> = new EventEmitter();
-  constructor(private activeModal: NgbActiveModal, private fb: FormBuilder) {
+  constructor(
+    private activeModal: NgbActiveModal,
+    private fb: FormBuilder,
+    private cadasterReportService: CadasterReportService
+  ) {
     this.form = this.fb.group({
       namePlant: new FormControl('', Validators.required),
-      oblastId: new FormControl('', Validators.required),
-      regionId: new FormControl('', Validators.required),
-      subRegionId: new FormControl(),
-      villageId: new FormControl(),
-      address: new FormControl(),
-      inactive: new FormControl(true, Validators.required),
+      reportYear: new FormControl('', Validators.required),
     });
   }
 
@@ -52,6 +52,9 @@ export class CadasterReportFormComponent implements OnInit {
 
   editForm(id: number) {
     this.isActive = true;
+    this.cadasterReportService
+      .getCadasterReportById(id)
+      .subscribe((cdrReport) => this.form.patchValue(cdrReport));
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
