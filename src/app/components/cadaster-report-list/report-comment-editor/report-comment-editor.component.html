@@ -1,0 +1,40 @@
+<div mat-dialog-title class="d-flex justify-content-between dialog-title">
+  <h2>Title</h2>
+  <button type="button" class="btn-close" mat-dialog-close></button>
+</div>
+<div mat-dialog-content>
+  <div class="comment__textarea">
+    <textarea
+      class="form-control"
+      rows="10"
+      placeholder="comment"
+      [(ngModel)]="comment"
+      #myTextArea
+    ></textarea>
+
+    <div class="btns m-2 d-flex justify-content-center gap-3">
+      <button
+        type="button"
+        class="btn btn-sm btn-success"
+        (click)="showHistory()"
+      >
+        <fa-icon [icon]="faHistory"></fa-icon> История
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-danger"
+        (click)="deleteComment()"
+        *ngIf="selectedItem"
+      >
+        <fa-icon [icon]="faTrash"></fa-icon> Удалить Комментарий
+      </button>
+      <button
+        type="submit"
+        class="btn btn-sm btn-primary"
+        (click)="onSaveComment()"
+      >
+        <fa-icon [icon]="faSave"></fa-icon> Сохранить
+      </button>
+    </div>
+  </div>
+</div>
