@@ -5,6 +5,8 @@
   border: 1px solid rgb(231, 228, 228) !important;
 
 } */
+/* @import '~@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss'; */
+
 
 .slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
   font-size: 12px;
@@ -15,3 +17,48 @@
 
 
 
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+snack-bar-container.success {
+  background-color: green;
+  color: white !important;
+
+}
+
+snack-bar-container.error {
+  background-color: red;
+  color: white !important;
+
+}
+
+snack-bar-container.notification {
+  font-size: 18px !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.mat-button-wrapper {
+  color: #fff;
+}
+/* mat-dialog overlay false */
+.dialog-bg-trans {
+  background-color: transparent;
+}
+
+/* mat-dialog scrool */
+.cdk-global-overlay-wrapper {
+  display: flex;
+  position: absolute;
+  z-index: 1000;
+  overflow: auto;
+  pointer-events: auto;
+}

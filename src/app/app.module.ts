@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PlantListComponent } from './components/plant-list/plant-list.component';
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
 import { PlantDeviceListComponent } from './components/plant-list/plant-device-list/plant-device-list.component';
@@ -32,7 +32,18 @@ import { ReportProductComponent } from './components/cadaster-report-list/report
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
 import { EditorTextAreaComponent } from './components/editors/editor-textarea/editor-textarea.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
- 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import {
+  MatDialogModule,
+  MAT_DIALOG_SCROLL_STRATEGY,
+} from '@angular/material/dialog';
+import { ReportCommentEditorComponent } from './components/cadaster-report-list/report-comment-editor/report-comment-editor.component';
+import { ScrollStrategyOptions } from '@angular/cdk/overlay';
+import { CommentHistoryComponent } from './components/cadaster-report-list/report-comment-editor/comment-history/comment-history.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,6 +70,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ReportParameterKoefComponent,
     ReportParameterGasComponent,
     EditorTextAreaComponent,
+    ReportCommentEditorComponent,
+    CommentHistoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,6 +84,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
+    NgbDropdownModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatCardModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
