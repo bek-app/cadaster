@@ -30,7 +30,6 @@ import { PlantProductListComponent } from './components/plant-list/plant-product
 import { PlantProductFormComponent } from './components/plant-list/plant-product-list/plant-product-form/plant-product-form.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
-import { EditorTextAreaComponent } from './components/editors/editor-textarea/editor-textarea.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -69,7 +68,6 @@ import { CommentHistoryComponent } from './components/cadaster-report-list/repor
     ReportProductComponent,
     ReportParameterKoefComponent,
     ReportParameterGasComponent,
-    EditorTextAreaComponent,
     ReportCommentEditorComponent,
     CommentHistoryComponent,
   ],

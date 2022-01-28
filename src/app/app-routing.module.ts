@@ -14,9 +14,7 @@ import { DicUnitResolver } from './services/dic-unit.resolver';
 import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { ReportProductComponent } from './components/cadaster-report-list/report-product/report-product.component';
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
-import { EditorTextAreaComponent } from './components/editors/editor-textarea/editor-textarea.component';
-import { ReportSharedService } from './services/report-shared.service';
-
+ 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
 
