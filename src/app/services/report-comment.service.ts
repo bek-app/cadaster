@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ReportCommentModel } from '../models/report-comment.model';
- @Injectable({
+@Injectable({
   providedIn: 'root',
 })
 export class ReportCommentService {
@@ -15,10 +15,22 @@ export class ReportCommentService {
 
   constructor(private http: HttpClient) {}
 
-  getReportCommentById(reportId: number): Observable<ReportCommentModel[]> {
+  getReportCommentList(
+    reportId: number,
+    disc: string
+  ): Observable<ReportCommentModel[]> {
     return this.http
       .get<ReportCommentModel[]>(
-        'api/KdrReportComment/list?reportId=' + reportId
+        `api/KdrReportComment/list?reportId=${reportId}&discriminator=${disc}`
+      )
+      .pipe(map((data: any) => data));
+  }
+  getReportCommentHistorytList(
+    commentId: number
+  ): Observable<ReportCommentModel[]> {
+    return this.http
+      .get<ReportCommentModel[]>(
+        `api/KdrReportComment/history?id=${commentId}`
       )
       .pipe(map((data: any) => data));
   }
@@ -27,6 +39,11 @@ export class ReportCommentService {
       'api/KdrReportComment',
       JSON.stringify(data),
       this.httpOptions
+    );
+  }
+  deleteReportComment(id: number): Observable<ReportCommentModel> {
+    return this.http.delete<ReportCommentModel>(
+      'api/KdrReportComment?id=' + id
     );
   }
 }
