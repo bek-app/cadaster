@@ -55,7 +55,7 @@ export class PlantDeviceListComponent implements OnInit {
       this.dataset = data;
     });
   }
-  anyFunction(id: number) {
+  goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }

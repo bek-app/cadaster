@@ -11,6 +11,12 @@
       [columnDefinitions]="columnDefinitions"
       [gridOptions]="gridOptions"
       [datasetHierarchical]="dataset"
+      (onCellChange)="
+        onCellChanged($any($event).detail.eventData, $any($event).detail.args)
+      "
+      (onClick)="
+        onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+      "
       (onAngularGridCreated)="angularGridReady($any($event).detail)"
     >
     </angular-slickgrid>

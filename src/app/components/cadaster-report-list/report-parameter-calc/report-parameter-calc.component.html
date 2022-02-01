@@ -10,6 +10,7 @@
       [columnDefinitions]="columnDefinitions"
       [gridOptions]="gridOptions"
       [datasetHierarchical]="dataset"
+
       (onCellChange)="
         onCellChanged($any($event).detail.eventData, $any($event).detail.args)
       "

@@ -7,11 +7,13 @@ export const parameterCalcFormatter: Formatter = (
   columnDef: Column,
   dataContext: any,
   grid?: any
-) => ({
-  addClasses:
-    !value && !dataContext.__hasChildren && !!dataContext.dicUnit.name
-      ? 'border border-danger text-white'
-      : '',
-  text: !dataContext.__hasChildren ? value : '',
-});
+) => {
+  const { id, __hasChildren, dicUnit } = dataContext;
+  return {
+    addClasses:
+      !value && !__hasChildren && !!dicUnit.name ? 'border border-danger' : '',
+    text: !__hasChildren ? value : '',
+  };
+};
 
+ 

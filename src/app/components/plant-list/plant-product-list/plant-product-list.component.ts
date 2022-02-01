@@ -54,7 +54,7 @@ export class PlantProductListComponent implements OnInit {
     });
   }
 
-  anyFunction(id: number) {
+  goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }

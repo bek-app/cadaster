@@ -81,7 +81,7 @@ export class PlantListComponent implements OnInit {
   }
   onActivate(componentReference: any) {
     if (this.plantId !== undefined) {
-      componentReference.anyFunction(this.plantId);
+      componentReference.goToPlants(this.plantId);
     }
   }
   refreshList() {

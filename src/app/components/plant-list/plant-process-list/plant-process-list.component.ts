@@ -58,7 +58,7 @@ export class PlantProcessListComponent implements OnInit {
       .getPlantProcessList(id)
       .subscribe((data) => (this.dataset = data));
   }
-  anyFunction(id: number) {
+  goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }

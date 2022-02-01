@@ -48,7 +48,7 @@ export class CadasterReportListComponent implements OnInit {
 
   onActivate(componentReference: any) {
     if (this.reportCadasterId !== undefined) {
-      componentReference.anyFunction(this.reportCadasterId);
+      componentReference.goToCadasterReports(this.reportCadasterId);
     }
   }
 }

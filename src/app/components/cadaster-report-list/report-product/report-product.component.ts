@@ -55,7 +55,7 @@ export class ReportProductComponent implements OnInit {
     this.prepareGrid();
   }
 
-  anyFunction(id: number) {
+  goToCadasterReports(id: number) {
     this.refreshList(id);
   }
   refreshList(reportId: number) {

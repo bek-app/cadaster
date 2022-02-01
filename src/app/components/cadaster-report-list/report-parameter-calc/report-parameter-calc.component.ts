@@ -15,7 +15,7 @@ import {
 import { ParameterCalc } from 'src/app/models/parameter-calc.model';
 import { ParameterCalcService } from 'src/app/services/parameter-calc.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CustomNgSelectEditor } from '../../editors/custom-ngselect-editor';
+import { CustomNgSelectEditor } from '../../editors/editor-ng-select/custom-ngselect-editor';
 import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
 import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter';
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
@@ -48,7 +48,6 @@ export class ReportParameterCalcComponent implements OnInit {
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: ParameterCalc[] = [];
-  cadasterId!: number;
   gridObj: any;
   dataViewObj: any;
   isExcludingChildWhenFiltering = false;
@@ -76,8 +75,7 @@ export class ReportParameterCalcComponent implements OnInit {
     };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (!args.item.__hasChildren) {
-        // this.editTextArea.comments(args.item);
+      if (!args.item.__hasChildren && this.editMode) {
         return true;
       }
       return false;
@@ -98,16 +96,18 @@ export class ReportParameterCalcComponent implements OnInit {
     this.activatedRoute.data.subscribe(
       (res: any) => (this.dicUnitList = res.dicUnit)
     );
+    this.refreshList(2);
     this.prepareGrid();
   }
 
   getCommentList(): void {
     this.commentService
-      .getReportCommentList(this.cdrReportId, 'calc')
+      .getReportCommentList((this.cdrReportId = 2), 'calc')
       .subscribe((data: any) => {
         this.commentList = data;
       });
   }
+
   parameterCalcFormatter: Formatter = (
     row: number,
     cell: number,
@@ -127,11 +127,12 @@ export class ReportParameterCalcComponent implements OnInit {
     };
   };
 
-  anyFunction(id: number) {
+  goToCadasterReports(id: number) {
     this.cdrReportId = id;
     this.getCommentList();
     this.refreshList(id);
   }
+
   refreshList(reportId: number) {
     this.parameterCalcService
       .getParameterCalcById(reportId)
@@ -160,7 +161,7 @@ export class ReportParameterCalcComponent implements OnInit {
     );
   }
 
-  openDialog(comment: ReportCommentModel) {
+  openCommentDialog(comment: ReportCommentModel) {
     this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
       autoFocus: true,
       minWidth: '400px',
@@ -176,7 +177,7 @@ export class ReportParameterCalcComponent implements OnInit {
         : this.notificationService.error('Error', 'Done');
 
       this.getCommentList();
-      this.refreshList(4);
+      this.refreshList(this.cdrReportId);
     });
   }
 
@@ -187,27 +188,38 @@ export class ReportParameterCalcComponent implements OnInit {
       const { id } = metadata.dataContext;
       const { field } = metadata.columnDef;
 
-      for (const item in metadata.dataContext) {
-        if (field === item) {
-          let controlValue = metadata.dataContext[item];
-          const comment: ReportCommentModel = {
-            id: 0,
-            note: '',
-            recordId: id.toString(),
-            controlId: field,
-            controlValue:
-              controlValue === null ? controlValue : controlValue.toString(),
-            discriminator: 'calc',
-            isMark: true,
-            isActive: true,
-            reportId: this.cdrReportId,
-          };
-          this.openDialog(comment);
+      if (field !== 'processName') {
+        for (const item in metadata.dataContext) {
+          if (field === item) {
+            let controlValue = metadata.dataContext[item];
+            let newControlValue;
+
+            if (typeof controlValue === 'object' && controlValue !== null) {
+              newControlValue = controlValue.name;
+            } else if (controlValue === null) {
+              newControlValue = controlValue;
+            } else newControlValue = controlValue.toString();
+
+            const comment: ReportCommentModel = {
+              id: 0,
+              note: '',
+              recordId: id.toString(),
+              controlId: field,
+              controlValue: newControlValue,
+              discriminator: 'calc',
+              isMark: true,
+              isActive: true,
+              reportId: this.cdrReportId,
+            };
+            this.openCommentDialog(comment);
+          }
         }
       }
     }
   }
+
   onCellChanged(e: Event, args: OnEventArgs) {}
+
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -234,32 +246,29 @@ export class ReportParameterCalcComponent implements OnInit {
         filterable: true,
         sortable: true,
         type: FieldType.number,
-        customTooltip: {
-          position: 'right-align',
-          formatter: () =>
-            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
-          asyncProcess: (
-            row: number,
-            cell: number,
-            value: any,
-            column: Column,
-            dataContext: any
-          ) => {
-            const id = dataContext.id.toString();
+        // customTooltip: {
+        //   position: 'right-align',
+        //   formatter: () =>
+        //     `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+        //   asyncProcess: (
+        //     row: number,
+        //     cell: number,
+        //     value: any,
+        //     column: Column,
+        //     dataContext: any
+        //   ) => {
+        //     const id = dataContext.id.toString();
+        //     let item = this.commentList.find(
+        //       (comment: any) =>
+        //         comment.recordId === id && comment.controlId === 'q4'
+        //     );
+        //     return new Promise((resolve, reject) => {
+        //       item?.note ? resolve(item) : resolve({});
+        //     });
+        //   },
+        //   asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
+        // },
 
-            return new Promise((resolve, reject) => {
-              let item = this.commentList.find(
-                (comment: any) =>
-                  comment.recordId === id && comment.controlId === 'q4'
-              );
-
-              setTimeout(() => {
-                item?.note ? resolve(item) : resolve({});
-              }, 500);
-            });
-          },
-          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
-        },
         onCellChange: (e: Event, args: OnEventArgs) => {
           const { id, q4 } = args.dataContext;
           const data = {
@@ -269,7 +278,13 @@ export class ReportParameterCalcComponent implements OnInit {
           };
           this.parameterCalcService
             .addParameterCalc(data)
-            .subscribe((res: any) => {
+            .subscribe((result: any) => {
+              result.isSuccess
+                ? this.notificationService.success(
+                    '“Ваши данные сохранены”',
+                    'Done'
+                  )
+                : this.notificationService.error(`${result.message}`, 'Done');
               this.addGridService(args.dataContext);
             });
         },
@@ -380,6 +395,7 @@ export class ReportParameterCalcComponent implements OnInit {
             .subscribe((res: any) => this.addGridService(args.dataContext));
         },
       },
+
       {
         id: 'fuelConsumption',
         name: 'Расход топлива в натуральном виде за период z, тонн',
@@ -430,7 +446,6 @@ export class ReportParameterCalcComponent implements OnInit {
         columnId: 'processName',
         childrenPropName: 'materials',
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
-
         autoApproveParentItemWhenTreeColumnIsValid:
           this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
@@ -478,6 +493,7 @@ export class ReportParameterCalcComponent implements OnInit {
       },
     };
   }
+
   tooltipTaskAsyncFormatter(
     row: number,
     cell: number,
@@ -487,7 +503,7 @@ export class ReportParameterCalcComponent implements OnInit {
     grid: SlickGrid
   ) {
     const out = `
-      <div class=" "><div> Comment:</div> <div>${dataContext.__params.note}</div></div>
+      <div class="" style="width:500px"> ${dataContext.__params.note}</div>
      `;
     if (dataContext.__params.note) return out;
     return;

@@ -10,7 +10,7 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid';
 import { ActivatedRoute } from '@angular/router';
-import { CustomNgSelectEditor } from '../../editors/custom-ngselect-editor';
+import { CustomNgSelectEditor } from '../../editors/editor-ng-select/custom-ngselect-editor';
 import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
 import { ParameterKoefModel } from 'src/app/models/parameter-koef.model';
 import { ParameterKoefService } from 'src/app/services/parameter-koef.service';
@@ -80,7 +80,7 @@ export class ReportParameterKoefComponent implements OnInit {
     this.prepareGrid();
   }
 
-  anyFunction(id: number) {
+  goToCadasterReports(id: number) {
     this.refreshList(id);
   }
   refreshList(reportId: number) {

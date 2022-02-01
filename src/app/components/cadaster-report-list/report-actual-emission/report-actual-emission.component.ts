@@ -58,7 +58,7 @@ export class ReportActualEmissionComponent implements OnInit {
     this.refreshList(4);
   }
 
-  anyFunction(id: number) {
+  goToCadasterReports(id: number) {
     this.actualEmissionId = id;
     this.refreshList(id);
   }
