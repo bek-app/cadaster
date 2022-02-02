@@ -1,154 +1,92 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Установка</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="hidePlantModal()"
-  ></button>
-</div>
-<div class="modal-body">
-  <form
-    class="form d-flex gap-3 flex-column"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-  >
-    <div class="row">
-      <label for="namePlant" class="col-sm-2 col-form-label"
-        >Наименование <span class="text-danger">*</span>
-      </label>
-      <div class="col-sm-10">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="namePlant"
-          id="namePlant"
-          [ngClass]="{ 'is-invalid': submitted && f.namePlant.errors }"
-        />
-        <div *ngIf="submitted && f.namePlant.errors" class="invalid-feedback">
-          <div *ngIf="f.namePlant.errors.required">Не указано наименование</div>
-        </div>
-      </div>
-    </div>
+<h2 mat-dialog-title>Установка</h2>
+<mat-dialog-content>
+  <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Наименование</mat-label>
+      <input matInput formControlName="namePlant" type="text" />
+      <mat-error *ngIf="myError('namePlant', 'required')">
+        Не указано наименование
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <label for="oblastId" class="col-sm-2 col-form-label">
-        Область<span class="text-danger">*</span></label
+    <mat-form-field>
+      <mat-label>Область</mat-label>
+      <mat-select
+        formControlName="oblastId"
+        (ngModelChange)="oblastChange($event)"
+        [ngClass]="{ 'is-invalid': submitted && f.oblastId.errors }"
       >
-      <div class="col-sm-10">
-        <select
-          class="form-select"
-          id="oblastId"
-          formControlName="oblastId"
-          (ngModelChange)="oblastChange($event)"
-          [ngClass]="{ 'is-invalid': submitted && f.oblastId.errors }"
-        >
-          <option *ngFor="let obl of oblast" [ngValue]="obl.id">
-            {{ obl.name }}
-          </option>
-        </select>
-        <div *ngIf="submitted && f.oblastId.errors" class="invalid-feedback">
-          <div *ngIf="f.oblastId.errors.required">Не выбрано область</div>
-        </div>
-      </div>
-    </div>
+        <mat-option *ngFor="let obl of oblast" [value]="obl.id">
+          {{ obl.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="myError('oblastId', 'required')">
+        Не выбрано область
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <label for="regionId" class="col-sm-2 col-form-label"
-        >Город <span class="text-danger">*</span></label
+    <mat-form-field>
+      <mat-label>Город</mat-label>
+      <mat-select
+        formControlName="regionId"
+        (ngModelChange)="regionChange($event)"
       >
-      <div class="col-sm-10">
-        <select
-          class="form-select"
-          id="regionId"
-          formControlName="regionId"
-          (ngModelChange)="regionChange($event)"
-          [ngClass]="{ 'is-invalid': submitted && f.regionId.errors }"
-        >
-          <option *ngFor="let reg of region" [ngValue]="reg.id">
-            {{ reg.name }}
-          </option>
-        </select>
-        <div *ngIf="submitted && f.regionId.errors" class="invalid-feedback">
-          <div *ngIf="f.regionId.errors.required">Не выбрано регион</div>
-        </div>
-      </div>
-    </div>
+        <mat-option *ngFor="let reg of region" [value]="reg.id">
+          {{ reg.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="myError('oblastId', 'required')">
+        Не выбрано регион
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <label for="subRegionId" class="col-sm-2 col-form-label"
-        >Сельский округ
-      </label>
-      <div class="col-sm-10">
-        <select
-          class="form-select"
-          id="subRegionId"
-          formControlName="subRegionId"
-          (ngModelChange)="subRegionChange($event)"
-        >
-          >
-
-          <option *ngFor="let subReg of subRegion" [ngValue]="subReg.id">
-            {{ subReg.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <label for="villageId" class="col-sm-2 col-form-label">Село</label>
-      <div class="col-sm-10">
-        <select
-          class="form-select"
-          id="villageId"
-          formControlName="villageId"
-          (ngModelChange)="villageChange($event)"
-        >
-          <option *ngFor="let vil of village" [ngValue]="vil.id">
-            {{ vil.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <label for="address" class="col-sm-2 col-form-label"
-        >Географическое место</label
+    <mat-form-field>
+      <mat-label>Сельский округ</mat-label>
+      <mat-select
+        formControlName="subRegionId"
+        (ngModelChange)="subRegionChange($event)"
       >
-      <div class="col-sm-10">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="address"
-          id="address"
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="form-check">
-          <label class="form-check-label" for="inactive">
-            Активен <span class="text-danger">*</span>
-          </label>
-          <input
-            class="form-check-input"
-            type="checkbox"
-            formControlName="inactive"
-            id="inactive"
-          />
-        </div>
-      </div>
-    </div>
+        <mat-option *ngFor="let subReg of subRegion" [value]="subReg.id">
+          {{ subReg.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <div class="row">
-      <div class="col d-flex justify-content-end gap-3">
-        <button
-          class="btn btn-secondary"
-          type="button"
-          (click)="hidePlantModal()"
-        >
-          Отмена
-        </button>
-        <button class="btn btn-success" type="submit">Сохранить</button>
-      </div>
-    </div>
+    <mat-form-field>
+      <mat-label>Село</mat-label>
+      <mat-select
+        formControlName="villageId"
+        (ngModelChange)="villageChange($event)"
+      >
+        <mat-option *ngFor="let vil of village" [value]="vil.id">
+          {{ vil.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Географическое место</mat-label>
+      <input matInput formControlName="address" type="text" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="inactive">Активен</mat-checkbox>
   </form>
-</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    mat-dialog-close
+    color="warn"
+    (click)="hidePlantModal()"
+  >
+    Отмена
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="!form.valid"
+  >
+    Сохранить
+  </button>
+</mat-dialog-actions>

@@ -1,4 +1,5 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -38,8 +39,9 @@ export class PlantListComponent implements OnInit {
   }
   constructor(
     private plantService: PlantService,
-    private modalService: NgbModal
-  ) {}
+    private plantDialog: MatDialog,
+
+  ) { }
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -71,7 +73,7 @@ export class PlantListComponent implements OnInit {
         name: 'product',
         title: 'Продукты',
       },
-    ];
+    ]; 
   }
 
   onCellClicked(e: any, args: any) {
@@ -89,14 +91,14 @@ export class PlantListComponent implements OnInit {
       this.dataset = data;
     });
   }
-
-  openPlantModal() {
-    this.modalRef = this.modalService.open(PlantFormComponent, {
-      size: 'xl',
+  openPlantDialog() {
+    this.modalRef = this.plantDialog.open(PlantFormComponent, {
+      width: '700px',
     });
     this.addPlant();
     this.updatePlant();
   }
+
   addPlant() {
     this.modalRef.componentInstance.addPlant.subscribe((data: PlantModel) => {
       this.plantService.addPlant({ id: 0, ...data }).subscribe(() => {
@@ -175,7 +177,7 @@ export class PlantListComponent implements OnInit {
         minWidth: 30,
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
-          this.openPlantModal();
+          this.openPlantDialog();
           this.modalRef.componentInstance.editForm(this.plantId);
         },
       },

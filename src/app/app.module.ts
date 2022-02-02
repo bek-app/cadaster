@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSlickgridModule } from 'angular-slickgrid';
@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PlantListComponent } from './components/plant-list/plant-list.component';
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
-import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
 import { PlantDeviceListComponent } from './components/plant-list/plant-device-list/plant-device-list.component';
@@ -32,17 +32,11 @@ import { ReportProductComponent } from './components/cadaster-report-list/report
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatCardModule } from '@angular/material/card';
-import {
-  MatDialogModule,
-} from '@angular/material/dialog';
 import { ReportCommentEditorComponent } from './components/cadaster-report-list/report-comment-editor/report-comment-editor.component';
 import { CommentHistoryComponent } from './components/cadaster-report-list/report-comment-editor/comment-history/comment-history.component';
 import { CustomInputEditorComponent } from './components/editors/custom-input-editor/custom-input-editor.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
+import { AngularMaterialModule } from './material.module';
+
 
 @NgModule({
   declarations: [
@@ -86,14 +80,11 @@ import { MatIconModule } from '@angular/material/icon';
     FontAwesomeModule,
     NgbDropdownModule,
     BrowserAnimationsModule,
-    MatDialogModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatToolbarModule,
-    MatIconModule
+    AngularMaterialModule
   ],
   providers: [],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+
 })
 export class AppModule { }

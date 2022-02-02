@@ -42,7 +42,6 @@ export class PlantFormComponent implements OnInit {
 
   constructor(
     private plantService: PlantService,
-    private activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private dicKatoService: DicKatoService
   ) {
@@ -62,7 +61,9 @@ export class PlantFormComponent implements OnInit {
       this.oblast = oblast;
     });
   }
-
+  public myError = (controlName: string, errorName: string) => {
+    return this.form.controls[controlName].hasError(errorName);
+  }
   oblastChange(oblastId: number) {
     if (oblastId) {
       this.oblastName = this.oblast.find(
@@ -173,7 +174,6 @@ export class PlantFormComponent implements OnInit {
     this.hidePlantModal();
   }
   hidePlantModal() {
-    this.activeModal.close();
     this.submitted = this.isActive = false;
     this.form.reset();
   }
