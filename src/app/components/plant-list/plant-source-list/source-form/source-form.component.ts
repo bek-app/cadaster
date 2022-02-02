@@ -24,8 +24,7 @@ export class SourceFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private plantSourceService: PlantSourceService,
-    private activeModal: NgbActiveModal,
-  
+
   ) {
     this.form = this.fb.group({
       nameSource: new FormControl('', Validators.required),
@@ -36,7 +35,7 @@ export class SourceFormComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
@@ -58,11 +57,13 @@ export class SourceFormComponent implements OnInit {
       : this.onPlantSourceUpdated.emit(data);
     this.hideSourceModal();
   }
-
+  public myError = (controlName: string, errorName: string) => {
+    return this.form.controls[controlName].hasError(errorName);
+  }
   hideSourceModal() {
     this.isActive = false;
-    this.activeModal.close();
     this.form.reset();
     this.submitted = false;
+
   }
 }

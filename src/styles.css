@@ -7,7 +7,7 @@
 } */
 /* @import '~@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss'; */
 
- 
+
 html,body{height:100%;}
 body{margin:0;font-family:Roboto, "Helvetica Neue", sans-serif;}
  .mat-form-field{width:100%;}
@@ -22,7 +22,9 @@ body{margin:0;font-family:Roboto, "Helvetica Neue", sans-serif;}
   font-size: 12px;
   border: 1px solid rgb(231, 228, 228) !important;
 }
-
+.angular-slickgrid{
+  margin: 10px 0;
+}
 
 
 

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import {
   AngularGridInstance,
@@ -35,13 +36,10 @@ export class PlantSourceListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
   }
   constructor(
-    private modalService: NgbModal,
-    config: NgbModalConfig,
+    private plantSourceDialog: MatDialog,
     private plantSourceService: PlantSourceService,
     private plantService: PlantService
   ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
   }
   ngOnInit(): void {
     this.prepareGrid();
@@ -62,8 +60,8 @@ export class PlantSourceListComponent implements OnInit {
       this.dataset = data;
     });
   }
-  openPlantSourceModal() {
-    this.ref = this.modalService.open(SourceFormComponent, { size: 'xl' });
+  openPlantSourceDialog() {
+    this.ref = this.plantSourceDialog.open(SourceFormComponent, {});
     this.onPlantSourceAdded();
     this.onPlantSourceUpdated();
   }
@@ -136,7 +134,7 @@ export class PlantSourceListComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.plantSourceId = args.dataContext.id;
-          this.openPlantSourceModal();
+          this.openPlantSourceDialog();
           this.ref.componentInstance.editForm(this.plantSourceId);
         },
       },

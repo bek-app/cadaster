@@ -70,23 +70,24 @@
     </mat-form-field>
 
     <mat-checkbox formControlName="inactive">Активен</mat-checkbox>
+    <div class="btns">
+      <button
+        mat-raised-button
+        mat-dialog-close
+        color="warn"
+        (click)="hidePlantModal()"
+      >
+        Отмена
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        mat-dialog-close
+        [disabled]="!form.valid"
+      >
+        Сохранить
+      </button>
+    </div>
   </form>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button
-    mat-raised-button
-    mat-dialog-close
-    color="warn"
-    (click)="hidePlantModal()"
-  >
-    Отмена
-  </button>
-  <button
-    mat-raised-button
-    color="primary"
-    type="submit"
-    [disabled]="!form.valid"
-  >
-    Сохранить
-  </button>
-</mat-dialog-actions>

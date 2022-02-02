@@ -1,0 +1,9 @@
+mat-form-field {
+  margin-bottom: 5px;
+}
+
+.btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

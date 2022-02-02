@@ -1,7 +1,5 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   AngularGridInstance,
   Column,
@@ -30,7 +28,6 @@ export class PlantListComponent implements OnInit {
   dataViewObj: any;
   modalRef: any;
   plantRoute: any[] = [];
-  onDatePickedSub!: Subscription;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -73,7 +70,7 @@ export class PlantListComponent implements OnInit {
         name: 'product',
         title: 'Продукты',
       },
-    ]; 
+    ];
   }
 
   onCellClicked(e: any, args: any) {

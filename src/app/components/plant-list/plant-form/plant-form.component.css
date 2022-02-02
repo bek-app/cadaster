@@ -1,3 +1,5 @@
- .is-invalid {
-   border: 1px solid red
- }
+.btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
