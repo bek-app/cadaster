@@ -24,7 +24,7 @@ import { ReportActualEmissionComponent } from './components/cadaster-report-list
 import { CadasterReportComponent } from './components/cadaster-report/cadaster-report.component';
 import { CadasterReportFormComponent } from './components/cadaster-report/cadaster-report-form/cadaster-report-form.component';
 import { ReportParameterCalcComponent } from './components/cadaster-report-list/report-parameter-calc/report-parameter-calc.component';
-import { EditorNgSelectComponent } from './components/editors/editor-ng-select/editor-ng-select.component';
+import { CustomSelectEditorComponent } from './components/editors/custom-select-editor/custom-select-editor.component';
 import { ReportParameterGasComponent } from './components/cadaster-report-list/report-parameter-gas/report-parameter-gas.component';
 import { PlantProductListComponent } from './components/plant-list/plant-product-list/plant-product-list.component';
 import { PlantProductFormComponent } from './components/plant-list/plant-product-list/plant-product-form/plant-product-form.component';
@@ -34,14 +34,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import {
   MatDialogModule,
-  MAT_DIALOG_SCROLL_STRATEGY,
 } from '@angular/material/dialog';
 import { ReportCommentEditorComponent } from './components/cadaster-report-list/report-comment-editor/report-comment-editor.component';
-import { ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { CommentHistoryComponent } from './components/cadaster-report-list/report-comment-editor/comment-history/comment-history.component';
+import { CustomInputEditorComponent } from './components/editors/custom-input-editor/custom-input-editor.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -62,7 +61,7 @@ import { CommentHistoryComponent } from './components/cadaster-report-list/repor
     CadasterReportComponent,
     CadasterReportFormComponent,
     ReportParameterCalcComponent,
-    EditorNgSelectComponent,
+    CustomSelectEditorComponent,
     PlantProductListComponent,
     PlantProductFormComponent,
     ReportProductComponent,
@@ -70,6 +69,7 @@ import { CommentHistoryComponent } from './components/cadaster-report-list/repor
     ReportParameterGasComponent,
     ReportCommentEditorComponent,
     CommentHistoryComponent,
+    CustomInputEditorComponent,
   ],
   imports: [
     BrowserModule,
@@ -87,8 +87,9 @@ import { CommentHistoryComponent } from './components/cadaster-report-list/repor
     MatDialogModule,
     MatSnackBarModule,
     MatCardModule,
+    MatFormFieldModule
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

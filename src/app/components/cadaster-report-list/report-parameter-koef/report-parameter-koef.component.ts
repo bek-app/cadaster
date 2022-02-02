@@ -10,8 +10,8 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid';
 import { ActivatedRoute } from '@angular/router';
-import { CustomNgSelectEditor } from '../../editors/editor-ng-select/custom-ngselect-editor';
-import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
+import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
+import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
 import { ParameterKoefModel } from 'src/app/models/parameter-koef.model';
 import { ParameterKoefService } from 'src/app/services/parameter-koef.service';
 import {
@@ -194,10 +194,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -251,10 +251,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -313,10 +313,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -376,10 +376,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -436,10 +436,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -496,10 +496,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -556,10 +556,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
@@ -616,10 +616,10 @@ export class ReportParameterKoefComponent implements OnInit {
         },
         exportWithFormatter: true,
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {

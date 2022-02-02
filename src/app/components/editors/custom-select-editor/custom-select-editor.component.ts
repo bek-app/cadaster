@@ -5,21 +5,24 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { Subject } from 'rxjs';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { DicUnitService } from 'src/app/services/dic-unit.service';
+import { ReportCommentEditorComponent } from '../../cadaster-report-list/report-comment-editor/report-comment-editor.component';
 import { DicFormComponent } from '../../dic-form/dic-form.component';
 
 @Component({
-  selector: 'app-editor-ng-select',
-  templateUrl: './editor-ng-select.component.html',
-  styleUrls: ['./editor-ng-select.component.css'],
+  selector: 'app-custom-select-editor',
+  templateUrl: './custom-select-editor.component.html',
+  styleUrls: ['./custom-select-editor.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class EditorNgSelectComponent implements OnInit {
+export class CustomSelectEditorComponent implements OnInit {
   selectedId: any;
   selectedItem: any;
   collection!: any[]; // this will be filled by the collection of your column definition
@@ -27,9 +30,12 @@ export class EditorNgSelectComponent implements OnInit {
   ref: any;
   dicUnit!: string;
   clearStatus: boolean = false;
+  dialogRef: any;
+  faCommentDots = faCommentDots;
   constructor(
     private modalService: NgbModal,
-    private dicUnitService: DicUnitService
+    private dicUnitService: DicUnitService,
+    public dialog: MatDialog
   ) {}
   ngOnInit(): void {
     if (this.selectedId) {
@@ -41,6 +47,16 @@ export class EditorNgSelectComponent implements OnInit {
       this.selectedItem = item;
       this.onItemChanged.next(item);
     }
+  }
+  openCommentDialog() {
+    this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
+      minWidth: '400px',
+      width: '500px',
+    });
+
+    this.dialogRef.componentInstance.saveComment.subscribe((result: any) => {
+      console.log(result);
+    });
   }
   clearValue() {
     this.onChange({ id: null, name: '' });

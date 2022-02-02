@@ -16,7 +16,7 @@ import {
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class CustomNgSelectEditor implements Editor {
+export class CustomSelectEditor implements Editor {
   private _subscriptions: Subscription[] = [];
 
   /** Angular Component Reference */

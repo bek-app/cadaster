@@ -9,33 +9,26 @@ import {
   Formatter,
   GridOption,
   OnEventArgs,
-  SharedService,
   SlickGrid,
 } from 'angular-slickgrid';
 import { ParameterCalc } from 'src/app/models/parameter-calc.model';
 import { ParameterCalcService } from 'src/app/services/parameter-calc.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CustomNgSelectEditor } from '../../editors/editor-ng-select/custom-ngselect-editor';
-import { EditorNgSelectComponent } from '../../editors/editor-ng-select/editor-ng-select.component';
+import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
+import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
 import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter';
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 import {
   MatDialog,
-  MAT_DIALOG_SCROLL_STRATEGY,
 } from '@angular/material/dialog';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ReportCommentService } from 'src/app/services/report-comment.service';
 import { ReportCommentModel } from 'src/app/models/report-comment.model';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component';
-import { ScrollStrategyOptions } from '@angular/cdk/overlay';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
 import { NotificationService } from 'src/app/services/notification.service';
+import {  CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
+import { ReportSharedService } from 'src/app/services/report-shared.service';
 
 @Component({
   selector: 'app-report-parameter-calc',
@@ -53,10 +46,12 @@ export class ReportParameterCalcComponent implements OnInit {
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   dicUnitList: any[] = [];
-  cdrReportId!: number;
+  cdrReportId: number=2;
   dialogRef: any;
   commentList: ReportCommentModel[] = [];
   editMode: boolean = false;
+  comments: any[] = [];
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
@@ -75,24 +70,25 @@ export class ReportParameterCalcComponent implements OnInit {
     };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (!args.item.__hasChildren && this.editMode) {
+      if (!args.item.__hasChildren && !this.editMode) {
         return true;
       }
       return false;
     });
   }
+  
   constructor(
     private parameterCalcService: ParameterCalcService,
     private activatedRoute: ActivatedRoute,
     private angularUtilService: AngularUtilService,
     public dialog: MatDialog,
     private commentService: ReportCommentService,
-    private _snackBar: MatSnackBar,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private sharedDataService: ReportSharedService
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList();
+    this.getCommentList(this.cdrReportId);
     this.activatedRoute.data.subscribe(
       (res: any) => (this.dicUnitList = res.dicUnit)
     );
@@ -100,9 +96,9 @@ export class ReportParameterCalcComponent implements OnInit {
     this.prepareGrid();
   }
 
-  getCommentList(): void {
+  getCommentList(cdrReportId: number = 2): void {
     this.commentService
-      .getReportCommentList((this.cdrReportId = 2), 'calc')
+      .getReportCommentList(cdrReportId, 'calc')
       .subscribe((data: any) => {
         this.commentList = data;
       });
@@ -116,14 +112,16 @@ export class ReportParameterCalcComponent implements OnInit {
     dataContext: any,
     grid?: any
   ) => {
-    const { id, __hasChildren, dicUnit } = dataContext;
+    const { id } = dataContext;
     const { field } = columnDef;
+
     const res = this.commentList.find((comment) => {
       return comment.recordId === id.toString() && comment.controlId === field;
     });
+
     return {
       addClasses: res ? 'border border-danger' : '',
-      text: !dataContext.__hasChildren ? value : '',
+      text: value,
     };
   };
 
@@ -152,51 +150,24 @@ export class ReportParameterCalcComponent implements OnInit {
       });
   }
 
-  addGridService(data: any) {
-    this.angularGrid.gridService.addItem(
-      { ...data },
-      {
-        highlightRow: false,
-      }
-    );
-  }
-
-  openCommentDialog(comment: ReportCommentModel) {
-    this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
-      autoFocus: true,
-      minWidth: '400px',
-      width: '500px',
-      data: { ...comment },
-      backdropClass: 'dialog-bg-trans',
-      panelClass: 'my-dialog',
-    });
-
-    this.dialogRef.componentInstance.saveComment.subscribe((result: any) => {
-      !result.isError
-        ? this.notificationService.success('Successfully', 'Done')
-        : this.notificationService.error('Error', 'Done');
-
-      this.getCommentList();
-      this.refreshList(this.cdrReportId);
-    });
-  }
-
   onCellClicked(e: Event, args: OnEventArgs) {
     if (!this.editMode) {
       const metadata =
         this.angularGrid.gridService.getColumnFromEventArguments(args);
       const { id } = metadata.dataContext;
       const { field } = metadata.columnDef;
-
       if (field !== 'processName') {
         for (const item in metadata.dataContext) {
           if (field === item) {
+
             let controlValue = metadata.dataContext[item];
             let newControlValue;
 
             if (typeof controlValue === 'object' && controlValue !== null) {
               newControlValue = controlValue.name;
+
             } else if (controlValue === null) {
+
               newControlValue = controlValue;
             } else newControlValue = controlValue.toString();
 
@@ -211,14 +182,50 @@ export class ReportParameterCalcComponent implements OnInit {
               isActive: true,
               reportId: this.cdrReportId,
             };
-            this.openCommentDialog(comment);
+
+            this.sharedDataService.sendComment(comment);
           }
         }
       }
     }
   }
 
-  onCellChanged(e: Event, args: OnEventArgs) {}
+  onCellChanged(e: Event, args: OnEventArgs) {
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
+
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
+
+    for (let item in metadata.dataContext) {
+      if (field === item) {
+        let nameField = item[0].toUpperCase() + item.slice(1);
+        let valueField = metadata.dataContext[item];
+        let newValueField;
+
+        if (typeof valueField === 'object') {
+          return;
+        } else newValueField = valueField.toString();
+
+        const data = {
+          id,
+          nameField,
+          valueField: newValueField,
+        };
+
+        this.parameterCalcService
+          .addParameterCalc(data)
+          .subscribe((result: any) => {
+            result.isSuccess
+              ? this.notificationService.success(
+                  '“Ваши данные сохранены”',
+                  'Done'
+                )
+              : this.notificationService.error(`${result.message}`, 'Done');
+          });
+      }
+    }
+  }
 
   prepareGrid() {
     this.columnDefinitions = [
@@ -240,12 +247,18 @@ export class ReportParameterCalcComponent implements OnInit {
         columnGroup: 'Вариант А',
         formatter: Formatters.multiple,
         params: {
-          formatters: [this.parameterCalcFormatter],
+          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
+          complexFieldLabel: 'q4',
         },
-        editor: { model: Editors.integer },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
+        exportWithFormatter: true,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
         // customTooltip: {
         //   position: 'right-align',
         //   formatter: () =>
@@ -268,49 +281,39 @@ export class ReportParameterCalcComponent implements OnInit {
         //   },
         //   asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
         // },
-
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const { id, q4 } = args.dataContext;
-          const data = {
-            id,
-            nameField: 'Q4',
-            valueField: q4.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((result: any) => {
-              result.isSuccess
-                ? this.notificationService.success(
-                    '“Ваши данные сохранены”',
-                    'Done'
-                  )
-                : this.notificationService.error(`${result.message}`, 'Done');
-              this.addGridService(args.dataContext);
-            });
-        },
       },
+
       {
         id: 'q3',
         name: 'Потеря тепла вследствии химической неполнотой сгорания (q3), %',
         field: 'q3',
         columnGroup: 'Вариант А',
-        formatter: parameterCalcFormatter,
-
+        formatter: this.parameterCalcFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
         editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const q3 = args.dataContext.q3;
-          const data = {
-            id,
-            nameField: 'Q3',
-            valueField: q3.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        customTooltip: {
+          position: 'right-align',
+          formatter: () =>
+            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+          asyncProcess: (
+            row: number,
+            cell: number,
+            value: any,
+            column: Column,
+            dataContext: any
+          ) => {
+            const id = dataContext.id.toString();
+            let item = this.commentList.find(
+              (comment: any) =>
+                comment.recordId === id && comment.controlId === 'q3'
+            );
+            return new Promise((resolve, reject) => {
+              item?.note ? resolve(item) : resolve({});
+            });
+          },
+          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
         },
       },
 
@@ -319,25 +322,35 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Содержание углерода в шлаке',
         field: 'slagCarbon',
         columnGroup: 'Вариант Б',
-        formatter: parameterCalcFormatter,
+        formatter: this.parameterCalcFormatter,
         filterable: true,
         sortable: true,
         type: FieldType.number,
         editor: { model: Editors.integer },
-
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const slagCarbon = args.dataContext.slagCarbon;
-          const data = {
-            id,
-            nameField: 'SlagCarbon',
-            valueField: slagCarbon.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        customTooltip: {
+          position: 'right-align',
+          formatter: () =>
+            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+          asyncProcess: (
+            row: number,
+            cell: number,
+            value: any,
+            column: Column,
+            dataContext: any
+          ) => {
+            const id = dataContext.id.toString();
+            let item = this.commentList.find(
+              (comment: any) =>
+                comment.recordId === id && comment.controlId === 'q3'
+            );
+            return new Promise((resolve, reject) => {
+              item?.note ? resolve(item) : resolve({});
+            });
+          },
+          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
         },
       },
+
       {
         id: 'dicUnit',
         name: 'Единица измерения ',
@@ -350,14 +363,13 @@ export class ReportParameterCalcComponent implements OnInit {
           complexFieldLabel: 'dicUnit.name',
         },
         editor: {
-          model: CustomNgSelectEditor,
+          model: CustomSelectEditor,
           collection: this.dicUnitList,
           params: {
-            component: EditorNgSelectComponent,
+            component: CustomSelectEditorComponent,
           },
         },
         exportWithFormatter: true,
-
         onCellChange: (e: Event, args: OnEventArgs) => {
           const id = args.dataContext.id;
           const dicUnit = args.dataContext.dicUnit;
@@ -367,9 +379,17 @@ export class ReportParameterCalcComponent implements OnInit {
             nameField: 'ParamCalcUnitId',
             valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
           };
-          this.parameterCalcService.addParameterCalc(data).subscribe((res) => {
-            this.addGridService(args.dataContext);
-          });
+
+          this.parameterCalcService
+            .addParameterCalc(data)
+            .subscribe((result) => {
+              result.isSuccess
+                ? this.notificationService.success(
+                    '“Ваши данные сохранены”',
+                    'Done'
+                  )
+                : this.notificationService.error(`${result.message}`, 'Done');
+            });
         },
       },
 
@@ -382,18 +402,6 @@ export class ReportParameterCalcComponent implements OnInit {
         sortable: true,
         type: FieldType.number,
         editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const slagAmount = args.dataContext.slagAmount;
-          const data = {
-            id,
-            nameField: 'SlagAmount',
-            valueField: slagAmount.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
-        },
       },
 
       {
@@ -405,18 +413,6 @@ export class ReportParameterCalcComponent implements OnInit {
         sortable: true,
         type: FieldType.number,
         editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const fuelConsumption = args.dataContext.fuelConsumption;
-          const data = {
-            id,
-            nameField: 'FuelConsumption',
-            valueField: fuelConsumption.toString(),
-          };
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
-        },
       },
     ];
 
@@ -454,7 +450,7 @@ export class ReportParameterCalcComponent implements OnInit {
       },
       // change header/cell row height for salesforce theme
       headerRowHeight: 45,
-      rowHeight: 45,
+      rowHeight: 50,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)

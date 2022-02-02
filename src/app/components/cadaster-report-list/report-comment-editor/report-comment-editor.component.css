@@ -1,3 +1,18 @@
  .dialog-title {
    margin: 0;
  }
+ .cdk-overlay-pane {
+  overflow-y: auto;
+}
+ .card {
+   min-height: 400px;
+ }
+
+ .comment__card {
+   background-color: #FAF7FF;
+   border: 1px solid #E3E0F3;
+   border-radius: 5px;
+   color: #3B3B3B;
+   padding: 15px;
+
+ }

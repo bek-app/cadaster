@@ -1,27 +1,17 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  Router,
-  RouterStateSnapshot,
-} from '@angular/router';
-import { Observable, of, Subject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportSharedService {
-  editMode = new Subject();
-  private messageSource = new Subject<any>();
+  public editDataDetails: any = [];
+  public subject = new Subject<any>();
 
-  constructor(private route: Router) {}
+  private commentSource = new BehaviorSubject(this.editDataDetails);
+  currentComment = this.commentSource.asObservable();
 
-  public getMessage(): Observable<any> {
-    return this.messageSource.asObservable();
-  }
-
-  public setMessage(message: any) {
-    return this.messageSource.next(message);
+  sendComment(comment: any) {
+    this.commentSource.next(comment);
   }
 }

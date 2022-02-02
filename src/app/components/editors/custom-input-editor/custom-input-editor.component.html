@@ -1,0 +1,13 @@
+<form class="form" [formGroup]="form">
+  <div class="d-flex justify-content-between gap-2">
+    
+    <div style="width:100%">
+      <input type="text" class="form-control" formControlName="name" (change)="onChange($event)" />
+    </div>
+
+    <button class="btn btn-sm btn-primary" type="button" (click)="openCommentDialog()">
+      <fa-icon [icon]="faCommentDots"></fa-icon>
+    </button>
+  </div>
+
+</form>
