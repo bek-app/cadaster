@@ -49,7 +49,9 @@ export class ProcessFormComponent implements OnInit {
     this.getDicProcess();
     this.getDicMaterial();
   }
-
+  public myError = (controlName: string, errorName: string) => {
+    return this.form.controls[controlName].hasError(errorName);
+  }
   openPlantProcessModal(name: string) {
     this.ref = this.modalService.open(DicFormComponent, {
       size: 'md',
@@ -108,8 +110,7 @@ export class ProcessFormComponent implements OnInit {
   }
 
   hidePlantProcessModal() {
-    this.modalService.dismissAll();
-    this.form.reset();
+     this.form.reset();
     this.isActive = false;
     this.submitted = false;
   }

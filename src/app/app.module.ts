@@ -12,8 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
 import { PlantDeviceListComponent } from './components/plant-list/plant-device-list/plant-device-list.component';
 import { DicFormComponent } from './components/dic-form/dic-form.component';
-import { NgSelectModule } from '@ng-select/ng-select';
-import { DeviceFormComponent } from './components/plant-list/plant-device-list/device-form/device-form.component';
+ import { DeviceFormComponent } from './components/plant-list/plant-device-list/device-form/device-form.component';
 import { ProcessFormComponent } from './components/plant-list/plant-process-list/process-form/process-form.component';
 import { PlantFormComponent } from './components/plant-list/plant-form/plant-form.component';
 import { SourceFormComponent } from './components/plant-list/plant-source-list/source-form/source-form.component';
@@ -35,10 +34,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReportCommentEditorComponent } from './components/cadaster-report-list/report-comment-editor/report-comment-editor.component';
 import { CommentHistoryComponent } from './components/cadaster-report-list/report-comment-editor/comment-history/comment-history.component';
 import { CustomInputEditorComponent } from './components/editors/custom-input-editor/custom-input-editor.component';
-import { AngularMaterialModule } from './material.module';
+import { AngularMaterialModule } from './modules/material.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { NgSelectModule } from '@ng-select/ng-select';
 
-
-@NgModule({
+ @NgModule({
   declarations: [
     AppComponent,
     PlantListComponent,
@@ -80,7 +80,7 @@ import { AngularMaterialModule } from './material.module';
     FontAwesomeModule,
     NgbDropdownModule,
     BrowserAnimationsModule,
-    AngularMaterialModule
+    AngularMaterialModule, FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent],

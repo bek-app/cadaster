@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   AngularGridInstance,
@@ -28,7 +29,7 @@ export class PlantProcessListComponent implements OnInit {
   dataViewObj: any;
   isActive = false;
   submitted = false;
-  namePlant!:string
+  namePlant!: string
   dicProcessList: Dictionary[] = [];
   @ViewChild('content') content: any;
   ref: any;
@@ -39,17 +40,18 @@ export class PlantProcessListComponent implements OnInit {
   }
 
   constructor(
-    private modalService: NgbModal,
+    private plantProcessDialog: MatDialog,
     private plantProcessService: PlantProcessService,
     private plantService: PlantService
-  ) {}
+  ) { }
+
   ngOnInit(): void {
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
       this.plantId = item.id;
       // this.namePlant = item.namePlant;
-       this.refreshList(this.plantId);
+      this.refreshList(this.plantId);
     });
-
+    this.openProcessFormDialog()
     this.prepareGrid();
   }
 
@@ -58,15 +60,20 @@ export class PlantProcessListComponent implements OnInit {
       .getPlantProcessList(id)
       .subscribe((data) => (this.dataset = data));
   }
+
   goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }
-  openPlantProcessModal() {
-    this.ref = this.modalService.open(ProcessFormComponent, { size: 'xl' });
+
+  openProcessFormDialog() {
+    this.ref = this.plantProcessDialog.open(ProcessFormComponent, {
+      width: "800px"
+    });
     this.addProcess();
     this.updateProcess();
   }
+
   addProcess() {
     this.ref.componentInstance.addProcess.subscribe((data: any) => {
       this.plantProcessService
@@ -74,6 +81,7 @@ export class PlantProcessListComponent implements OnInit {
         .subscribe(() => this.refreshList(this.plantId));
     });
   }
+
   updateProcess() {
     this.ref.componentInstance.updateProcess.subscribe((data: any) => {
       this.plantProcessService
@@ -152,7 +160,7 @@ export class PlantProcessListComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.processId = args.dataContext.id;
-          this.openPlantProcessModal();
+          this.openProcessFormDialog();
           this.ref.componentInstance.editForm(this.processId);
         },
       },
@@ -196,7 +204,7 @@ export class PlantProcessListComponent implements OnInit {
       enableTranslate: true,
       enableColumnReorder: false,
       enableColumnPicker: false,
-        columnPicker: {
+      columnPicker: {
         hideForceFitButton: true,
       },
       headerMenu: {
