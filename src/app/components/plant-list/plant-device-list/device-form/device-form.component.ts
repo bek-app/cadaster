@@ -5,10 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { data } from 'jquery';
-import { PlantDeviceService } from 'src/app/services/plant-device.service';
-import { PlantService } from 'src/app/services/plant.service';
+  import { PlantDeviceService } from 'src/app/services/plant-device.service';
 
 @Component({
   selector: 'app-device-form',
@@ -22,11 +19,9 @@ export class DeviceFormComponent implements OnInit {
   @Output() addDevice: EventEmitter<any> = new EventEmitter();
   @Output() updateDevice: EventEmitter<any> = new EventEmitter();
   constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
+     private fb: FormBuilder,
     private plantDeviceService: PlantDeviceService,
-    private activeModal: NgbActiveModal
-  ) {
+   ) {
     this.form = this.fb.group({
       nameDevice: new FormControl('', Validators.required),
       identificationNumber: new FormControl('', Validators.required),
@@ -57,8 +52,7 @@ export class DeviceFormComponent implements OnInit {
     });
   }
   hidePlantDeviceModal() {
-    this.activeModal.close();
-    this.form.reset();
+     this.form.reset();
     this.submitted = false;
     this.isActive = false;
   }

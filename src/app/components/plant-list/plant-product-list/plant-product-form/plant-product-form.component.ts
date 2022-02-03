@@ -6,9 +6,8 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { data } from 'jquery';
-import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
+import { MatDialog } from '@angular/material/dialog';
+ import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { DicProductService } from 'src/app/services/dic-product.service';
 import { DicUnitService } from 'src/app/services/dic-unit.service';
@@ -30,11 +29,10 @@ export class PlantProductFormComponent implements OnInit {
   @Output() updateProduct: EventEmitter<any> = new EventEmitter();
   constructor(
     private formBuilder: FormBuilder,
-    private activeModal: NgbActiveModal,
     private dicProductService: DicProductService,
     private dicUnitService: DicUnitService,
     private plantProductService: PlantProductService,
-    private modalService: NgbModal
+    private dicFormDialog: MatDialog
   ) {
     this.form = this.formBuilder.group({
       dicProductId: new FormControl('', Validators.required),
@@ -68,8 +66,8 @@ export class PlantProductFormComponent implements OnInit {
     this.hideProductModal();
   }
   openDicModal(name: string) {
-    this.dicRef = this.modalService.open(DicFormComponent, {
-      size: 'md',
+    this.dicRef = this.dicFormDialog.open(DicFormComponent, {
+      width: '600px',
     });
     if (name === 'dicProduct') {
       this.dicRef.componentInstance.dicTitle = 'Добавить продукты';
@@ -100,7 +98,6 @@ export class PlantProductFormComponent implements OnInit {
     });
   }
   hideProductModal() {
-    this.activeModal.close();
     this.submitted = this.isActive = false;
     this.form.reset();
   }
@@ -108,8 +105,6 @@ export class PlantProductFormComponent implements OnInit {
   editForm(id: number) {
     this.isActive = true;
     this.plantProductService.getPlantProductById(id).subscribe((product) => {
-      console.log(product);
-
       this.form.patchValue(product);
     });
   }

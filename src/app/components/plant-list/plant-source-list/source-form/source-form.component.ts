@@ -6,7 +6,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { PlantSourceService } from 'src/app/services/plant-source.service';
 @Component({
   selector: 'app-source-form',
@@ -57,9 +56,7 @@ export class SourceFormComponent implements OnInit {
       : this.onPlantSourceUpdated.emit(data);
     this.hideSourceModal();
   }
-  public myError = (controlName: string, errorName: string) => {
-    return this.form.controls[controlName].hasError(errorName);
-  }
+
   hideSourceModal() {
     this.isActive = false;
     this.form.reset();

@@ -1,13 +1,6 @@
-<h2 mat-dialog-title>Процессы</h2>
-<mat-dialog-content>
-  <form
-    class="form d-flex gap-3 flex-column"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    fxLayout="column"
-    fxLayoutAlign="space-between stretch"
-    fxLayoutGap="15px"
-  >
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>Процессы</h2>
+  <mat-dialog-content>
     <div class="row">
       <label for="dicProcessId" class="form-label">
         Наименование производственного процесса
@@ -26,22 +19,22 @@
         <ng-template ng-footer-tmp>
           <button
             type="button"
-            class="btn btn-outline-primary"
-            (click)="openPlantProcessModal('dicProcess')"
+            mat-raised-button
+            color="primary"
+            (click)="openDicFormDialog('dicProcess')"
           >
             Добавить не существующий в списке
           </button>
         </ng-template>
       </ng-select>
-      <div
-        class="text-danger"
+      <mat-error
         *ngIf="
           (f.dicProcessId.touched || submitted) &&
           f.dicProcessId.errors?.required
         "
       >
         <small>Поле обязательно для заполнения</small>
-      </div>
+      </mat-error>
     </div>
 
     <div class="row">
@@ -64,22 +57,22 @@
         <ng-template ng-footer-tmp>
           <button
             type="button"
-            class="btn btn-outline-primary"
-            (click)="openPlantProcessModal('dicMaterial')"
+            mat-raised-button
+            color="primary"
+            (click)="openDicFormDialog('dicMaterial')"
           >
             Добавить не существующий в списке
           </button>
         </ng-template>
       </ng-select>
 
-      <div
-        class="text-danger"
+      <mat-error
         *ngIf="
           (f.materials.touched || submitted) && f.materials.errors?.required
         "
       >
         <small>Поле обязательно для заполнения</small>
-      </div>
+      </mat-error>
     </div>
 
     <mat-form-field>
@@ -87,7 +80,7 @@
         Уровень коэффициентов выбросов парниковых газов
       </mat-label>
       <input matInput formControlName="oddsLevel" />
-      <mat-error *ngIf="myError('oddsLevel', 'required')">
+      <mat-error>
         Поле обязательно для заполнения
       </mat-error>
     </mat-form-field>
@@ -119,24 +112,24 @@
         Источник данных для расчета коэффициента содержания углерода
       </mat-label>
       <textarea matInput formControlName="calculatingCarbon"></textarea>
-      <mat-error *ngIf="myError('calculatingCarbon', 'required')">
+      <mat-error>
         Поле обязательно для заполнения
       </mat-error>
     </mat-form-field>
+  </mat-dialog-content>
 
-    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">
-      <button
-        type="button"
-        mat-raised-button
-        color="warn"
-        mat-dialog-close
-        (click)="hidePlantProcessModal()"
-      >
-        Отмена
-      </button>
-      <button type="submit" mat-raised-button color="primary">
-        Сохранить
-      </button>
-    </div>
-  </form>
-</mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+    <button
+      type="button"
+      mat-raised-button
+      color="warn"
+      mat-dialog-close
+      (click)="hidePlantProcessModal()"
+    >
+      Отмена
+    </button>
+    <button type="submit" mat-raised-button color="primary">
+      Сохранить
+    </button>
+  </mat-dialog-actions>
+</form>

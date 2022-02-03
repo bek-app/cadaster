@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import {
   AngularGridInstance,
@@ -8,13 +9,9 @@ import {
   Observable,
   OnEventArgs,
 } from 'angular-slickgrid';
-import { PlantProcessModel } from 'src/app/models/plant-process.model ';
 import { PlantProductModel } from 'src/app/models/plant-product.model';
-import { PlantSourceModel } from 'src/app/models/plant-source.model';
 import { PlantProductService } from 'src/app/services/plant-product.service';
-import { PlantSourceService } from 'src/app/services/plant-source.service';
 import { PlantService } from 'src/app/services/plant.service';
-import { SourceFormComponent } from '../plant-source-list/source-form/source-form.component';
 import { PlantProductFormComponent } from './plant-product-form/plant-product-form.component';
 @Component({
   selector: 'app-plant-product-list',
@@ -38,20 +35,17 @@ export class PlantProductListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
   }
   constructor(
-    private modalService: NgbModal,
-    config: NgbModalConfig,
+    private productFormDialog: MatDialog,
     private plantProductService: PlantProductService,
     private plantService: PlantService
   ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
   }
   ngOnInit(): void {
     this.prepareGrid();
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
       this.plantId = item.id;
       this.refreshList(this.plantId);
-    });
+    }); 
   }
 
   goToPlants(id: number) {
@@ -65,9 +59,9 @@ export class PlantProductListComponent implements OnInit {
       this.dataset = product;
     });
   }
-  openPlantProductModal() {
-    this.ref = this.modalService.open(PlantProductFormComponent, {
-      size: 'lg',
+  openProductDialog() {
+    this.ref = this.productFormDialog.open(PlantProductFormComponent, {
+      width: '800px',
     });
     this.onProductAdded();
     this.onProductUpdated();
@@ -78,7 +72,10 @@ export class PlantProductListComponent implements OnInit {
         const newData = { id: 0, plantId: this.plantId, ...data };
         this.plantProductService
           .addPlantProduct(newData)
-          .subscribe((result) => this.refreshList(this.plantId));
+          .subscribe((result) => {
+            this.refreshList(this.plantId)
+            this.ref.close();
+          });
       }
     );
   }
@@ -93,7 +90,10 @@ export class PlantProductListComponent implements OnInit {
         };
         this.plantProductService
           .updatePlantProduct(newData)
-          .subscribe((result) => this.refreshList(this.plantId));
+          .subscribe((result) => {
+            this.refreshList(this.plantId)
+            this.ref.close();
+          });
       }
     );
   }
@@ -126,7 +126,8 @@ export class PlantProductListComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.plantProductId = args.dataContext.id;
-          this.openPlantProductModal();
+          this.openProductDialog()
+
           this.ref.componentInstance.editForm(this.plantProductId);
         },
       },

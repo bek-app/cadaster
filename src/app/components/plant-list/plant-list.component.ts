@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import {
   AngularGridInstance,
   Column,
@@ -37,7 +37,6 @@ export class PlantListComponent implements OnInit {
   constructor(
     private plantService: PlantService,
     private plantDialog: MatDialog,
-
   ) { }
 
   ngOnInit(): void {
@@ -92,6 +91,7 @@ export class PlantListComponent implements OnInit {
     this.modalRef = this.plantDialog.open(PlantFormComponent, {
       width: '700px',
     });
+
     this.addPlant();
     this.updatePlant();
   }
@@ -100,6 +100,7 @@ export class PlantListComponent implements OnInit {
     this.modalRef.componentInstance.addPlant.subscribe((data: PlantModel) => {
       this.plantService.addPlant({ id: 0, ...data }).subscribe(() => {
         this.refreshList();
+        this.modalRef.close()
       });
     });
   }
@@ -109,7 +110,8 @@ export class PlantListComponent implements OnInit {
         this.plantService
           .updatePlant({ id: this.plantId, ...data })
           .subscribe(() => {
-            this.refreshList();
+            this.refreshList(); this.modalRef.close()
+
           });
       }
     );

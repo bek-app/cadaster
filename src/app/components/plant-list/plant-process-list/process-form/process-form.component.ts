@@ -6,6 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
 import { Dictionary } from 'src/app/models/dictionary.model';
@@ -28,7 +29,7 @@ export class ProcessFormComponent implements OnInit {
   @Output() addProcess: EventEmitter<any> = new EventEmitter();
   @Output() updateProcess: EventEmitter<any> = new EventEmitter();
   constructor(
-    private modalService: NgbModal,
+    private dicFormDialog: MatDialog,
     private plantProcessService: PlantProcessService,
     private fb: FormBuilder,
     private dicMaterialService: DicMaterialService,
@@ -49,12 +50,11 @@ export class ProcessFormComponent implements OnInit {
     this.getDicProcess();
     this.getDicMaterial();
   }
-  public myError = (controlName: string, errorName: string) => {
-    return this.form.controls[controlName].hasError(errorName);
-  }
-  openPlantProcessModal(name: string) {
-    this.ref = this.modalService.open(DicFormComponent, {
-      size: 'md',
+
+  openDicFormDialog(name: string) {
+    this.ref = this.dicFormDialog.open(DicFormComponent, {
+      width: "600px"
+
     });
     if (name === 'dicMaterial') {
       this.ref.componentInstance.dicTitle = 'Добавить материалы';
@@ -110,7 +110,7 @@ export class ProcessFormComponent implements OnInit {
   }
 
   hidePlantProcessModal() {
-     this.form.reset();
+    this.form.reset();
     this.isActive = false;
     this.submitted = false;
   }

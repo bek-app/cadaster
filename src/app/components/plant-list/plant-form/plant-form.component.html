@@ -1,11 +1,12 @@
-<h2 mat-dialog-title>
-  {{ 'PLANT.PLANT__TITLE' | translate }}</h2>
-<mat-dialog-content>
-  <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+<form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>
+    {{ 'PLANT.PLANT__TITLE' | translate }}
+  </h2>
+  <mat-dialog-content>
     <mat-form-field>
       <mat-label>Наименование</mat-label>
       <input matInput formControlName="namePlant" type="text" />
-      <mat-error *ngIf="myError('namePlant', 'required')">
+      <mat-error>
         Не указано наименование
       </mat-error>
     </mat-form-field>
@@ -15,13 +16,12 @@
       <mat-select
         formControlName="oblastId"
         (ngModelChange)="oblastChange($event)"
-        [ngClass]="{ 'is-invalid': submitted && f.oblastId.errors }"
       >
         <mat-option *ngFor="let obl of oblast" [value]="obl.id">
           {{ obl.name }}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="myError('oblastId', 'required')">
+      <mat-error>
         Не выбрано область
       </mat-error>
     </mat-form-field>
@@ -36,7 +36,7 @@
           {{ reg.name }}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="myError('oblastId', 'required')">
+      <mat-error>
         Не выбрано регион
       </mat-error>
     </mat-form-field>
@@ -71,24 +71,20 @@
     </mat-form-field>
 
     <mat-checkbox formControlName="inactive">Активен</mat-checkbox>
-    <div class="btns">
-      <button
-        mat-raised-button
-        mat-dialog-close
-        color="warn"
-        (click)="hidePlantModal()"
-      >
-        Отмена
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        mat-dialog-close
-        [disabled]="!form.valid"
-      >
-        Сохранить
-      </button>
-    </div>
-  </form>
-</mat-dialog-content>
+    
+  </mat-dialog-content>
+
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      color="warn"
+      (click)="hidePlantModal()"
+    >
+      Отмена
+    </button>
+    <button mat-raised-button color="primary" type="submit">
+      Сохранить
+    </button>
+  </mat-dialog-actions>
+</form>

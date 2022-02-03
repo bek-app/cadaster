@@ -23,9 +23,7 @@ export class DicFormComponent implements OnInit {
   @Output() dicAdded = new EventEmitter<Dictionary>();
 
   constructor(
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    private activeModal: NgbActiveModal
+    private fb: FormBuilder, 
   ) {
     this.form = this.fb.group({
       name: new FormControl('', [
@@ -60,8 +58,7 @@ export class DicFormComponent implements OnInit {
   }
 
   hideDicFormModal() {
-    this.activeModal.close();
-    this.form.reset();
+     this.form.reset();
     this.submitted = false;
   }
 }

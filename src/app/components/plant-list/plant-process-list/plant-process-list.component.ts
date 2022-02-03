@@ -51,8 +51,7 @@ export class PlantProcessListComponent implements OnInit {
       // this.namePlant = item.namePlant;
       this.refreshList(this.plantId);
     });
-    this.openProcessFormDialog()
-    this.prepareGrid();
+     this.prepareGrid();
   }
 
   refreshList(id: number) {

@@ -1,12 +1,12 @@
-<h2 mat-dialog-title>
-  Источники
-</h2>
-<mat-dialog-content>
-  <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+<form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>
+    Источники
+  </h2>
+  <mat-dialog-content>
     <mat-form-field>
       <mat-label>Наименование источника</mat-label>
       <input matInput formControlName="nameSource" type="text" />
-      <mat-error *ngIf="myError('nameSource', 'required')">
+      <mat-error>
         Поле обязательно для заполнения
       </mat-error>
     </mat-form-field>
@@ -14,7 +14,7 @@
     <mat-form-field>
       <mat-label>Характеристика используемой технологии</mat-label>
       <textarea matInput formControlName="characteristic"></textarea>
-      <mat-error *ngIf="myError('characteristic', 'required')">
+      <mat-error>
         Поле обязательно для заполнения
       </mat-error>
     </mat-form-field>
@@ -29,29 +29,22 @@
     <mat-form-field>
       <mat-label>Время работы</mat-label>
       <input matInput formControlName="workinHours" type="text" />
-      <mat-error *ngIf="myError('workinHours', 'required')">
+      <mat-error>
         Поле обязательно для заполнения
       </mat-error>
     </mat-form-field>
-    
-    <div class="btns">
-      <button
-        mat-raised-button
-        mat-dialog-close
-        color="warn"
-        (click)="hideSourceModal()"
-      >
-        Отмена
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        mat-dialog-close
-        [disabled]="!form.valid"
-      >
-        Сохранить
-      </button>
-    </div>
-  </form>
-</mat-dialog-content>
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      color="warn"
+      (click)="hideSourceModal()"
+    >
+      Отмена
+    </button>
+    <button mat-raised-button color="primary" type="submit">
+      Сохранить
+    </button>
+  </mat-dialog-actions>
+</form>

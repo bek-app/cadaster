@@ -1,6 +1,6 @@
 <div class="container">
   <mat-toolbar color="primary" class="toolbar">
-    <mat-toolbar-row class="menu">
+    <mat-toolbar-row>
       <h1>Кадастр</h1>
       <a
         mat-button
@@ -21,7 +21,7 @@
         Отчет
       </a>
       <mat-form-field appearance="fill">
-         <mat-select
+        <mat-select
           #selectedLang
           [value]="translate.currentLang"
           (selectionChange)="translate.use(selectedLang.value)"
