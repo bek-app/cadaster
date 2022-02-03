@@ -1,6 +1,5 @@
 import {
-  AfterViewInit,
-  Component,
+   Component,
   EventEmitter,
   OnInit,
   Output,
@@ -12,8 +11,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { DicKatoService } from 'src/app/services/dic-kato.service';
+ import { DicKatoService } from 'src/app/services/dic-kato.service';
 import { PlantService } from 'src/app/services/plant.service';
 
 @Component({

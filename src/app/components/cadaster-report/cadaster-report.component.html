@@ -1,27 +1,13 @@
-<div class="row mt-3">
-  <div class="col">
-    <div class="row">
-      <div class="col">
-        <button
-          class="btn btn-outline-primary mb-2"
-          (click)="openCadasterModal()"
-        >
-          Создать
-        </button>
-      </div>
-      <div class="col d-flex justify-content-end"><h3>Отчет</h3></div>
-    </div>
-    <div class="row">
-      <div class="col" id="demo-container">
-        <angular-slickgrid
-          gridId="cadaster-report"
-          [columnDefinitions]="columnDefinitions"
-          [gridOptions]="gridOptions"
-          [dataset]="dataset"
-          (onAngularGridCreated)="angularGridReady($any($event).detail)"
-        >
-        </angular-slickgrid>
-      </div>
-    </div>
-  </div>
+<button mat-raised-button (click)="openCdrReportDialog()">
+  Создать
+</button>
+
+<div class="angular-slickgrid" id="demo-container">
+  <angular-slickgrid
+    gridId="cadaster-report"
+    [columnDefinitions]="columnDefinitions"
+    [gridOptions]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  ></angular-slickgrid>
 </div>

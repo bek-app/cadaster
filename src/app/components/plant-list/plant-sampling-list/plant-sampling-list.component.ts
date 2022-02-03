@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
+ import {
   AngularGridInstance,
   Column,
   Formatters,

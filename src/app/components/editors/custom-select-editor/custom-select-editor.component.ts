@@ -1,15 +1,7 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectComponent } from '@ng-select/ng-select';
 import { Subject } from 'rxjs';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { DicUnitService } from 'src/app/services/dic-unit.service';
@@ -33,10 +25,9 @@ export class CustomSelectEditorComponent implements OnInit {
   dialogRef: any;
   faCommentDots = faCommentDots;
   constructor(
-    private modalService: NgbModal,
     private dicUnitService: DicUnitService,
     public dialog: MatDialog
-  ) {}
+  ) { }
   ngOnInit(): void {
     if (this.selectedId) {
       this.clearStatus = !this.clearStatus;
@@ -62,8 +53,8 @@ export class CustomSelectEditorComponent implements OnInit {
     this.onChange({ id: null, name: '' });
   }
   openModal(name: string) {
-    this.ref = this.modalService.open(DicFormComponent, {
-      size: 'md',
+    this.ref = this.dialog.open(DicFormComponent, {
+      width: '400px',
     });
     if (name === 'dicUnit') {
       this.ref.componentInstance.dicTitle = 'Добавить eдиница измерения';
@@ -79,5 +70,5 @@ export class CustomSelectEditorComponent implements OnInit {
       });
     });
   }
-  focus() {}
+  focus() { }
 }

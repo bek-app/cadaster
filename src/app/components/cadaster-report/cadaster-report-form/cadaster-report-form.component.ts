@@ -6,7 +6,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 
 @Component({
@@ -22,7 +21,6 @@ export class CadasterReportFormComponent implements OnInit {
   @Output() addPlant: EventEmitter<any> = new EventEmitter();
   @Output() updatePlant: EventEmitter<any> = new EventEmitter();
   constructor(
-    private activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private cadasterReportService: CadasterReportService
   ) {
@@ -32,7 +30,7 @@ export class CadasterReportFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   onSubmit() {
     this.submitted = true;
@@ -45,7 +43,6 @@ export class CadasterReportFormComponent implements OnInit {
     this.hideCadasterModal();
   }
   hideCadasterModal() {
-    this.activeModal.close();
     this.submitted = this.isActive = false;
     this.form.reset();
   }

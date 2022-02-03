@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import {
+ import {
   AngularGridInstance,
   Column,
   Formatters,
@@ -45,7 +44,7 @@ export class PlantProductListComponent implements OnInit {
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
       this.plantId = item.id;
       this.refreshList(this.plantId);
-    }); 
+    });
   }
 
   goToPlants(id: number) {

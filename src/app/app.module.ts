@@ -10,8 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PlantListComponent } from './components/plant-list/plant-list.component';
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
-import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
 import { PlantDeviceListComponent } from './components/plant-list/plant-device-list/plant-device-list.component';
 import { DicFormComponent } from './components/dic-form/dic-form.component';
@@ -119,13 +118,11 @@ export function appInitializerFactory(
         deps: [HttpClient],
       },
     }),
-    NgbModule,
-    NgSelectModule,
+     NgSelectModule,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-    NgbDropdownModule,
-    BrowserAnimationsModule,
+     BrowserAnimationsModule,
     AngularMaterialModule,
     FlexLayoutModule,
 

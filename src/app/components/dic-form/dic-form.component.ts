@@ -6,8 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Dictionary } from 'src/app/models/dictionary.model';
+ import { Dictionary } from 'src/app/models/dictionary.model';
 @Component({
   selector: 'app-dic-form',
   templateUrl: './dic-form.component.html',
@@ -23,7 +22,7 @@ export class DicFormComponent implements OnInit {
   @Output() dicAdded = new EventEmitter<Dictionary>();
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
   ) {
     this.form = this.fb.group({
       name: new FormControl('', [

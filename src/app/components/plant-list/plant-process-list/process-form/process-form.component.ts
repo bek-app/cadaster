@@ -7,8 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
+ import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { DicMaterialService } from 'src/app/services/dic-materials.service';
 import { DicProcessService } from 'src/app/services/dic-process.service';

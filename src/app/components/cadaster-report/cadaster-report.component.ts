@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   AngularGridInstance,
   Column,
@@ -32,11 +32,11 @@ export class CadasterReportComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
   }
   constructor(
-    private modalService: NgbModal,
+    private cdrReportDialog: MatDialog,
     private cadasterService: CadasterReportService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -49,9 +49,9 @@ export class CadasterReportComponent implements OnInit {
     });
   }
 
-  openCadasterModal() {
-    this.modalRef = this.modalService.open(CadasterReportFormComponent, {
-      size: 'xl',
+  openCdrReportDialog() {
+    this.modalRef = this.cdrReportDialog.open(CadasterReportFormComponent, {
+      width: '800px',
     });
   }
 
@@ -118,7 +118,7 @@ export class CadasterReportComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.cadasterId = args.dataContext.id;
-          this.openCadasterModal();
+          this.openCdrReportDialog();
           this.modalRef.componentInstance.editForm(this.cadasterId);
         },
       },

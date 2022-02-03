@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import {
+ import {
   AngularGridInstance,
   Column,
   Formatters,
@@ -17,8 +16,7 @@ import { SourceFormComponent } from './source-form/source-form.component';
   selector: 'app-plant-source-list',
   templateUrl: './plant-source-list.component.html',
   styleUrls: ['./plant-source-list.component.css'],
-  providers: [NgbModalConfig, NgbModal],
-})
+ })
 export class PlantSourceListComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
