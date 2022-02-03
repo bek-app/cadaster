@@ -31,6 +31,7 @@
     "@ng-bootstrap/ng-bootstrap": "^10.0.0",
     "@ng-select/ng-select": "^8.1.1",
     "@ngx-translate/core": "^14.0.0",
+    "@ngx-translate/http-loader": "^7.0.0",
     "@slickgrid-universal/composite-editor-component": "^1.1.1",
     "@slickgrid-universal/custom-tooltip-plugin": "^1.2.1",
     "angular-slickgrid": "^4.0.0",

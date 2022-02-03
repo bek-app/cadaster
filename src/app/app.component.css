@@ -8,8 +8,6 @@
 
 .menu {
   display: flex;
-  justify-content: flex-start;
-
 }
 
 .menu a {
@@ -22,4 +20,9 @@
 .active {
   border-bottom: 5px solid red;
 
+}
+
+mat-form-field {
+  width: 200px;
+  margin-left: auto; 
 }

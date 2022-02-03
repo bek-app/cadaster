@@ -20,6 +20,17 @@
       >
         Отчет
       </a>
+      <mat-form-field appearance="fill">
+         <mat-select
+          #selectedLang
+          [value]="translate.currentLang"
+          (selectionChange)="translate.use(selectedLang.value)"
+        >
+          <mat-option *ngFor="let lang of translate.getLangs()" [value]="lang">
+            {{ lang }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </mat-toolbar-row>
   </mat-toolbar>
 
