@@ -52,8 +52,6 @@ export class CustomInputEditorComponent implements OnInit {
       autoFocus: true,
       minWidth: '400px',
       width: '500px',
-      // backdropClass: 'dialog-bg-trans',
-      // panelClass: 'my-dialog',
     });
 
     this.dialogRef.componentInstance.saveComment.subscribe((result: any) => {
@@ -63,5 +61,5 @@ export class CustomInputEditorComponent implements OnInit {
     });
   }
 
-  focus() {}
+  focus() { }
 }

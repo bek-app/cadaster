@@ -26,7 +26,7 @@ import { ReportCommentService } from 'src/app/services/report-comment.service';
 import { ReportCommentModel } from 'src/app/models/report-comment.model';
 import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component';
 import { NotificationService } from 'src/app/services/notification.service';
-import {  CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
 import { ReportSharedService } from 'src/app/services/report-shared.service';
 
@@ -46,7 +46,7 @@ export class ReportParameterCalcComponent implements OnInit {
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   dicUnitList: any[] = [];
-  cdrReportId: number=2;
+  cdrReportId: number = 2;
   dialogRef: any;
   commentList: ReportCommentModel[] = [];
   editMode: boolean = false;
@@ -76,7 +76,7 @@ export class ReportParameterCalcComponent implements OnInit {
       return false;
     });
   }
-  
+
   constructor(
     private parameterCalcService: ParameterCalcService,
     private activatedRoute: ActivatedRoute,
@@ -85,7 +85,7 @@ export class ReportParameterCalcComponent implements OnInit {
     private commentService: ReportCommentService,
     private notificationService: NotificationService,
     private sharedDataService: ReportSharedService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getCommentList(this.cdrReportId);
@@ -120,7 +120,7 @@ export class ReportParameterCalcComponent implements OnInit {
     });
 
     return {
-      addClasses: res ? 'border border-danger' : '',
+      addClasses: res ? 'primary' : '',
       text: value,
     };
   };
@@ -218,9 +218,9 @@ export class ReportParameterCalcComponent implements OnInit {
           .subscribe((result: any) => {
             result.isSuccess
               ? this.notificationService.success(
-                  '“Ваши данные сохранены”',
-                  'Done'
-                )
+                '“Ваши данные сохранены”',
+                'Done'
+              )
               : this.notificationService.error(`${result.message}`, 'Done');
           });
       }
@@ -288,11 +288,19 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Потеря тепла вследствии химической неполнотой сгорания (q3), %',
         field: 'q3',
         columnGroup: 'Вариант А',
-        formatter: this.parameterCalcFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
+          complexFieldLabel: 'q4',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
         customTooltip: {
           position: 'right-align',
           formatter: () =>
@@ -385,9 +393,9 @@ export class ReportParameterCalcComponent implements OnInit {
             .subscribe((result) => {
               result.isSuccess
                 ? this.notificationService.success(
-                    '“Ваши данные сохранены”',
-                    'Done'
-                  )
+                  '“Ваши данные сохранены”',
+                  'Done'
+                )
                 : this.notificationService.error(`${result.message}`, 'Done');
             });
         },

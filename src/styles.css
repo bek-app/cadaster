@@ -1,44 +1,56 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@ng-select/ng-select/themes/default.theme.css";
 @import '~@mdi/font/css/materialdesignicons.css';
+
 /* .slickgrid-container .grid-canvas .slick-cell {
   border: 1px solid rgb(231, 228, 228) !important;
 
 } */
-/* @import '~@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss'; */
 
 
-html,body{height:100%;}
-body{margin:0;font-family:Roboto, "Helvetica Neue", sans-serif;}
- .mat-form-field{width:100%;}
-.misc-bottom-padding{margin:8px 0 20px;}
-.misc-bottom-padding mat-label{margin-right:15px;}
-.mat-radio-label{margin:0 15px 0 0;}
-.title-center{margin:0 auto;}
-.button-wrapper{margin-top:10px;}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.misc-bottom-padding {
+  margin: 8px 0 20px;
+}
+
+.misc-bottom-padding mat-label {
+  margin-right: 15px;
+}
+
+.mat-radio-label {
+  margin: 0 15px 0 0;
+}
+
+.title-center {
+  margin: 0 auto;
+}
+
+.button-wrapper {
+  margin-top: 10px;
+}
 
 
 .slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
   font-size: 12px;
   border: 1px solid rgb(231, 228, 228) !important;
 }
-.angular-slickgrid{
+
+.angular-slickgrid {
   margin: 10px 0;
 }
 
 
 
 
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
 
 snack-bar-container.success {
   background-color: green;
@@ -66,5 +78,3 @@ snack-bar-container.notification {
 .dialog-bg-trans {
   background-color: transparent;
 }
-
-

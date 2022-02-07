@@ -1,26 +1,32 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div mat-dialog-title class="d-flex justify-content-between dialog-title">
-    <h2>Comment Editor</h2>
-    {{ historyCommentList.length }} комментариев
-    <button type="button" class="btn-close" mat-dialog-close></button>
-  </div>
+  <h2 mat-dialog-title>
+    Комментарий
+  </h2>
 
-  <div mat-dialog-content>
-    <mat-card class="card">
-      <div
-        class="comment__card mb-2"
+  <mat-dialog-content>
+    <div
+      fxLayout="column"
+      fxLayoutAlign="center stretch"
+      fxLayoutGap="10px"
+      style="background-color: #e8d5b5;"
+    >
+      <mat-card
         *ngFor="let comment of historyCommentList"
+        style="background-color: #989CFF"
       >
         <mat-card-title>
           <h3>Author: Meirambek {{ comment.authorName }}</h3>
         </mat-card-title>
+
         <mat-card-subtitle>
           <p>{{ comment.note }}</p>
         </mat-card-subtitle>
+
         <mat-card-actions>
           <button
             type="button"
-            class="btn btn-sm btn-danger"
+            mat-raised-button
+            color="warn"
             (click)="deleteComment(comment.id)"
             *ngIf="selectedComment"
           >
@@ -28,59 +34,25 @@
             Удалить Комментарий
           </button>
         </mat-card-actions>
-      </div>
-    </mat-card>
-  </div>
-
-  <div class="">
-    <div class="row mt-2">
-      <div class="col">
-        <textarea
-          class="form-control"
-          rows="2"
-          placeholder="Оставьте комментарий"
-          formControlName="comment"
-          [ngClass]="{
-            'is-invalid': submitted && f.comment.errors
-          }"
-        ></textarea>
-        <div
-          class="text-danger"
-          *ngIf="(f.comment.touched || submitted) && f.comment.errors?.required"
-        >
-          <small>Поле обязательно для заполнения</small>
-        </div>
-      </div>
+      </mat-card>
     </div>
+  </mat-dialog-content>
 
-    <div class="row mt-2">
-      <div class="col d-flex justify-content-end">
-        <button type="submit" class="btn btn-sm btn-primary">
-          <fa-icon [icon]="faPaperPlane"></fa-icon>
-          Отправить
-        </button>
-      </div>
-    </div>
-  </div>
+  <mat-dialog-actions fxLayout="column" fxLayoutAlign="space-between end">
+    <mat-form-field style="margin-top: 10px;">
+      <textarea
+        matInput
+        placeholder="Оставьте комментарий"
+        formControlName="comment"
+      ></textarea>
+      <mat-error *ngIf="">
+        <small>Поле обязательно для заполнения</small>
+      </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary">
+      <fa-icon [icon]="faPaperPlane"></fa-icon>
+      Отправить
+    </button>
+  </mat-dialog-actions>
 </form>
-
-<!-- <div class="btns m-2 d-flex justify-content-center gap-3">
-        <button
-          type="button"
-          class="btn btn-sm btn-success"
-          (click)="showHistory()"
-        >
-          <fa-icon [icon]="faHistory"></fa-icon> История
-        </button>
-        <button
-          type="button"
-          class="btn btn-sm btn-danger"
-          (click)="deleteComment()"
-          *ngIf="selectedComment"
-        >
-          <fa-icon [icon]="faTrash"></fa-icon> Удалить Комментарий
-        </button>
-        <button type="submit" class="btn btn-sm btn-primary">
-          <fa-icon [icon]="faSave"></fa-icon> Сохранить
-        </button>
-      </div> -->

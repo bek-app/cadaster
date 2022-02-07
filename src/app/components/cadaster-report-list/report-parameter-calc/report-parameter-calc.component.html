@@ -1,24 +1,18 @@
-<div class="row">
-  <div class="col">
-    <div class="mb-5">
-      <h2>
-        Параметры, использованные для расчета коэффициентов окисления топлива
-      </h2>
-    </div>
-    <angular-slickgrid
-      gridId="parameter-calc"
-      [columnDefinitions]="columnDefinitions"
-      [gridOptions]="gridOptions"
-      [datasetHierarchical]="dataset"
-
-      (onCellChange)="
-        onCellChanged($any($event).detail.eventData, $any($event).detail.args)
-      "
-      (onClick)="
-        onCellClicked($any($event).detail.eventData, $any($event).detail.args)
-      "
-      (onAngularGridCreated)="angularGridReady($any($event).detail)"
-    >
-    </angular-slickgrid>
-  </div>
+<h2>
+  Параметры, использованные для расчета коэффициентов окисления топлива
+</h2>
+<div id="demo-container">
+  <angular-slickgrid
+    gridId="parameter-calc"
+    [columnDefinitions]="columnDefinitions"
+    [gridOptions]="gridOptions"
+    [datasetHierarchical]="dataset"
+    (onCellChange)="
+      onCellChanged($any($event).detail.eventData, $any($event).detail.args)
+    "
+    (onClick)="
+      onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+    "
+    (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  ></angular-slickgrid>
 </div>

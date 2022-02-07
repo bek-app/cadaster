@@ -1,20 +1,32 @@
-<div class="d-flex justify-content-between gap-2">
+<div fxLayout="row" fxLayoutAlign="space-between end">
+  <ng-select
+    style="width: 100%;"
+    [items]="collection"
+    autofocus
+    bindValue="id"
+    bindLabel="name"
+    appendTo="body"
+    (change)="onChange($event)"
+    [clearable]="false"
+    [(ngModel)]="selectedId"
+    [clearable]="clearStatus"
+    (clear)="clearValue()"
+  >
+    <ng-template ng-footer-tmp>
+      <div fxLayoutAlign="center">
+        <button
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="openDicDialog('dicUnit')"
+        >
+          Добавить
+        </button>
+      </div>
+    </ng-template>
+  </ng-select>
 
-  <div style="width:95%">
-    <ng-select [items]="collection" autofocus bindValue="id" bindLabel="name" appendTo="body"
-      (change)="onChange($event)" [clearable]="false" [(ngModel)]="selectedId" [clearable]="clearStatus"
-      (clear)="clearValue()">
-      <ng-template ng-footer-tmp>
-        <div class="d-flex justify-content-around">
-          <button type="button" class="btn btn-sm btn-outline-primary" (click)="openModal('dicUnit')">
-            Добавить
-          </button>
-        </div>
-      </ng-template>
-    </ng-select>
-  </div>
-
-  <button class="btn btn-sm btn-primary" type="button" (click)="openCommentDialog()">
+  <button mat-mini-fab color="warn" type="button" (click)="openCommentDialog()">
     <fa-icon [icon]="faCommentDots"></fa-icon>
   </button>
 </div>

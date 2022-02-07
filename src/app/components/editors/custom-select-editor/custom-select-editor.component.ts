@@ -52,9 +52,9 @@ export class CustomSelectEditorComponent implements OnInit {
   clearValue() {
     this.onChange({ id: null, name: '' });
   }
-  openModal(name: string) {
+  openDicDialog(name: string) {
     this.ref = this.dialog.open(DicFormComponent, {
-      width: '400px',
+      width: '600px',
     });
     if (name === 'dicUnit') {
       this.ref.componentInstance.dicTitle = 'Добавить eдиница измерения';

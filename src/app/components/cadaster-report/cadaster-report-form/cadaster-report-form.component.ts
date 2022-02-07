@@ -17,7 +17,7 @@ export class CadasterReportFormComponent implements OnInit {
   isActive = false;
   form: FormGroup;
   submitted?: boolean;
-
+  plantList: any[] = []
   @Output() addPlant: EventEmitter<any> = new EventEmitter();
   @Output() updatePlant: EventEmitter<any> = new EventEmitter();
   constructor(
@@ -40,10 +40,14 @@ export class CadasterReportFormComponent implements OnInit {
 
     const data = { userId: 1, ...this.form.value };
     !this.isActive ? this.addPlant.emit(data) : this.updatePlant.emit(data);
-    this.hideCadasterModal();
+    this.hideCdrReportFormDialog();
   }
-  hideCadasterModal() {
-    this.submitted = this.isActive = false;
+  plantChange(event: any) {
+
+  }
+  hideCdrReportFormDialog() {
+    this.submitted = false;
+    this.isActive = false;
     this.form.reset();
   }
 
