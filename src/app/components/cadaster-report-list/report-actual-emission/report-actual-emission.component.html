@@ -1,0 +1,8 @@
+<angular-slickgrid
+  gridId="actual-emission"
+  [columnDefinitions]="columnDefinitions"
+  [gridOptions]="gridOptions"
+  [datasetHierarchical]="dataset"
+  (onAngularGridCreated)="angularGridReady($any($event).detail)"
+>
+</angular-slickgrid>

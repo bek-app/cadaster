@@ -1,37 +1,24 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">{{ dicTitle }}</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="hideDicFormModal()"
-  ></button>
-</div>
-<div class="modal-body">
+<h4 mat-dialog-title>{{ dicTitle }}</h4>
+<mat-dialog-content>
   <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row d-flex gap-3 flex-column">
-      <div class="col">
-        <label for="name" class="form-label"> {{ dicLabel }}</label>
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+      <mat-form-field>
+        <mat-label>
+          {{ dicLabel }}
+        </mat-label>
         <input
-          type="text"
-          class="form-control"
+          matInput
           formControlName="name"
           (keypress)="checkValue($event)"
           (paste)="checkValue($event)"
-          [ngClass]="{
-            'is-invalid': submitted && f.name.errors
-          }"
         />
-        <div
-          class="text-danger"
+        <mat-error
           *ngIf="(f.name.touched || submitted) && f.name.errors?.required"
         >
-          <small>Поле обязательно для заполнения</small>
-        </div>
-      </div>
-      <div class="col d-flex align-items-end justify-content-end">
-        <button type="submit" class="btn btn-primary">Добавить</button>
-      </div>
+          Поле обязательно для заполнения
+        </mat-error>
+      </mat-form-field>
+      <button type="submit" mat-raised-button color="primary">Добавить</button>
     </div>
   </form>
-</div>
+</mat-dialog-content>

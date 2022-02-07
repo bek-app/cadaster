@@ -1,48 +1,35 @@
-<div class="row mt-3">
-  <div class="col">
-    <div class="row">
-      <div class="col">
-        <button class="btn btn-outline-primary mb-2" (click)="openPlantModal()">
-          Создать
-        </button>
-      </div>
-      <div class="col d-flex justify-content-end"><h3>Установки</h3></div>
-    </div>
-    <div class="div" id="demo-container">
-      <angular-slickgrid
-        gridId="plant-grid"
-        [columnDefinitions]="columnDefinitions"
-        [gridOptions]="gridOptions"
-        [dataset]="dataset"
-        (onClick)="
-          onCellClicked($any($event).detail.eventData, $any($event).detail.args)
-        "
-        (onAngularGridCreated)="angularGridReady($any($event).detail)"
-      >
-      </angular-slickgrid>
-    </div>
-  </div>
-</div>
+<div class="plant__list">
+  <button mat-raised-button color="primary" (click)="openPlantDialog()">
+    {{ 'CREATE' | translate }}
+  </button>
 
-<div class="row mt-3">
-  <div class="col">
-    <div class="row">
-      <ul class="nav nav-tabs">
-        <li class="nav-item" *ngFor="let plant of plantRoute">
-          <a
-            class="nav-link"
-            [routerLinkActiveOptions]="{ exact: true }"
-            routerLinkActive="active"
-            aria-current="page"
-            [routerLink]="[plant.name]"
-          >
-            {{ plant.title }}
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="row">
-      <router-outlet (activate)="onActivate($event)"></router-outlet>
-    </div>
+  <div class="angular-slickgrid" id="demo-container">
+    <angular-slickgrid
+      gridId="plant-grid"
+      [columnDefinitions]="columnDefinitions"
+      [gridOptions]="gridOptions"
+      [dataset]="dataset"
+      (onClick)="
+        onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+      "
+      (onAngularGridCreated)="angularGridReady($any($event).detail)"
+    ></angular-slickgrid>
+  </div>
+
+  <div class="plant__tabs-header">
+    <nav mat-tab-nav-bar>
+      <a
+        *ngFor="let plant of plantRoute"
+        mat-tab-link
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="active"
+        [routerLink]="[plant.name]"
+      >
+        {{ plant.title }}
+      </a>
+    </nav>
+  </div>
+  <div class="plant__tabs-content">
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
   </div>
 </div>

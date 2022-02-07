@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import {
+import { MatDialog } from '@angular/material/dialog';
+ import {
   AngularGridInstance,
   Column,
   Formatters,
@@ -16,8 +16,7 @@ import { SourceFormComponent } from './source-form/source-form.component';
   selector: 'app-plant-source-list',
   templateUrl: './plant-source-list.component.html',
   styleUrls: ['./plant-source-list.component.css'],
-  providers: [NgbModalConfig, NgbModal],
-})
+ })
 export class PlantSourceListComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
@@ -35,13 +34,10 @@ export class PlantSourceListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
   }
   constructor(
-    private modalService: NgbModal,
-    config: NgbModalConfig,
+    private plantSourceDialog: MatDialog,
     private plantSourceService: PlantSourceService,
     private plantService: PlantService
   ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
   }
   ngOnInit(): void {
     this.prepareGrid();
@@ -52,7 +48,7 @@ export class PlantSourceListComponent implements OnInit {
     });
   }
 
-  anyFunction(id: number) {
+  goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }
@@ -62,8 +58,8 @@ export class PlantSourceListComponent implements OnInit {
       this.dataset = data;
     });
   }
-  openPlantSourceModal() {
-    this.ref = this.modalService.open(SourceFormComponent, { size: 'xl' });
+  openPlantSourceDialog() {
+    this.ref = this.plantSourceDialog.open(SourceFormComponent, {});
     this.onPlantSourceAdded();
     this.onPlantSourceUpdated();
   }
@@ -121,6 +117,8 @@ export class PlantSourceListComponent implements OnInit {
         id: 'workinHours',
         name: 'Время работы',
         field: 'workinHours',
+        filterable: true,
+        sortable: true,
       },
 
       {
@@ -134,7 +132,7 @@ export class PlantSourceListComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.plantSourceId = args.dataContext.id;
-          this.openPlantSourceModal();
+          this.openPlantSourceDialog();
           this.ref.componentInstance.editForm(this.plantSourceId);
         },
       },

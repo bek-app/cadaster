@@ -6,8 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Dictionary } from 'src/app/models/dictionary.model';
+ import { Dictionary } from 'src/app/models/dictionary.model';
 @Component({
   selector: 'app-dic-form',
   templateUrl: './dic-form.component.html',
@@ -24,8 +23,6 @@ export class DicFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private modalService: NgbModal,
-    private activeModal: NgbActiveModal
   ) {
     this.form = this.fb.group({
       name: new FormControl('', [
@@ -60,8 +57,7 @@ export class DicFormComponent implements OnInit {
   }
 
   hideDicFormModal() {
-    this.activeModal.close();
-    this.form.reset();
+     this.form.reset();
     this.submitted = false;
   }
 }

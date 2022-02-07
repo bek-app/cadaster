@@ -1,0 +1,18 @@
+<button
+  mat-raised-button
+  color="primary"
+  (click)="openProductDialog()"
+  *ngIf="plantId"
+>
+  Создать
+</button>
+
+<div class="angular-slickgrid" id="demo-container">
+  <angular-slickgrid
+    gridId="product-grid"
+    [columnDefinitions]="columnDefinitions"
+    [gridOptions]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  ></angular-slickgrid>
+</div>

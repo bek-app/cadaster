@@ -1,0 +1,15 @@
+<div class="cdr__report">
+  <button mat-raised-button color="primary" (click)="openCdrReportDialog()">
+    Создать
+  </button>
+
+  <div class="angular-slickgrid" id="demo-container">
+    <angular-slickgrid
+      gridId="cadaster-report"
+      [columnDefinitions]="columnDefinitions"
+      [gridOptions]="gridOptions"
+      [dataset]="dataset"
+      (onAngularGridCreated)="angularGridReady($any($event).detail)"
+    ></angular-slickgrid>
+  </div>
+</div>

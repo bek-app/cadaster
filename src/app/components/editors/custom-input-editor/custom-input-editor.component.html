@@ -1,0 +1,19 @@
+<form
+  class="form"
+  [formGroup]="form"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+>
+  <mat-form-field>
+    <!-- <mat-label>Наименование</mat-label> -->
+    <input
+      matInput
+      formControlName="name"
+      (change)="onChange($event)"
+      type="text"
+    />
+  </mat-form-field>
+  <button mat-mini-fab color="warn" type="button" (click)="openCommentDialog()">
+    <fa-icon [icon]="faCommentDots"></fa-icon>
+  </button>
+</form>

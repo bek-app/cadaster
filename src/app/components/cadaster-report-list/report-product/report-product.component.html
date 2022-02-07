@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col">
+    <div class="mb-5">
+      <h2>
+        Данные по произведенной продукции за отчетный год и объему выбросов
+        парниковых газов от каждого вида продукции
+      </h2>
+    </div>
+    <angular-slickgrid
+      gridId="report-product"
+      [columnDefinitions]="columnDefinitions"
+      [gridOptions]="gridOptions"
+      [dataset]="dataset"
+      (onAngularGridCreated)="angularGridReady($any($event).detail)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>

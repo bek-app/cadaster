@@ -1,0 +1,40 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 matDialogTitle>Установка</h2>
+
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>reportYear</mat-label>
+      <input matInput formControlName="reportYear" type="text" />
+      <mat-error>
+        Не указано reportYear
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Наименование установка</mat-label>
+      <mat-select
+        formControlName="oblastId"
+        (ngModelChange)="plantChange($event)"
+      >
+        <mat-option *ngFor="let plant of plantList" [value]="plant.id">
+          {{ plant.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error>
+        Не выбрано установка
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button
+      mat-raised-button
+      mat-dialog-close
+      color="warn"
+      type="button"
+      (click)="hideCdrReportFormDialog()"
+    >
+      Отмена
+    </button>
+    <button mat-raised-button color="primary" type="submit">Сохранить</button>
+  </mat-dialog-actions>
+</form>

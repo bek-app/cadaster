@@ -1,107 +1,71 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Приборы</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="hidePlantDeviceModal()"
-  ></button>
-</div>
-<div class="modal-body">
-  <form
-    class="form d-flex gap-3 flex-column"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-  >
-    <div class="row">
-      <div class="col">
-        <label for="nameDevice" class="form-label"
-          >Наименование измерительного прибора
-          <span class="text-danger">*</span>
-        </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nameDevice"
-          id="nameDevice"
-        />
-      </div>
-    </div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>Приборы</h2>
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>
+        Наименование измерительного прибора
+      </mat-label>
+      <input matInput formControlName="nameDevice" />
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <div class="col">
-        <label for="identificationNumber" class="form-label"
-          >Расположение
-          <span class="text-danger">*</span>
-        </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="identificationNumber"
-          id="identificationNumber"
-        />
-      </div>
-    </div>
+    <mat-form-field>
+      <mat-label>
+        Расположение
+      </mat-label>
+      <input matInput formControlName="identificationNumber" />
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <div class="col">
-        <label for="unitDevice" class="form-label">единица измерений </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="unitDevice"
-          id="unitDevice"
-        />
-      </div>
-    </div>
+    <mat-form-field>
+      <mat-label>
+        единица измерений
+      </mat-label>
+      <input matInput formControlName="unitDevice" />
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <div class="col">
-        <label for="lowerLimit" class="form-label">нижний предел </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="lowerLimit"
-          id="lowerLimit"
-        />
-      </div>
-    </div>
+    <mat-form-field>
+      <mat-label>
+        нижний предел
+      </mat-label>
+      <input matInput formControlName="lowerLimit" />
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <div class="col">
-        <label for="upperLimit" class="form-label">верхний предел </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="upperLimit"
-          id="upperLimit"
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label for="specifiedUncertainty" class="form-label"
-          >Указанная неопределенность
-        </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="specifiedUncertainty"
-          id="specifiedUncertainty"
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col d-flex gap-3 justify-content-end align-items-center">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="hidePlantDeviceModal()"
-        >
-          Отмена
-        </button>
-        <button type="submit" class="btn btn-success">Сохранить</button>
-      </div>
-    </div>
-  </form>
-</div>
+    <mat-form-field>
+      <mat-label>
+        верхний предел
+      </mat-label>
+      <input matInput formControlName="upperLimit" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>
+        Указанная неопределенность
+      </mat-label>
+      <input matInput formControlName="specifiedUncertainty" />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+    <button
+      type="button"
+      mat-raised-button
+      color="warn"
+      mat-dialog-close
+      (click)="hidePlantDeviceModal()"
+    >
+      Отмена
+    </button>
+    <button type="submit" mat-raised-button color="primary">Сохранить</button>
+  </mat-dialog-actions>
+</form>

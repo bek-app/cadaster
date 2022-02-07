@@ -1,20 +1,80 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~@mdi/font/css/materialdesignicons.css';
 
-.slickgrid-container .grid-canvas .slick-cell {
+/* .slickgrid-container .grid-canvas .slick-cell {
   border: 1px solid rgb(231, 228, 228) !important;
 
+} */
+
+
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.mat-form-field {
+  width: 100%;
+}
+
+.misc-bottom-padding {
+  margin: 8px 0 20px;
+}
+
+.misc-bottom-padding mat-label {
+  margin-right: 15px;
+}
+
+.mat-radio-label {
+  margin: 0 15px 0 0;
+}
+
+.title-center {
+  margin: 0 auto;
+}
+
+.button-wrapper {
+  margin-top: 10px;
+}
+
 
 .slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
   font-size: 12px;
   border: 1px solid rgb(231, 228, 228) !important;
 }
 
+.angular-slickgrid {
+  margin: 10px 0;
+}
 
 
-.slickgrid-container .slick-preheader-panel.ui-state-default .slick-header-columns .slick-header-column {
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
+
+
+
+snack-bar-container.success {
+  background-color: green;
+  color: white !important;
+
+}
+
+snack-bar-container.error {
+  background-color: red;
+  color: white !important;
+
+}
+
+snack-bar-container.notification {
+  font-size: 18px !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.mat-button-wrapper {
+  color: #fff;
+}
+
+/* mat-dialog overlay false */
+.dialog-bg-trans {
+  background-color: transparent;
 }

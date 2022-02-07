@@ -1,0 +1,472 @@
+import { Component, OnInit } from '@angular/core';
+import {
+  AngularGridInstance,
+  AngularUtilService,
+  Column,
+  Editors,
+  FieldType,
+  Formatter,
+  Formatters,
+  GridOption,
+  OnEventArgs,
+} from 'angular-slickgrid';
+import { ActivatedRoute } from '@angular/router';
+import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
+import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
+import { ParameterGasService } from 'src/app/services/parameter-gas.service';
+import { ParameterGasModel } from 'src/app/models/parameter-gas.model';
+import {
+  gasCh4Formatter,
+  gasN2OFormatter,
+} from '../../formatters/parameterGasFormatter';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
+import { ReportCommentModel } from 'src/app/models/report-comment.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ReportCommentService } from 'src/app/services/report-comment.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from 'src/app/services/notification.service';
+import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component';
+@Component({
+  selector: 'app-report-parameter-gas',
+  templateUrl: './report-parameter-gas.component.html',
+  styleUrls: ['./report-parameter-gas.component.css'],
+})
+export class ReportParameterGasComponent implements OnInit {
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: ParameterGasModel[] = [];
+  cadasterId!: number;
+  gridObj: any;
+  dataViewObj: any;
+  isExcludingChildWhenFiltering = false;
+  isAutoApproveParentItemWhenTreeColumnIsValid = true;
+  dicUnitList: any[] = [];
+  cdrReportId!: number;
+  dialogRef: any;
+  commentList: ReportCommentModel[] = [];
+  editMode: boolean = false;
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
+    this.gridObj = angularGrid.slickGrid;
+    this.dataViewObj = angularGrid.dataView;
+    this.dataViewObj.getItemMetadata = (row: any) => {
+      const newCssClass = 'bg-secondary bg-opacity-50 text-white';
+      const item = this.dataViewObj.getItem(row);
+      if (item.__hasChildren) {
+        return {
+          cssClasses: newCssClass,
+        };
+      }
+      return '';
+    };
+    this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
+      if (!args.item.__hasChildren && !this.editMode) {
+        return true;
+      }
+      return false;
+    });
+  }
+  constructor(
+    private parameterGasService: ParameterGasService,
+    private activatedRoute: ActivatedRoute,
+    private angularUtilService: AngularUtilService,
+    public dialog: MatDialog,
+    private commentService: ReportCommentService,
+    private notificationService: NotificationService
+  ) {}
+
+  ngOnInit(): void {
+    this.getCommentList();
+    this.activatedRoute.data.subscribe(
+      (res: any) => (this.dicUnitList = res.dicUnit)
+    );
+    this.refreshList(2);
+    this.prepareGrid();
+  }
+
+  goToCadasterReports(id: number) {
+    this.cdrReportId = id;
+    this.refreshList(this.cdrReportId);
+  }
+
+  refreshList(cdrReportId: number) {
+    this.parameterGasService
+      .getParameterGasById(cdrReportId)
+      .subscribe((data) => {
+        data.forEach((items) => {
+          items.materials.forEach((material: any) => {
+            Object.assign(material, {
+              processName: material.dicMaterialName,
+              gasCh4Unit: {
+                id: material.gasCh4UnitId,
+                name: material.gasCh4UnitName,
+              },
+              gasN2OUnit: {
+                id: material.gasN2OUnitId,
+                name: material.gasN2OUnitName,
+              },
+            });
+          });
+        });
+        this.dataset = data;
+      });
+  }
+
+  getCommentList(): void {
+    this.commentService
+      .getReportCommentList((this.cdrReportId = 2), 'calc')
+      .subscribe((data: any) => {
+        this.commentList = data;
+      });
+  }
+
+  gasCommentFormatter: Formatter = (
+    row: number,
+    cell: number,
+    value: any,
+    columnDef: Column,
+    dataContext: any,
+    grid?: any
+  ) => {
+    const { id } = dataContext;
+    const { field } = columnDef;
+
+    const res = this.commentList.find((comment) => {
+      return comment.recordId === id.toString() && comment.controlId === field;
+    });
+
+    return {
+      addClasses: res ? 'border border-danger' : '',
+      text: value,
+    };
+  };
+
+  openCommentDialog(comment: ReportCommentModel) {
+    this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
+      autoFocus: true,
+      minWidth: '400px',
+      width: '500px',
+      data: { ...comment },
+      backdropClass: 'dialog-bg-trans',
+      panelClass: 'my-dialog',
+    });
+
+    this.dialogRef.componentInstance.saveComment.subscribe((result: any) => {
+      !result.isError
+        ? this.notificationService.success('Successfully', 'Done')
+        : this.notificationService.error('Error', 'Done');
+
+      this.getCommentList();
+      this.refreshList(this.cdrReportId);
+    });
+  }
+
+  onCellClicked(e: Event, args: OnEventArgs) {
+    if (!this.editMode) {
+      const metadata =
+        this.angularGrid.gridService.getColumnFromEventArguments(args);
+      const { id } = metadata.dataContext;
+      const { field } = metadata.columnDef;
+
+      if (field !== 'processName') {
+        for (const item in metadata.dataContext) {
+          if (field === item) {
+            let controlValue = metadata.dataContext[item];
+            let newControlValue;
+
+            if (typeof controlValue === 'object' && controlValue !== null) {
+              newControlValue = controlValue.name;
+            } else if (controlValue === null) {
+              newControlValue = controlValue;
+            } else newControlValue = controlValue.toString();
+
+            const comment: ReportCommentModel = {
+              id: 0,
+              note: '',
+              recordId: id.toString(),
+              controlId: field,
+              controlValue: newControlValue,
+              discriminator: 'calc',
+              isMark: true,
+              isActive: true,
+              reportId: this.cdrReportId,
+            };
+            // this.openCommentDialog(comment);
+          }
+        }
+      }
+    }
+  }
+
+  onCellChanged(e: Event, args: OnEventArgs) {
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
+
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
+
+    for (let item in metadata.dataContext) {
+      if (field === item) {
+        let nameField = item[0].toUpperCase() + item.slice(1);
+        let valueField = metadata.dataContext[item];
+        let newValueField;
+
+        if (typeof valueField === 'object') {
+          return;
+        } else newValueField = valueField.toString();
+
+        const data = {
+          id,
+          nameField,
+          valueField: newValueField,
+        };
+
+        this.parameterGasService
+          .addParameterGas(data)
+          .subscribe((result: any) => {
+            console.log(result);
+
+            result.isSuccess
+              ? this.notificationService.success(
+                  '“Ваши данные сохранены”',
+                  'Done'
+                )
+              : this.notificationService.error(`${result.message}`, 'Done');
+          });
+      }
+    }
+  }
+  prepareGrid() {
+    this.columnDefinitions = [
+      {
+        id: 'processName',
+        name: 'Наименование производственного процесса',
+        field: 'processName',
+        type: FieldType.string,
+        width: 120,
+        formatter: reportCadasterTreeFormatter,
+        filterable: true,
+        sortable: true,
+      },
+
+      // Измеренная объемная концентрация метана (CH4) в выхлопных газах при коэффициенте избытка воздуха α
+      {
+        id: 'gasCh4',
+        name: 'Концентрация метана',
+        field: 'gasCh4',
+        columnGroup: 'Коэффициент выбросов',
+        formatter: this.gasCommentFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+      },
+      {
+        id: 'gasCh4Unit',
+        name: 'Единица измерения ',
+        field: 'gasCh4Unit',
+        columnGroup: 'Коэффициент выбросов',
+        filterable: true,
+        sortable: true,
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject, this.gasCommentFormatter],
+          complexFieldLabel: 'gasCh4Unit.name',
+        },
+        exportWithFormatter: true,
+        editor: {
+          model: CustomSelectEditor,
+          collection: this.dicUnitList,
+          params: {
+            component: CustomSelectEditorComponent,
+          },
+        },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const gasCh4Unit = args.dataContext.gasCh4Unit;
+          const data = {
+            id,
+            nameField: 'GasCh4UnitId',
+            valueField:
+              gasCh4Unit.id != null ? gasCh4Unit.id.toString() : gasCh4Unit.id,
+          };
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
+        },
+      },
+
+      /// Измеренная объемная концентрация закиси азота (N2O) в выхлопных газах при коэффициенте избытка воздуха α
+      {
+        id: 'gasN2O',
+        name: 'Концентрация закиси азота',
+        field: 'gasN2O',
+        columnGroup: 'Коэффициент выбросов',
+        formatter: this.gasCommentFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+      },
+      {
+        id: 'gasN2OUnit',
+        name: 'Единица измерения ',
+        field: 'gasN2OUnit',
+        columnGroup: 'Коэффициент выбросов',
+        filterable: true,
+        sortable: true,
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject, this.gasCommentFormatter],
+          complexFieldLabel: 'gasN2OUnit.name',
+        },
+        exportWithFormatter: true,
+        editor: {
+          model: CustomSelectEditor,
+          collection: this.dicUnitList,
+          params: {
+            component: CustomSelectEditorComponent,
+          },
+        },
+        onCellChange: (e: Event, args: OnEventArgs) => {
+          const id = args.dataContext.id;
+          const gasN2OUnit = args.dataContext.gasN2OUnit;
+          const data = {
+            id,
+            nameField: 'GasN2OUnitId',
+            valueField:
+              gasN2OUnit.id != null ? gasN2OUnit.id.toString() : gasN2OUnit.id,
+          };
+          this.parameterGasService
+            .addParameterGas(data)
+            .subscribe((res: any) => {});
+        },
+      },
+
+      /// Измеренная концентрация кислорода (О2) в месте отбора пробы дымовых газов, %
+      {
+        id: 'gasProcО2',
+        name: 'Концентрация кислорода (О2)',
+        field: 'gasProcО2',
+        columnGroup: 'Коэффициент выбросов',
+        formatter: this.gasCommentFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+      },
+
+      /// Коэффициент, учитывающий характер топлива
+      {
+        id: 'gasKoeffFuelNature',
+        name: 'учитывающий характер топлива',
+        field: 'gasKoeffFuelNature',
+        columnGroup: 'Коэффициент выбросов',
+        formatter: this.gasCommentFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+      },
+
+      /// Удельная масса загрязняющих веществ ,закись азота (N2O), кг/нм^3
+      {
+        id: 'gasWeightN2O',
+        name: 'Удельная масса загрязняющих веществ,закись азота (N2O), кг/нм^3',
+        field: 'gasWeightN2O',
+        columnGroup: 'Коэффициент выбросов',
+        formatter: this.gasCommentFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+      },
+
+      /// Удельная масса загрязняющих веществ, метан (CH4), кг/нм^3
+      {
+        id: 'gasWeightCh4',
+        name: 'Удельная масса загрязняющих веществ, метан (CH4)',
+        field: 'gasWeightCh4',
+        columnGroup: 'Коэффициент выбросов',
+        formatter: this.gasCommentFormatter,
+        filterable: true,
+        sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
+      },
+    ];
+
+    this.gridOptions = {
+      autoResize: {
+        container: '#demo-container',
+      },
+      gridWidth: '100%',
+      enableAutoSizeColumns: true,
+      enableAutoResize: true,
+      enableExcelExport: true,
+      excelExportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true,
+      },
+      autoEdit: true,
+      autoCommitEdit: true,
+      enableCellNavigation: true,
+      editable: true,
+      enableFiltering: true,
+      enableGrouping: true,
+      createPreHeaderPanel: true,
+      showPreHeaderPanel: true,
+      enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
+      multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
+      treeDataOptions: {
+        columnId: 'processName',
+        childrenPropName: 'materials',
+        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
+
+        autoApproveParentItemWhenTreeColumnIsValid:
+          this.isAutoApproveParentItemWhenTreeColumnIsValid,
+      },
+      params: {
+        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
+      },
+      // change header/cell row height for salesforce theme
+      headerRowHeight: 45,
+      rowHeight: 45,
+      showCustomFooter: true,
+
+      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
+      presets: {
+        treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
+      },
+      // use Material Design SVG icons
+      contextMenu: {
+        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
+        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
+        iconClearGroupingCommand: 'mdi mdi-close',
+        iconCopyCellValueCommand: 'mdi mdi-content-copy',
+        iconExportCsvCommand: 'mdi mdi-download',
+        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
+        iconExportTextDelimitedCommand: 'mdi mdi-download',
+      },
+      gridMenu: {
+        iconCssClass: 'mdi mdi-menu',
+        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
+        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
+        iconExportCsvCommand: 'mdi mdi-download',
+        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
+        iconExportTextDelimitedCommand: 'mdi mdi-download',
+        iconRefreshDatasetCommand: 'mdi mdi-sync',
+        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
+        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
+      },
+      headerMenu: {
+        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
+        iconClearSortCommand: 'mdi mdi-swap-vertical',
+        iconSortAscCommand: 'mdi mdi-sort-ascending',
+        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
+        iconColumnHideCommand: 'mdi mdi-close',
+      },
+    };
+  }
+}

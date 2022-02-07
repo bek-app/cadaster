@@ -1,0 +1,58 @@
+<form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>
+    Комментарий
+  </h2>
+
+  <mat-dialog-content>
+    <div
+      fxLayout="column"
+      fxLayoutAlign="center stretch"
+      fxLayoutGap="10px"
+      style="background-color: #e8d5b5;"
+    >
+      <mat-card
+        *ngFor="let comment of historyCommentList"
+        style="background-color: #989CFF"
+      >
+        <mat-card-title>
+          <h3>Author: Meirambek {{ comment.authorName }}</h3>
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          <p>{{ comment.note }}</p>
+        </mat-card-subtitle>
+
+        <mat-card-actions>
+          <button
+            type="button"
+            mat-raised-button
+            color="warn"
+            (click)="deleteComment(comment.id)"
+            *ngIf="selectedComment"
+          >
+            <fa-icon [icon]="faTrash"></fa-icon>
+            Удалить Комментарий
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions fxLayout="column" fxLayoutAlign="space-between end">
+    <mat-form-field style="margin-top: 10px;">
+      <textarea
+        matInput
+        placeholder="Оставьте комментарий"
+        formControlName="comment"
+      ></textarea>
+      <mat-error *ngIf="">
+        <small>Поле обязательно для заполнения</small>
+      </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary">
+      <fa-icon [icon]="faPaperPlane"></fa-icon>
+      Отправить
+    </button>
+  </mat-dialog-actions>
+</form>

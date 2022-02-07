@@ -1,0 +1,22 @@
+<mat-dialog-content class="history">
+  <h1>История</h1>
+  <div class="div" *ngFor="let item of historyCommentList">
+    <mat-card class="example-card mt-2">
+      <mat-card-title>controlId: {{ item.controlId }}</mat-card-title>
+      <mat-card-subtitle
+        >controlValue: {{ item.controlValue }}
+      </mat-card-subtitle>
+      <mat-card-content>
+        <p>discriminator: {{ item.discriminator }}</p>
+        <p>recordId: {{ item.recordId }}</p>
+        <p>note:{{ item.note }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="gap-3 d-flex justify-content-end">
+  <button class="btn btn-sm btn-danger" mat-button mat-dialog-close>
+    Отмена
+  </button>
+</mat-dialog-actions>

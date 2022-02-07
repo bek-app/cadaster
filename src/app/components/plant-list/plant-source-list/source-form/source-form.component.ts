@@ -6,7 +6,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { PlantSourceService } from 'src/app/services/plant-source.service';
 @Component({
   selector: 'app-source-form',
@@ -24,8 +23,7 @@ export class SourceFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private plantSourceService: PlantSourceService,
-    private activeModal: NgbActiveModal,
-  
+
   ) {
     this.form = this.fb.group({
       nameSource: new FormControl('', Validators.required),
@@ -36,7 +34,7 @@ export class SourceFormComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
@@ -61,8 +59,8 @@ export class SourceFormComponent implements OnInit {
 
   hideSourceModal() {
     this.isActive = false;
-    this.activeModal.close();
     this.form.reset();
     this.submitted = false;
+
   }
 }

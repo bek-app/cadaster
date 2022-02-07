@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
+import { MatDialog } from '@angular/material/dialog';
+ import {
   AngularGridInstance,
   Column,
   Formatters,
@@ -28,7 +28,6 @@ export class PlantDeviceListComponent implements OnInit {
   isActive = false;
   namePlant!: string;
   ref: any;
-  @ViewChild('content') content: any;
   deviceFormComponent!: DeviceFormComponent;
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -36,10 +35,10 @@ export class PlantDeviceListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
   }
   constructor(
-    private modalService: NgbModal,
+    private deviceDialog: MatDialog,
     private plantDeviceService: PlantDeviceService,
     private plantService: PlantService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
@@ -47,7 +46,7 @@ export class PlantDeviceListComponent implements OnInit {
       // this.namePlant = item.name;
       this.refreshList(this.plantId);
     });
-    this.prepareGrid();
+     this.prepareGrid();
   }
 
   refreshList(plantId: number) {
@@ -55,15 +54,18 @@ export class PlantDeviceListComponent implements OnInit {
       this.dataset = data;
     });
   }
-  anyFunction(id: number) {
+
+  goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }
-  openPlantDeviceModal() {
-    this.ref = this.modalService.open(DeviceFormComponent, { size: 'xl' });
+
+  openDeviceDialog() {
+    this.ref = this.deviceDialog.open(DeviceFormComponent, { width: "600px" });
     this.addPlantDevice();
     this.updatePlantDevice();
   }
+
   addPlantDevice() {
     this.ref.componentInstance.addDevice.subscribe((data: any) => {
       this.plantDeviceService
@@ -72,9 +74,13 @@ export class PlantDeviceListComponent implements OnInit {
           plantId: this.plantId,
           ...data,
         })
-        .subscribe(() => this.refreshList(this.plantId));
+        .subscribe(() => {
+          this.refreshList(this.plantId)
+          this.ref.close();
+        });
     });
   }
+
   updatePlantDevice() {
     this.ref.componentInstance.updateDevice.subscribe((data: any) => {
       this.plantDeviceService
@@ -83,7 +89,10 @@ export class PlantDeviceListComponent implements OnInit {
           plantId: this.plantId,
           ...data,
         })
-        .subscribe(() => this.refreshList(this.plantId));
+        .subscribe(() => {
+          this.refreshList(this.plantId);
+          this.ref.close();
+        });
     });
   }
 
@@ -142,7 +151,7 @@ export class PlantDeviceListComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.deviceId = args.dataContext.id;
-          this.openPlantDeviceModal();
+          this.openDeviceDialog();
           this.ref.componentInstance.editForm(this.deviceId);
         },
       },

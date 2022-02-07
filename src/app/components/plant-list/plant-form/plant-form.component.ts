@@ -1,6 +1,5 @@
 import {
-  AfterViewInit,
-  Component,
+   Component,
   EventEmitter,
   OnInit,
   Output,
@@ -12,8 +11,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { DicKatoService } from 'src/app/services/dic-kato.service';
+ import { DicKatoService } from 'src/app/services/dic-kato.service';
 import { PlantService } from 'src/app/services/plant.service';
 
 @Component({
@@ -21,7 +19,7 @@ import { PlantService } from 'src/app/services/plant.service';
   templateUrl: './plant-form.component.html',
   styleUrls: ['./plant-form.component.css'],
 })
-export class PlantFormComponent implements OnInit, AfterViewInit {
+export class PlantFormComponent implements OnInit {
   isActive = false;
   form: FormGroup;
   submitted?: boolean;
@@ -36,11 +34,12 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
   subRegionName!: string;
   villageName!: string;
   address: string = '';
+
   @Output() addPlant: EventEmitter<any> = new EventEmitter();
   @Output() updatePlant: EventEmitter<any> = new EventEmitter();
+
   constructor(
     private plantService: PlantService,
-    private activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private dicKatoService: DicKatoService
   ) {
@@ -59,12 +58,6 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
     this.dicKatoService.getDicKato(1).subscribe((oblast) => {
       this.oblast = oblast;
     });
-  }
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    // this.selectOblast.unsubscribe();
-    // console.log(this.selectOblast);
   }
 
   oblastChange(oblastId: number) {
@@ -96,6 +89,8 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
       if (this.oblastName && this.regionName) {
         this.address = `${this.oblastName}, ${this.regionName}`;
         this.form.controls.address.setValue(this.address);
+        this.form.value.villageId = null;
+        this.form.value.subRegionId = null;
         this.village = [];
       }
 
@@ -175,7 +170,6 @@ export class PlantFormComponent implements OnInit, AfterViewInit {
     this.hidePlantModal();
   }
   hidePlantModal() {
-    this.activeModal.close();
     this.submitted = this.isActive = false;
     this.form.reset();
   }

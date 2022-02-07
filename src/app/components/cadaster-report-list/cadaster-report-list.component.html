@@ -1,25 +1,16 @@
-<div class="row mt-3">
-  <div class="col">
-    <div class="row">
-      <div class="col">
-        <button
-          class="btn btn-outline-primary mb-2"
-          (click)="openCadasterModal()"
-        >
-          Создать
-        </button>
-      </div>
-      <div class="col d-flex justify-content-end"><h3>Кадастр</h3></div>
-    </div>
-    <div class="div" id="demo-container">
-      <angular-slickgrid
-        gridId="plant-grid"
-        [columnDefinitions]="columnDefinitions"
-        [gridOptions]="gridOptions"
-        [dataset]="dataset"
-        (onAngularGridCreated)="angularGridReady($any($event).detail)"
-      >
-      </angular-slickgrid>
-    </div>
-  </div>
+<div class="cdr__report-list">
+  <nav mat-tab-nav-bar style="background-color: #8f8cb8;">
+    <a
+      class="tab-link"
+      mat-tab-link
+      *ngFor="let report of cdrReportRoute"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="active"
+      [routerLink]="[report.name]"
+    >
+      {{ report.title }}
+    </a>
+  </nav>
+
+  <router-outlet (activate)="onActivate($event)"></router-outlet>
 </div>

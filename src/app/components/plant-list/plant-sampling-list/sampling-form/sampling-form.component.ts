@@ -6,8 +6,8 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
+import { MatDialog } from '@angular/material/dialog';
+ import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { PlantSamplingModel } from 'src/app/models/plant-sampling.model';
 import { DicMaterialService } from 'src/app/services/dic-materials.service';
@@ -29,9 +29,8 @@ export class SamplingFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private samplingService: PlantSamplingService,
-    private activeModal: NgbActiveModal,
     private dicMaterialService: DicMaterialService,
-    private modalService: NgbModal
+    private dicFormDialog: MatDialog
   ) {
     this.form = this.fb.group({
       nameSampling: new FormControl('', Validators.required),
@@ -56,8 +55,8 @@ export class SamplingFormComponent implements OnInit {
     });
   }
   openDicFormModal(name: string) {
-    this.ref = this.modalService.open(DicFormComponent, {
-      size: 'md',
+    this.ref = this.dicFormDialog.open(DicFormComponent, {
+      width: "600px"
     });
     if (name === 'dicMaterial') {
       this.ref.componentInstance.dicTitle = 'Добавить материалы';
@@ -70,16 +69,13 @@ export class SamplingFormComponent implements OnInit {
     this.ref.componentInstance.dicAdded.subscribe((data: Dictionary) => {
       this.dicMaterialService.addDicMaterial(data).subscribe((res) => {
         this.getDicMaterial();
-        this.form.controls['materials'].setValue([res.id]);
+        this.form.controls.materials.setValue([res.id]);
       });
     });
   }
 
   getDicMaterial() {
-    this.dicMaterialService.getDicMaterial().subscribe((res) => {
-      this.dicMaterialsList = res;
-      console.log(res);
-    });
+    this.dicMaterialService.getDicMaterial().subscribe((res) => this.dicMaterialsList = res);
   }
   onSubmit() {
     this.submitted = true;
@@ -95,7 +91,6 @@ export class SamplingFormComponent implements OnInit {
 
   hideSamplingModal() {
     this.isActive = false;
-    this.activeModal.close();
     this.form.reset();
     this.submitted = false;
   }

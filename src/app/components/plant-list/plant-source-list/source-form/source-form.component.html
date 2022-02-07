@@ -1,110 +1,50 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Источники</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="hideSourceModal()"
-  ></button>
-</div>
-<div class="modal-body">
-  <form
-    class="form d-flex gap-3 flex-column"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-  >
-    <div class="row">
-      <div class="col">
-        <label for="nameSource" class="form-label"
-          >Наименование источника <span class="text-danger">*</span>
-        </label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="nameSource"
-          id="nameSource"
-          [ngClass]="{ 'is-invalid': submitted && f.nameSource.errors }"
-        />
-        <div *ngIf="submitted && f.nameSource.errors" class="invalid-feedback">
-          <div *ngIf="f.nameSource.errors.required">
-            Поле обязательно для заполнения
-          </div>
-        </div>
-      </div>
-    </div>
+<form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 mat-dialog-title>
+    Источники
+  </h2>
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Наименование источника</mat-label>
+      <input matInput formControlName="nameSource" type="text" />
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <div class="col">
-        <label for="characteristic" class="form-label"
-          >Характеристика используемой технологии
-          <span class="text-danger">*</span>
-        </label>
-        <textarea
-          class="form-control"
-          formControlName="characteristic"
-          name="characteristic"
-          id="characteristic"
-          cols="5"
-          rows="3"
-          [ngClass]="{ 'is-invalid': submitted && f.characteristic.errors }"
-        ></textarea>
+    <mat-form-field>
+      <mat-label>Характеристика используемой технологии</mat-label>
+      <textarea matInput formControlName="characteristic"></textarea>
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
 
-        <div
-          *ngIf="submitted && f.characteristic.errors"
-          class="invalid-feedback"
-        >
-          <div *ngIf="f.characteristic.errors.required">
-            Поле обязательно для заполнения
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label for="installedCapacity" class="form-label"
-          >Установленная мощность (единицы измерения) (при наличии)
-        </label>
-        <textarea
-          class="form-control"
-          formControlName="installedCapacity"
-          name="installedCapacity"
-          id="installedCapacity"
-          cols="5"
-          rows="3"
-        ></textarea>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label for="workinHours" class="form-label"
-          >Время работы <span class="text-danger">*</span>
-        </label>
+    <mat-form-field>
+      <mat-label>
+        Установленная мощность (единицы измерения) (при наличии)
+      </mat-label>
+      <textarea matInput formControlName="installedCapacity"></textarea>
+    </mat-form-field>
 
-        <input
-          type="text"
-          class="form-control"
-          formControlName="workinHours"
-          id="workinHours"
-          [ngClass]="{ 'is-invalid': submitted && f.workinHours.errors }"
-        />
-        <div *ngIf="submitted && f.workinHours.errors" class="invalid-feedback">
-          <div *ngIf="f.workinHours.errors.required">
-            Поле обязательно для заполнения
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col d-flex justify-content-end gap-3">
-        <button
-          class="btn btn-secondary"
-          type="button"
-          (click)="hideSourceModal()"
-        >
-          Отмена
-        </button>
-        <button class="btn btn-success" type="submit">Сохранить</button>
-      </div>
-    </div>
-  </form>
-</div>
+    <mat-form-field>
+      <mat-label>Время работы</mat-label>
+      <input matInput formControlName="workinHours" type="text" />
+      <mat-error>
+        Поле обязательно для заполнения
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      color="warn"
+      (click)="hideSourceModal()"
+    >
+      Отмена
+    </button>
+    <button mat-raised-button color="primary" type="submit">
+      Сохранить
+    </button>
+  </mat-dialog-actions>
+</form>

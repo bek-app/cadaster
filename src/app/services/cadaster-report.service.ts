@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CadasterReportModel } from '../models/cadaster-report.model';
 
@@ -14,7 +14,7 @@ export class CadasterReportService {
       'Content-Type': 'application/json; charset=utf-8 ',
     }),
   };
-
+  subject = new Subject();
   constructor(private http: HttpClient) {}
 
   getCadasterReportById(id: number): Observable<CadasterReportModel[]> {

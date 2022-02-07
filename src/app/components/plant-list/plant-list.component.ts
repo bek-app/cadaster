@@ -1,6 +1,5 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import {
   AngularGridInstance,
   Column,
@@ -29,7 +28,6 @@ export class PlantListComponent implements OnInit {
   dataViewObj: any;
   modalRef: any;
   plantRoute: any[] = [];
-  onDatePickedSub!: Subscription;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -38,8 +36,8 @@ export class PlantListComponent implements OnInit {
   }
   constructor(
     private plantService: PlantService,
-    private modalService: NgbModal
-  ) {}
+    private plantDialog: MatDialog,
+  ) { }
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -68,7 +66,7 @@ export class PlantListComponent implements OnInit {
       },
       {
         id: 5,
-        name: 'products',
+        name: 'product',
         title: 'Продукты',
       },
     ];
@@ -81,7 +79,7 @@ export class PlantListComponent implements OnInit {
   }
   onActivate(componentReference: any) {
     if (this.plantId !== undefined) {
-      componentReference.anyFunction(this.plantId);
+      componentReference.goToPlants(this.plantId);
     }
   }
   refreshList() {
@@ -89,18 +87,20 @@ export class PlantListComponent implements OnInit {
       this.dataset = data;
     });
   }
-
-  openPlantModal() {
-    this.modalRef = this.modalService.open(PlantFormComponent, {
-      size: 'xl',
+  openPlantDialog() {
+    this.modalRef = this.plantDialog.open(PlantFormComponent, {
+      width: '700px',
     });
+
     this.addPlant();
     this.updatePlant();
   }
+
   addPlant() {
     this.modalRef.componentInstance.addPlant.subscribe((data: PlantModel) => {
       this.plantService.addPlant({ id: 0, ...data }).subscribe(() => {
         this.refreshList();
+        this.modalRef.close()
       });
     });
   }
@@ -110,7 +110,8 @@ export class PlantListComponent implements OnInit {
         this.plantService
           .updatePlant({ id: this.plantId, ...data })
           .subscribe(() => {
-            this.refreshList();
+            this.refreshList(); this.modalRef.close()
+
           });
       }
     );
@@ -175,7 +176,7 @@ export class PlantListComponent implements OnInit {
         minWidth: 30,
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
-          this.openPlantModal();
+          this.openPlantDialog();
           this.modalRef.componentInstance.editForm(this.plantId);
         },
       },

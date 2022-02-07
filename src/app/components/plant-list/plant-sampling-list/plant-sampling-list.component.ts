@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
+import { MatDialog } from '@angular/material/dialog';
+ import {
   AngularGridInstance,
   Column,
   Formatters,
@@ -34,10 +34,10 @@ export class PlantSamplingListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
   }
   constructor(
-    private modalService: NgbModal,
+    private samplingDialog: MatDialog,
     private plantService: PlantService,
     private samplingService: PlantSamplingService
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.prepareGrid();
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
@@ -45,9 +45,9 @@ export class PlantSamplingListComponent implements OnInit {
       // this.namePlant = item.namePlant;
       this.refreshList(this.plantId);
     });
-  }
+   }
 
-  anyFunction(id: number) {
+  goToPlants(id: number) {
     this.plantId = id;
     this.refreshList(id);
   }
@@ -57,8 +57,8 @@ export class PlantSamplingListComponent implements OnInit {
       this.dataset = data;
     });
   }
-  openSamplingModal() {
-    this.ref = this.modalService.open(SamplingFormComponent, { size: 'xl' });
+  openSamplingDialog() {
+    this.ref = this.samplingDialog.open(SamplingFormComponent, { width: '800px' });
     this.onSamplingAdded();
     this.onSamplingUpdated();
   }
@@ -68,7 +68,7 @@ export class PlantSamplingListComponent implements OnInit {
         const newData = { id: 0, plantId: this.plantId, ...data };
         this.samplingService.addPlantSampling(newData).subscribe((data) => {
           this.refreshList(this.plantId);
-          console.log(data);
+          this.ref.close();
         });
       }
     );
@@ -84,6 +84,8 @@ export class PlantSamplingListComponent implements OnInit {
         };
         this.samplingService.updatePlantSampling(newData).subscribe((data) => {
           this.refreshList(this.plantId);
+          this.ref.close();
+
         });
       }
     );
@@ -146,7 +148,7 @@ export class PlantSamplingListComponent implements OnInit {
         maxWidth: 30,
         onCellClick: (e: Event, args: OnEventArgs) => {
           this.samplingId = args.dataContext.id;
-          this.openSamplingModal();
+          this.openSamplingDialog();
           this.ref.componentInstance.editForm(this.samplingId);
         },
       },
