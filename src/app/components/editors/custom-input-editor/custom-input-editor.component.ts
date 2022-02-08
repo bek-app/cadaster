@@ -18,7 +18,6 @@ import { ReportCommentEditorComponent } from '../../cadaster-report-list/report-
   styleUrls: ['./custom-input-editor.component.css'],
 })
 export class CustomInputEditorComponent implements OnInit {
-  selectedId: any;
   selectedItem: any;
   collection!: any[]; // this will be filled by the collection of your column definition
   onItemChanged = new Subject<any>();
@@ -43,7 +42,9 @@ export class CustomInputEditorComponent implements OnInit {
   }
 
   onChange(event: any) {
+
     let value = event.target.value;
+
     this.selectedItem = value;
     this.onItemChanged.next(value);
   }

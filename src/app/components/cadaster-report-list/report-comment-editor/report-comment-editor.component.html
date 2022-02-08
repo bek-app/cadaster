@@ -8,11 +8,12 @@
       fxLayout="column"
       fxLayoutAlign="center stretch"
       fxLayoutGap="10px"
-      style="background-color: #e8d5b5;"
+      style="background-color: #D9E3EC;"
     >
       <mat-card
+        class="card"
         *ngFor="let comment of historyCommentList"
-        style="background-color: #989CFF"
+        style="background-color: #c1d6e6;"
       >
         <mat-card-title>
           <h3>Author: Meirambek {{ comment.authorName }}</h3>

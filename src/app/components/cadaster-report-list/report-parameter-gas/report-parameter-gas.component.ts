@@ -23,8 +23,7 @@ import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTree
 import { ReportCommentModel } from 'src/app/models/report-comment.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ReportCommentService } from 'src/app/services/report-comment.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { NotificationService } from 'src/app/services/notification.service';
+ import { NotificationService } from 'src/app/services/notification.service';
 import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component';
 @Component({
   selector: 'app-report-parameter-gas',
@@ -51,7 +50,7 @@ export class ReportParameterGasComponent implements OnInit {
     this.gridObj = angularGrid.slickGrid;
     this.dataViewObj = angularGrid.dataView;
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'bg-secondary bg-opacity-50 text-white';
+      const newCssClass = 'inactive__header';
       const item = this.dataViewObj.getItem(row);
       if (item.__hasChildren) {
         return {

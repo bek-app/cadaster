@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -13,7 +13,7 @@ import {
 } from 'angular-slickgrid';
 import { ParameterCalc } from 'src/app/models/parameter-calc.model';
 import { ParameterCalcService } from 'src/app/services/parameter-calc.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
 import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
 import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter';
@@ -58,9 +58,8 @@ export class ReportParameterCalcComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView;
 
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'bg-secondary bg-opacity-50 text-white';
+      const newCssClass = 'inactive__header';
       const item = this.dataViewObj.getItem(row);
-
       if (item.__hasChildren) {
         return {
           cssClasses: newCssClass,
@@ -84,7 +83,8 @@ export class ReportParameterCalcComponent implements OnInit {
     public dialog: MatDialog,
     private commentService: ReportCommentService,
     private notificationService: NotificationService,
-    private sharedDataService: ReportSharedService
+    private sharedDataService: ReportSharedService,
+    private render: Renderer2
   ) { }
 
   ngOnInit(): void {
@@ -120,7 +120,7 @@ export class ReportParameterCalcComponent implements OnInit {
     });
 
     return {
-      addClasses: res ? 'primary' : '',
+      addClasses: res ? 'border' : '',
       text: value,
     };
   };

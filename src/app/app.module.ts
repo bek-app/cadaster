@@ -10,7 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PlantListComponent } from './components/plant-list/plant-list.component';
 import { PlantSourceListComponent } from './components/plant-list/plant-source-list/plant-source-list.component';
- import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlantProcessListComponent } from './components/plant-list/plant-process-list/plant-process-list.component';
 import { PlantDeviceListComponent } from './components/plant-list/plant-device-list/plant-device-list.component';
 import { DicFormComponent } from './components/dic-form/dic-form.component';
@@ -41,7 +41,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LOCATION_INITIALIZED } from '@angular/common';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatFormFieldDefaultOptions, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
+const appearance: MatFormFieldDefaultOptions = {
+  appearance: 'outline'
+};
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -118,11 +122,11 @@ export function appInitializerFactory(
         deps: [HttpClient],
       },
     }),
-     NgSelectModule,
+    NgSelectModule,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-     BrowserAnimationsModule,
+    BrowserAnimationsModule,
     AngularMaterialModule,
     FlexLayoutModule,
 
@@ -132,7 +136,11 @@ export function appInitializerFactory(
     useFactory: appInitializerFactory,
     deps: [TranslateService, Injector],
     multi: true,
-  },],
+  },
+  {
+    provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+    useValue: appearance
+  }],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 

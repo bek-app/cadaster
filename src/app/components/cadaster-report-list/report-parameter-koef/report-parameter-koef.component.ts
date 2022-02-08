@@ -49,7 +49,7 @@ export class ReportParameterKoefComponent implements OnInit {
     this.gridObj = angularGrid.slickGrid;
     this.dataViewObj = angularGrid.dataView;
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'bg-secondary bg-opacity-50 text-white';
+      const newCssClass = 'inactive__header';
       const item = this.dataViewObj.getItem(row);
       if (item.__hasChildren) {
         return {

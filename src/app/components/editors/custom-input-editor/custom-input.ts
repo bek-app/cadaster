@@ -23,7 +23,6 @@ export class CustomInputEditor implements Editor {
   componentRef!: ComponentRef<any>;
 
   /** default item Id */
-  defaultId = '';
 
   /** default item object */
   defaultItem: any;
@@ -132,7 +131,6 @@ export class CustomInputEditor implements Editor {
   }
 
   cancel() {
-    this.componentRef.instance.selectedId = this.defaultId;
     this.componentRef.instance.selectedItem = this.defaultItem;
     if (this.args && this.args.cancelChanges) {
       this.args.cancelChanges();
@@ -183,18 +181,16 @@ export class CustomInputEditor implements Editor {
   }
 
   applyValue(item: any, state: any) {
-    // console.log(item);
-    // console.log(state);
     item[this.columnDef.field] = state;
   }
 
   getValue() {
-    return this.componentRef.instance.selectedId;
+    return this.componentRef.instance.selectedItem;
   }
 
   loadValue(item: any) {
+
     const itemObject = item && item[this.columnDef.field];
-    this.componentRef.instance.selectedId = itemObject || '';
     this.componentRef.instance.selectedItem = itemObject && itemObject;
   }
 
@@ -205,16 +201,16 @@ export class CustomInputEditor implements Editor {
   isValueChanged() {
     return (
       !(
-        this.componentRef.instance.selectedId === '' &&
-        (this.defaultId === null || this.defaultId === undefined)
-      ) && this.componentRef.instance.selectedId !== this.defaultId
+        this.componentRef.instance.selectedItem === '' &&
+        (this.defaultItem === null || this.defaultItem === undefined)
+      ) && this.componentRef.instance.selectedItem !== this.defaultItem
     );
 
   }
 
   validate(): EditorValidationResult {
     if (this.validator) {
-      const value = this.componentRef.instance.selectedId;
+      const value = this.componentRef.instance.selectedItem;
       return this.validator(value, this.args);
     }
 

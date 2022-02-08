@@ -7,7 +7,14 @@
 
 } */
 
+.inactive__header{
+  background-color: #A0A9B2 !important;
+  color: #fff !important;
 
+}
+.border {
+  border: 1px solid red !important;
+}
 
 body {
   margin: 0;
