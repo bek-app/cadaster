@@ -8,7 +8,6 @@
       fxLayout="column"
       fxLayoutAlign="center stretch"
       fxLayoutGap="10px"
-      style="background-color: #D9E3EC;"
     >
       <mat-card
         class="card"
@@ -50,10 +49,15 @@
         <small>Поле обязательно для заполнения</small>
       </mat-error>
     </mat-form-field>
-
-    <button type="submit" mat-raised-button color="primary">
-      <fa-icon [icon]="faPaperPlane"></fa-icon>
-      Отправить
-    </button>
+    <div fxLayout="row" fxLayoutAlign="space-between end">
+      <button type="button" mat-raised-button color="warn" mat-dialog-close>
+        <fa-icon [icon]="faPaperPlane"></fa-icon>
+        Отмена
+      </button>
+      <button type="submit" mat-raised-button color="primary">
+        <fa-icon [icon]="faPaperPlane"></fa-icon>
+        Отправить
+      </button>
+    </div>
   </mat-dialog-actions>
 </form>

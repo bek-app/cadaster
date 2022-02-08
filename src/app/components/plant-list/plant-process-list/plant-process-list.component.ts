@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
- import {
+import {
   AngularGridInstance,
   Column,
   Formatters,
@@ -50,7 +50,7 @@ export class PlantProcessListComponent implements OnInit {
       // this.namePlant = item.namePlant;
       this.refreshList(this.plantId);
     });
-     this.prepareGrid();
+    this.prepareGrid();
   }
 
   refreshList(id: number) {
@@ -76,7 +76,10 @@ export class PlantProcessListComponent implements OnInit {
     this.ref.componentInstance.addProcess.subscribe((data: any) => {
       this.plantProcessService
         .addPlantProcess({ id: 0, plantId: this.plantId, ...data })
-        .subscribe(() => this.refreshList(this.plantId));
+        .subscribe(() => {
+          this.ref.close();
+          this.refreshList(this.plantId)
+        });
     });
   }
 
@@ -88,7 +91,7 @@ export class PlantProcessListComponent implements OnInit {
           plantId: this.plantId,
           ...data,
         })
-        .subscribe(() => this.refreshList(this.plantId));
+        .subscribe(() => { this.ref.close(); this.refreshList(this.plantId) });
     });
   }
 
@@ -98,6 +101,13 @@ export class PlantProcessListComponent implements OnInit {
         id: 'processName',
         name: 'Наименование производственного процесса',
         field: 'processName',
+        filterable: true,
+        sortable: true,
+      },
+      {
+        id: 'subProccessNames',
+        name: 'Наименование производственного подпроцесса',
+        field: 'subProccessNames',
         filterable: true,
         sortable: true,
       },

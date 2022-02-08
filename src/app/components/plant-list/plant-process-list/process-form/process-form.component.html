@@ -1,22 +1,18 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <h2 mat-dialog-title>Процессы</h2>
   <mat-dialog-content>
-    <div class="row">
-      <label for="dicProcessId" class="form-label">
-        Наименование производственного процесса
-        <span class="text-danger">*</span>
-      </label>
-      <ng-select
-        [items]="dicProcessList"
-        bindValue="id"
-        bindLabel="name"
-        [hideSelected]="true"
-        [minTermLength]="2"
-        typeToSearchText="Пожалуйста, введите 2 или более символов"
-        formControlName="dicProcessId"
-        [ngClass]="{ invalid: submitted && f.dicProcessId.errors }"
-      >
-        <ng-template ng-footer-tmp>
+    <mat-form-field>
+      <mat-label>Наименование производственного процесса</mat-label>
+      <mat-select formControlName="dicProcessId">
+        <div class="custom-panel">
+          <mat-option
+            *ngFor="let process of dicProcessList"
+            [value]="process.id"
+          >
+            {{ process.name }}
+          </mat-option>
+        </div>
+        <footer>
           <button
             type="button"
             mat-raised-button
@@ -25,36 +21,46 @@
           >
             Добавить не существующий в списке
           </button>
-        </ng-template>
-      </ng-select>
-      <mat-error
-        *ngIf="
-          (f.dicProcessId.touched || submitted) &&
-          f.dicProcessId.errors?.required
-        "
-      >
-        <small>Поле обязательно для заполнения</small>
-      </mat-error>
-    </div>
+        </footer>
+      </mat-select>
+    </mat-form-field>
 
-    <div class="row">
-      <label for="materials" class="form-label">
-        Наименование топлива или сырья
-        <span class="text-danger">*</span>
-      </label>
-      <ng-select
-        [items]="dicMaterialsList"
-        bindValue="id"
-        bindLabel="name"
-        [hideSelected]="true"
-        [minTermLength]="2"
-        [multiple]="true"
-        typeToSearchText="Пожалуйста, введите 2 или более символов"
-        formControlName="materials"
-        [closeOnSelect]="false"
-        [ngClass]="{ invalid: submitted && f.materials.errors }"
-      >
-        <ng-template ng-footer-tmp>
+    <mat-form-field>
+      <mat-label>Наименование производственного подпроцессов</mat-label>
+      <mat-select formControlName="subProccesses" multiple>
+        <div class="custom-panel">
+          <mat-option
+            *ngFor="let subProccess of subProccessesList"
+            [value]="subProccess.id"
+          >
+            {{ subProccess.name }}
+          </mat-option>
+        </div>
+        <footer>
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="openDicFormDialog('subProccesses')"
+          >
+            Добавить не существующий в списке
+          </button>
+        </footer>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Наименование топлива или сырья</mat-label>
+      <mat-select formControlName="materials" multiple>
+        <div class="custom-panel">
+          <mat-option
+            *ngFor="let material of dicMaterialsList"
+            [value]="material.id"
+          >
+            {{ material.name }}
+          </mat-option>
+        </div>
+        <footer>
           <button
             type="button"
             mat-raised-button
@@ -63,17 +69,9 @@
           >
             Добавить не существующий в списке
           </button>
-        </ng-template>
-      </ng-select>
-
-      <mat-error
-        *ngIf="
-          (f.materials.touched || submitted) && f.materials.errors?.required
-        "
-      >
-        <small>Поле обязательно для заполнения</small>
-      </mat-error>
-    </div>
+        </footer>
+      </mat-select>
+    </mat-form-field>
 
     <mat-form-field>
       <mat-label>
@@ -124,7 +122,7 @@
       mat-raised-button
       color="warn"
       mat-dialog-close
-      (click)="hidePlantProcessModal()"
+      (click)="hideProcessModal()"
     >
       Отмена
     </button>

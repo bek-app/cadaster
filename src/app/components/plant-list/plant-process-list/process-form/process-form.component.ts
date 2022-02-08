@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
- import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
+import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component';
 import { Dictionary } from 'src/app/models/dictionary.model';
 import { DicMaterialService } from 'src/app/services/dic-materials.service';
 import { DicProcessService } from 'src/app/services/dic-process.service';
@@ -24,7 +24,9 @@ export class ProcessFormComponent implements OnInit {
   submitted = false;
   dicProcessList: Dictionary[] = [];
   dicMaterialsList: Dictionary[] = [];
+  subProccessesList: Dictionary[] = [];
   ref: any;
+
   @Output() addProcess: EventEmitter<any> = new EventEmitter();
   @Output() updateProcess: EventEmitter<any> = new EventEmitter();
   constructor(
@@ -36,6 +38,7 @@ export class ProcessFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       dicProcessId: new FormControl('', Validators.required),
+      subProccesses: new FormControl('', Validators.required),
       materials: new FormControl('', Validators.required),
       oddsLevel: new FormControl('', Validators.required),
       amountConsumed: new FormControl(),
@@ -43,6 +46,7 @@ export class ProcessFormComponent implements OnInit {
       calculatingConversion: new FormControl(),
       calculatingCarbon: new FormControl(),
     });
+
   }
 
   ngOnInit(): void {
@@ -55,14 +59,19 @@ export class ProcessFormComponent implements OnInit {
       width: "600px"
 
     });
+
     if (name === 'dicMaterial') {
       this.ref.componentInstance.dicTitle = 'Добавить материалы';
       this.ref.componentInstance.dicLabel = 'Материал';
       this.dicMaterialAdded();
     } else if (name === 'dicProcess') {
-      this.ref.componentInstance.dicTitle = 'Добавить Процессы';
+      this.ref.componentInstance.dicTitle = 'Добавить процессы';
       this.ref.componentInstance.dicLabel = 'Процесс';
       this.dicProccessAdded();
+    } else {
+      this.ref.componentInstance.dicTitle = 'Добавить подпроцессы';
+      this.ref.componentInstance.dicLabel = 'Подпроцесс';
+      this.subProccessAdded()
     }
   }
 
@@ -71,14 +80,27 @@ export class ProcessFormComponent implements OnInit {
       this.dicMaterialService.addDicMaterial(data).subscribe((res) => {
         this.getDicMaterial();
         this.form.controls['materials'].setValue([res.id]);
+        this.ref.close();
       });
     });
   }
+
   dicProccessAdded() {
     this.ref.componentInstance.dicAdded.subscribe((data: Dictionary) => {
       this.dicProcessService.addDicProcess(data).subscribe((res) => {
         this.getDicProcess();
         this.form.controls['dicProcessId'].setValue(res.id);
+        this.ref.close();
+      });
+    });
+  }
+
+  subProccessAdded() {
+    this.ref.componentInstance.dicAdded.subscribe((data: Dictionary) => {
+      this.dicProcessService.addDicProcess(data).subscribe((res) => {
+        this.getDicProcess();
+        this.form.controls['subProccesses'].setValue([res.id]);
+        this.ref.close();
       });
     });
   }
@@ -86,8 +108,10 @@ export class ProcessFormComponent implements OnInit {
   getDicProcess() {
     this.dicProcessService.getDicProcess().subscribe((res) => {
       this.dicProcessList = res;
+      this.subProccessesList = res;
     });
   }
+
   getDicMaterial() {
     this.dicMaterialService.getDicMaterial().subscribe((res) => {
       this.dicMaterialsList = res;
@@ -101,14 +125,14 @@ export class ProcessFormComponent implements OnInit {
     }
     const data = { ...this.form.value };
     !this.isActive ? this.addProcess.emit(data) : this.updateProcess.emit(data);
-    this.hidePlantProcessModal();
+    this.hideProcessModal();
   }
 
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
 
-  hidePlantProcessModal() {
+  hideProcessModal() {
     this.form.reset();
     this.isActive = false;
     this.submitted = false;
