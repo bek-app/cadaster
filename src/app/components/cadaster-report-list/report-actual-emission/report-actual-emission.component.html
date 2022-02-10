@@ -4,5 +4,10 @@
   [gridOptions]="gridOptions"
   [datasetHierarchical]="dataset"
   (onAngularGridCreated)="angularGridReady($any($event).detail)"
->
-</angular-slickgrid>
+  (onCellChange)="
+    onCellChanged($any($event).detail.eventData, $any($event).detail.args)
+  "
+  (onClick)="
+    onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+  "
+></angular-slickgrid>

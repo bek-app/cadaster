@@ -1,88 +1,194 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'
 import {
   AngularGridInstance,
   AngularUtilService,
   Column,
   Editors,
   FieldType,
+  Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { ActualEmissionService } from '../../../services/actual-emission.service';
-import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
+} from 'angular-slickgrid'
+import { ReportCommentModel } from 'src/app/models/report-comment.model'
+import { ReportSharedService } from 'src/app/services/report-shared.service'
+import { ActualEmissionService } from '../../../services/actual-emission.service'
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
 @Component({
   selector: 'app-report-actual-emission',
   templateUrl: './report-actual-emission.component.html',
   styleUrls: ['./report-actual-emission.component.css'],
 })
 export class ReportActualEmissionComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: any[] = [];
-  gridObj: any;
-  dataViewObj: any;
-  actualEmissionId!: number;
-  isExcludingChildWhenFiltering = false;
-  isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  editMode = false;
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: any[] = []
+  gridObj: any
+  dataViewObj: any
+  cdrReportId: number = 2
+  isExcludingChildWhenFiltering = false
+  isAutoApproveParentItemWhenTreeColumnIsValid = true
+  editMode = false
+
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
+
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header';
-      const item = this.dataViewObj.getItem(row);
-      if (item.__hasChildren) {
+      const newCssClass = 'inactive__header'
+      const materialClass = 'sub__header-material'
+      const processClass = 'sub__header-process'
+
+      const item = this.dataViewObj.getItem(row)
+      console.log(item.key == 'material')
+
+      if (item.__hasChildren && item.__treeLevel === 0) {
         return {
           cssClasses: newCssClass,
-        };
-      } else {
-        return '';
-      }
+        }
+      } else if (item.key == 'material') {
+        return {
+          cssClasses: materialClass,
+        }
+      } else if (item.key == 'processes') {
+        return {
+          cssClasses: processClass,
+        }
+      } else return ''
     };
+
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
-        return false;
+        return false
       }
-      return true;
-    });
+      return true
+    })
   }
+
   constructor(
     private angularUtilService: AngularUtilService,
-    private actualEmissionService: ActualEmissionService
+    private actualEmissionService: ActualEmissionService,
+    private sharedDataService: ReportSharedService,
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid();
-    this.refreshList(4);
+    this.prepareGrid()
+    this.refreshList(2)
   }
 
   goToCadasterReports(id: number) {
-    this.actualEmissionId = id;
-    this.refreshList(id);
+    this.cdrReportId = id
+    this.refreshList(id)
   }
+
   refreshList(reportId: number) {
     this.actualEmissionService
       .getActualEmissionById(reportId)
       .subscribe((data) => {
+        let group: any[] = []
         data.forEach((items) => {
+          items.processes.forEach((process: any) => {
+            Object.assign(process, {
+              processName: process.dicMaterialName,
+            })
+          })
           items.materials.forEach((material: any) => {
             Object.assign(material, {
               processName: material.dicMaterialName,
-            });
-          });
-        });
-        this.dataset = data;
-      });
+            })
+          })
+          group = [
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Сырье',
+              group: [...items.materials],
+              key: 'material',
+            },
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Подпроцессы',
+              group: [...items.processes],
+              key: 'processes',
+            },
+          ]
+          Object.assign(items, { group })
+        })
+         this.dataset = data
+      })
   }
-  addGridService(data: any) {
-    this.angularGrid.gridService.addItem(
-      { ...data },
-      {
-        highlightRow: false,
+
+  onCellClicked(e: Event, args: OnEventArgs) {
+    if (!this.editMode) {
+      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+        args,
+      )
+      const { id } = metadata.dataContext
+      const { field } = metadata.columnDef
+      if (field !== 'processName') {
+        for (const item in metadata.dataContext) {
+          if (field === item) {
+            let controlValue = metadata.dataContext[item]
+            let newControlValue
+
+            if (typeof controlValue === 'object' && controlValue !== null) {
+              newControlValue = controlValue.name
+            } else if (controlValue === null) {
+              newControlValue = controlValue
+            } else newControlValue = controlValue.toString()
+
+            const comment: ReportCommentModel = {
+              id: 0,
+              note: '',
+              recordId: id.toString(),
+              controlId: field,
+              controlValue: newControlValue,
+              discriminator: 'calc',
+              isMark: true,
+              isActive: true,
+              reportId: this.cdrReportId,
+            }
+
+            this.sharedDataService.sendComment(comment)
+          }
+        }
       }
-    );
+    }
+  }
+  onCellChanged(e: Event, args: OnEventArgs) {
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
+
+    for (let item in metadata.dataContext) {
+      if (field === item) {
+        let nameField = item[0].toUpperCase() + item.slice(1)
+        let valueField = metadata.dataContext[item]
+        let newValueField
+        let discriminator = metadata.dataContext.discriminator
+        if (typeof valueField === 'object') {
+          return
+        } else newValueField = valueField.toString()
+
+        const data = {
+          id,
+          nameField,
+          valueField: newValueField,
+          discriminator,
+        }
+
+        this.actualEmissionService.addActualEmission(data).subscribe((res) => {
+          console.log(res)
+
+          this.refreshList(this.cdrReportId)
+        })
+      }
+    }
   }
   prepareGrid() {
     this.columnDefinitions = [
@@ -103,21 +209,16 @@ export class ReportActualEmissionComponent implements OnInit {
         field: 'carbonDioxide',
         filterable: true,
         sortable: true,
-        type: FieldType.string,
-        editor: {
-          model: Editors.longText,
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'carbonDioxide',
         },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const carbonDioxide = args.dataContext.carbonDioxide;
-          const data = {
-            id,
-            nameField: 'CarbonDioxide',
-            valueField: carbonDioxide,
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -127,19 +228,16 @@ export class ReportActualEmissionComponent implements OnInit {
         columnGroup: 'Объем выбросов метана',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const methaneEmissionsTon = args.dataContext.methaneEmissionsTon;
-          const data = {
-            id,
-            nameField: 'MethaneEmissionsTon',
-            valueField: methaneEmissionsTon.toString(),
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'methaneEmissionsTon',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -149,19 +247,16 @@ export class ReportActualEmissionComponent implements OnInit {
         columnGroup: 'Объем выбросов метана',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const methaneEmissionsCo2 = args.dataContext.methaneEmissionsCo2;
-          const data = {
-            id,
-            nameField: 'MethaneEmissionsCo2',
-            valueField: methaneEmissionsCo2.toString(),
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'methaneEmissionsCo2',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
 
@@ -172,19 +267,16 @@ export class ReportActualEmissionComponent implements OnInit {
         columnGroup: 'Объем выбросов закиси азота',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const nitrousOxideTon = args.dataContext.nitrousOxideTon;
-          const data = {
-            id,
-            nameField: 'NitrousOxideTon',
-            valueField: nitrousOxideTon.toString(),
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'nitrousOxideTon',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -194,19 +286,16 @@ export class ReportActualEmissionComponent implements OnInit {
         columnGroup: 'Объем выбросов закиси азота',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const nitrousOxideCo2 = args.dataContext.nitrousOxideCo2;
-          const data = {
-            id,
-            nameField: 'NitrousOxideCo2',
-            valueField: nitrousOxideCo2.toString(),
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'nitrousOxideCo2',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -216,19 +305,16 @@ export class ReportActualEmissionComponent implements OnInit {
         columnGroup: 'Объем выбросов перфторуглеродов',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const perfluorocarbonTon = args.dataContext.perfluorocarbonTon;
-          const data = {
-            id,
-            nameField: 'PerfluorocarbonTon',
-            valueField: perfluorocarbonTon.toString(),
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'perfluorocarbonTon',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -239,19 +325,16 @@ export class ReportActualEmissionComponent implements OnInit {
 
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const perfluorocarbonCo2 = args.dataContext.perfluorocarbonCo2;
-          const data = {
-            id,
-            nameField: 'PerfluorocarbonCo2',
-            valueField: perfluorocarbonCo2.toString(),
-          };
-          this.actualEmissionService
-            .addActualEmission(data)
-            .subscribe((res) => this.refreshList(this.actualEmissionId));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [Formatters.complexObject],
+          complexFieldLabel: 'perfluorocarbonCo2',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
 
@@ -262,7 +345,7 @@ export class ReportActualEmissionComponent implements OnInit {
         filterable: true,
         sortable: true,
       },
-    ];
+    ]
 
     this.gridOptions = {
       autoResize: {
@@ -288,11 +371,14 @@ export class ReportActualEmissionComponent implements OnInit {
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       treeDataOptions: {
         columnId: 'processName',
-        childrenPropName: 'materials',
-        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
-
-        autoApproveParentItemWhenTreeColumnIsValid:
-          this.isAutoApproveParentItemWhenTreeColumnIsValid,
+        childrenPropName: 'group',
+        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering,
+        autoApproveParentItemWhenTreeColumnIsValid: this
+          .isAutoApproveParentItemWhenTreeColumnIsValid,
+        initialSort: {
+          columnId: 'processName',
+          direction: 'DESC',
+        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
@@ -300,12 +386,12 @@ export class ReportActualEmissionComponent implements OnInit {
 
       // change header/cell row height for salesforce theme
       headerRowHeight: 45,
-      rowHeight: 45,
+      rowHeight: 50,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
       presets: {
-        treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
+        treeData: { toggledItems: [{ itemId: 1, isCollapsed: true }] },
       },
       // use Material Design SVG icons
       contextMenu: {
@@ -335,24 +421,6 @@ export class ReportActualEmissionComponent implements OnInit {
         iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
         iconColumnHideCommand: 'mdi mdi-close',
       },
-    };
-  }
-  renderAngularComponent(
-    cellNode: HTMLElement,
-    row: number,
-    dataContext: any,
-    colDef: Column
-  ) {
-    if (colDef.params.component) {
-      const componentOutput = this.angularUtilService.createAngularComponent(
-        colDef.params.component
-      );
-      Object.assign(componentOutput.componentRef.instance, {
-        item: dataContext,
-      });
-
-      // use a delay to make sure Angular ran at least a full cycle and make sure it finished rendering the Component
-      setTimeout(() => $(cellNode).empty().html(componentOutput.domElement));
     }
   }
 }
