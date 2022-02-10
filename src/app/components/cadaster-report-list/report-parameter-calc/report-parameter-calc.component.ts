@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewEncapsulation } from '@angular/core'
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -10,25 +10,23 @@ import {
   GridOption,
   OnEventArgs,
   SlickGrid,
-} from 'angular-slickgrid';
-import { ParameterCalc } from 'src/app/models/parameter-calc.model';
-import { ParameterCalcService } from 'src/app/services/parameter-calc.service';
-import { ActivatedRoute } from '@angular/router';
-import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
-import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
-import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter';
-import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { ReportCommentService } from 'src/app/services/report-comment.service';
-import { ReportCommentModel } from 'src/app/models/report-comment.model';
-import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component';
-import { NotificationService } from 'src/app/services/notification.service';
-import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
-import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
-import { ReportSharedService } from 'src/app/services/report-shared.service';
+} from 'angular-slickgrid'
+import { ParameterCalc } from 'src/app/models/parameter-calc.model'
+import { ParameterCalcService } from 'src/app/services/parameter-calc.service'
+import { ActivatedRoute } from '@angular/router'
+import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select'
+import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component'
+import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter'
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
+import { MatDialog } from '@angular/material/dialog'
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin'
+import { ReportCommentService } from 'src/app/services/report-comment.service'
+import { ReportCommentModel } from 'src/app/models/report-comment.model'
+import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component'
+import { NotificationService } from 'src/app/services/notification.service'
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
+import { ReportSharedService } from 'src/app/services/report-shared.service'
 
 @Component({
   selector: 'app-report-parameter-calc',
@@ -37,43 +35,54 @@ import { ReportSharedService } from 'src/app/services/report-shared.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class ReportParameterCalcComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: ParameterCalc[] = [];
-  gridObj: any;
-  dataViewObj: any;
-  isExcludingChildWhenFiltering = false;
-  isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  dicUnitList: any[] = [];
-  cdrReportId: number = 2;
-  dialogRef: any;
-  commentList: ReportCommentModel[] = [];
-  editMode: boolean = false;
-  comments: any[] = [];
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: ParameterCalc[] = []
+  gridObj: any
+  dataViewObj: any
+  isExcludingChildWhenFiltering = false
+  isAutoApproveParentItemWhenTreeColumnIsValid = true
+  dicUnitList: any[] = []
+  cdrReportId: number = 2
+  dialogRef: any
+  commentList: ReportCommentModel[] = []
+  editMode: boolean = false
+  comments: any[] = []
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
 
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header';
-      const item = this.dataViewObj.getItem(row);
-      if (item.__hasChildren) {
+      const newCssClass = 'inactive__header'
+      const materialClass = 'sub__header-material'
+      const processClass = 'sub__header-process'
+
+      const item = this.dataViewObj.getItem(row)
+
+      if (item.__hasChildren && item.__treeLevel === 0) {
         return {
           cssClasses: newCssClass,
-        };
-      }
-      return '';
-    };
+        }
+      } else if (item.key == 'material') {
+        return {
+          cssClasses: materialClass,
+        }
+      } else if (item.key == 'processes') {
+        return {
+          cssClasses: processClass,
+        }
+      } else return ''
+    }
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (!args.item.__hasChildren && !this.editMode) {
-        return true;
+        return true
       }
-      return false;
-    });
+      return false
+    })
   }
 
   constructor(
@@ -84,24 +93,23 @@ export class ReportParameterCalcComponent implements OnInit {
     private commentService: ReportCommentService,
     private notificationService: NotificationService,
     private sharedDataService: ReportSharedService,
-    private render: Renderer2
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.getCommentList(this.cdrReportId);
+    this.getCommentList(this.cdrReportId)
     this.activatedRoute.data.subscribe(
-      (res: any) => (this.dicUnitList = res.dicUnit)
-    );
-    this.refreshList(2);
-    this.prepareGrid();
+      (res: any) => (this.dicUnitList = res.dicUnit),
+    )
+    this.refreshList(2)
+    this.prepareGrid()
   }
 
   getCommentList(cdrReportId: number = 2): void {
     this.commentService
       .getReportCommentList(cdrReportId, 'calc')
       .subscribe((data: any) => {
-        this.commentList = data;
-      });
+        this.commentList = data
+      })
   }
 
   parameterCalcFormatter: Formatter = (
@@ -110,32 +118,38 @@ export class ReportParameterCalcComponent implements OnInit {
     value: any,
     columnDef: Column,
     dataContext: any,
-    grid?: any
+    grid?: any,
   ) => {
-    const { id } = dataContext;
-    const { field } = columnDef;
+    const { id } = dataContext
+    const { field } = columnDef
 
     const res = this.commentList.find((comment) => {
-      return comment.recordId === id.toString() && comment.controlId === field;
-    });
+      return comment.recordId === id.toString() && comment.controlId === field
+    })
 
     return {
       addClasses: res ? 'border' : '',
-      text: value,
-    };
-  };
+      text: value ? value : '',
+    }
+  }
 
   goToCadasterReports(id: number) {
-    this.cdrReportId = id;
-    this.getCommentList();
-    this.refreshList(id);
+    this.cdrReportId = id
+    this.getCommentList()
+    this.refreshList(id)
   }
 
   refreshList(reportId: number) {
     this.parameterCalcService
       .getParameterCalcById(reportId)
       .subscribe((data) => {
+        let group: any[] = []
         data.forEach((items) => {
+          items.processes.forEach((process: any) => {
+            Object.assign(process, {
+              processName: process.dicMaterialName,
+            })
+          })
           items.materials.forEach((material: any) => {
             Object.assign(material, {
               processName: material.dicMaterialName,
@@ -143,33 +157,46 @@ export class ReportParameterCalcComponent implements OnInit {
                 id: material.paramCalcUnitId,
                 name: material.paramCalcUnitName,
               },
-            });
-          });
-        });
-        this.dataset = data;
-      });
+            })
+          })
+          group = [
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Сырье',
+              group: [...items.materials],
+              key: 'material',
+            },
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Подпроцессы',
+              group: [...items.processes],
+              key: 'processes',
+            },
+          ]
+          Object.assign(items, { group })
+        })
+        this.dataset = data
+      })
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
     if (!this.editMode) {
-      const metadata =
-        this.angularGrid.gridService.getColumnFromEventArguments(args);
-      const { id } = metadata.dataContext;
-      const { field } = metadata.columnDef;
+      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+        args,
+      )
+      const { id } = metadata.dataContext
+      const { field } = metadata.columnDef
       if (field !== 'processName') {
         for (const item in metadata.dataContext) {
           if (field === item) {
-
-            let controlValue = metadata.dataContext[item];
-            let newControlValue;
+            let controlValue = metadata.dataContext[item]
+            let newControlValue
 
             if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name;
-
+              newControlValue = controlValue.name
             } else if (controlValue === null) {
-
-              newControlValue = controlValue;
-            } else newControlValue = controlValue.toString();
+              newControlValue = controlValue
+            } else newControlValue = controlValue.toString()
 
             const comment: ReportCommentModel = {
               id: 0,
@@ -181,9 +208,9 @@ export class ReportParameterCalcComponent implements OnInit {
               isMark: true,
               isActive: true,
               reportId: this.cdrReportId,
-            };
+            }
 
-            this.sharedDataService.sendComment(comment);
+            this.sharedDataService.sendComment(comment)
           }
         }
       }
@@ -191,38 +218,39 @@ export class ReportParameterCalcComponent implements OnInit {
   }
 
   onCellChanged(e: Event, args: OnEventArgs) {
-    const metadata =
-      this.angularGrid.gridService.getColumnFromEventArguments(args);
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
 
-    const { id } = metadata.dataContext;
-    const { field } = metadata.columnDef;
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
 
     for (let item in metadata.dataContext) {
       if (field === item) {
-        let nameField = item[0].toUpperCase() + item.slice(1);
-        let valueField = metadata.dataContext[item];
-        let newValueField;
+        let nameField = item[0].toUpperCase() + item.slice(1)
+        let valueField = metadata.dataContext[item]
+        let newValueField
 
         if (typeof valueField === 'object') {
-          return;
-        } else newValueField = valueField.toString();
+          return
+        } else newValueField = valueField.toString()
 
         const data = {
           id,
           nameField,
           valueField: newValueField,
-        };
+        }
 
         this.parameterCalcService
           .addParameterCalc(data)
           .subscribe((result: any) => {
             result.isSuccess
               ? this.notificationService.success(
-                '“Ваши данные сохранены”',
-                'Done'
-              )
-              : this.notificationService.error(`${result.message}`, 'Done');
-          });
+                  '“Ваши данные сохранены”',
+                  'Done',
+                )
+              : this.notificationService.error(`${result.message}`, 'Done')
+          })
       }
     }
   }
@@ -234,7 +262,7 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Наименование производственного процесса',
         field: 'processName',
         type: FieldType.string,
-        width: 120,
+        width: 150,
         formatter: reportCadasterTreeFormatter,
         filterable: true,
         sortable: true,
@@ -242,7 +270,8 @@ export class ReportParameterCalcComponent implements OnInit {
 
       {
         id: 'q4',
-        name: 'Потеря тепла вследствии механической неполнотой сгорания (q4), %',
+        name:
+          'Потеря тепла вследствии механической неполнотой сгорания (q4), %',
         field: 'q4',
         columnGroup: 'Вариант А',
         formatter: Formatters.multiple,
@@ -259,28 +288,28 @@ export class ReportParameterCalcComponent implements OnInit {
         exportWithFormatter: true,
         filterable: true,
         sortable: true,
-        // customTooltip: {
-        //   position: 'right-align',
-        //   formatter: () =>
-        //     `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
-        //   asyncProcess: (
-        //     row: number,
-        //     cell: number,
-        //     value: any,
-        //     column: Column,
-        //     dataContext: any
-        //   ) => {
-        //     const id = dataContext.id.toString();
-        //     let item = this.commentList.find(
-        //       (comment: any) =>
-        //         comment.recordId === id && comment.controlId === 'q4'
-        //     );
-        //     return new Promise((resolve, reject) => {
-        //       item?.note ? resolve(item) : resolve({});
-        //     });
-        //   },
-        //   asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
-        // },
+        customTooltip: {
+          position: 'right-align',
+          formatter: () =>
+            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+          asyncProcess: (
+            row: number,
+            cell: number,
+            value: any,
+            column: Column,
+            dataContext: any,
+          ) => {
+            const id = dataContext.id.toString()
+            let item = this.commentList.find(
+              (comment: any) =>
+                comment.recordId === id && comment.controlId === 'q4',
+            )
+            return new Promise((resolve, reject) => {
+              item?.note ? resolve(item) : resolve({})
+            })
+          },
+          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
+        },
       },
 
       {
@@ -293,7 +322,7 @@ export class ReportParameterCalcComponent implements OnInit {
         formatter: Formatters.multiple,
         params: {
           formatters: [this.parameterCalcFormatter, Formatters.complexObject],
-          complexFieldLabel: 'q4',
+          complexFieldLabel: 'q3',
         },
         editor: {
           model: CustomInputEditor,
@@ -310,16 +339,16 @@ export class ReportParameterCalcComponent implements OnInit {
             cell: number,
             value: any,
             column: Column,
-            dataContext: any
+            dataContext: any,
           ) => {
-            const id = dataContext.id.toString();
+            const id = dataContext.id.toString()
             let item = this.commentList.find(
               (comment: any) =>
-                comment.recordId === id && comment.controlId === 'q3'
-            );
+                comment.recordId === id && comment.controlId === 'q3',
+            )
             return new Promise((resolve, reject) => {
-              item?.note ? resolve(item) : resolve({});
-            });
+              item?.note ? resolve(item) : resolve({})
+            })
           },
           asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
         },
@@ -330,11 +359,19 @@ export class ReportParameterCalcComponent implements OnInit {
         name: 'Содержание углерода в шлаке',
         field: 'slagCarbon',
         columnGroup: 'Вариант Б',
-        formatter: this.parameterCalcFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
+          complexFieldLabel: 'slagCarbon',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
         customTooltip: {
           position: 'right-align',
           formatter: () =>
@@ -344,16 +381,16 @@ export class ReportParameterCalcComponent implements OnInit {
             cell: number,
             value: any,
             column: Column,
-            dataContext: any
+            dataContext: any,
           ) => {
-            const id = dataContext.id.toString();
+            const id = dataContext.id.toString()
             let item = this.commentList.find(
               (comment: any) =>
-                comment.recordId === id && comment.controlId === 'q3'
-            );
+                comment.recordId === id && comment.controlId === 'q3',
+            )
             return new Promise((resolve, reject) => {
-              item?.note ? resolve(item) : resolve({});
-            });
+              item?.note ? resolve(item) : resolve({})
+            })
           },
           asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
         },
@@ -379,25 +416,25 @@ export class ReportParameterCalcComponent implements OnInit {
         },
         exportWithFormatter: true,
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const dicUnit = args.dataContext.dicUnit;
+          const id = args.dataContext.id
+          const dicUnit = args.dataContext.dicUnit
 
           const data = {
             id,
             nameField: 'ParamCalcUnitId',
             valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
-          };
+          }
 
           this.parameterCalcService
             .addParameterCalc(data)
             .subscribe((result) => {
               result.isSuccess
                 ? this.notificationService.success(
-                  '“Ваши данные сохранены”',
-                  'Done'
-                )
-                : this.notificationService.error(`${result.message}`, 'Done');
-            });
+                    '“Ваши данные сохранены”',
+                    'Done',
+                  )
+                : this.notificationService.error(`${result.message}`, 'Done')
+            })
         },
       },
 
@@ -408,8 +445,17 @@ export class ReportParameterCalcComponent implements OnInit {
         columnGroup: 'Вариант Б',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
+          complexFieldLabel: 'slagAmount',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
 
       {
@@ -419,10 +465,19 @@ export class ReportParameterCalcComponent implements OnInit {
         columnGroup: 'Вариант Б',
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
+          complexFieldLabel: 'fuelConsumption',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
-    ];
+    ]
 
     this.gridOptions = {
       autoResize: {
@@ -448,10 +503,11 @@ export class ReportParameterCalcComponent implements OnInit {
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       treeDataOptions: {
         columnId: 'processName',
-        childrenPropName: 'materials',
+        childrenPropName: 'group',
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
-        autoApproveParentItemWhenTreeColumnIsValid:
-          this.isAutoApproveParentItemWhenTreeColumnIsValid,
+        autoApproveParentItemWhenTreeColumnIsValid: this
+          .isAutoApproveParentItemWhenTreeColumnIsValid,
+      
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
@@ -495,7 +551,7 @@ export class ReportParameterCalcComponent implements OnInit {
         iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
         iconColumnHideCommand: 'mdi mdi-close',
       },
-    };
+    }
   }
 
   tooltipTaskAsyncFormatter(
@@ -504,12 +560,12 @@ export class ReportParameterCalcComponent implements OnInit {
     value: any,
     column: Column,
     dataContext: any,
-    grid: SlickGrid
+    grid: SlickGrid,
   ) {
     const out = `
       <div class="" style="width:500px"> ${dataContext.__params.note}</div>
-     `;
-    if (dataContext.__params.note) return out;
-    return;
+     `
+    if (dataContext.__params.note) return out
+    return
   }
 }
