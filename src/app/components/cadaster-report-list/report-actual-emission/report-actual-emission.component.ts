@@ -5,6 +5,7 @@ import {
   Column,
   Editors,
   FieldType,
+  Formatter,
   Formatters,
   GridOption,
   OnEventArgs,
@@ -43,7 +44,6 @@ export class ReportActualEmissionComponent implements OnInit {
       const processClass = 'sub__header-process'
 
       const item = this.dataViewObj.getItem(row)
-      console.log(item.key == 'material')
 
       if (item.__hasChildren && item.__treeLevel === 0) {
         return {
@@ -58,7 +58,7 @@ export class ReportActualEmissionComponent implements OnInit {
           cssClasses: processClass,
         }
       } else return ''
-    };
+    }
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
@@ -113,10 +113,10 @@ export class ReportActualEmissionComponent implements OnInit {
               group: [...items.processes],
               key: 'processes',
             },
-          ]
+          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
           Object.assign(items, { group })
         })
-         this.dataset = data
+        this.dataset = data
       })
   }
 
@@ -157,6 +157,7 @@ export class ReportActualEmissionComponent implements OnInit {
       }
     }
   }
+
   onCellChanged(e: Event, args: OnEventArgs) {
     const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
       args,
@@ -190,6 +191,7 @@ export class ReportActualEmissionComponent implements OnInit {
       }
     }
   }
+
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -197,7 +199,7 @@ export class ReportActualEmissionComponent implements OnInit {
         name: 'Наименование процесса',
         field: 'processName',
         type: FieldType.string,
-        width: 120,
+        width: 170,
         formatter: reportCadasterTreeFormatter,
         filterable: true,
         sortable: true,

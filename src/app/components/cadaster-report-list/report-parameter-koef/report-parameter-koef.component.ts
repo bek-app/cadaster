@@ -1,30 +1,26 @@
- import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core'
 import {
   AngularGridInstance,
   AngularUtilService,
   Column,
-  Editors,
   FieldType,
+  Formatter,
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { ActivatedRoute } from '@angular/router';
-import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
-import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
-import { ParameterKoefModel } from 'src/app/models/parameter-koef.model';
-import { ParameterKoefService } from 'src/app/services/parameter-koef.service';
-import {
-  koefCaseBurningFormatter,
-  koefCh4Formatter,
-  koefCo2Formatter,
-  koefLowerCalorificFormatter,
-  koefN2OFormatter,
-  koefOperatingWeightFormatter,
-  koefPerfluorocarbonsFormatter,
-  koefVolumeFormatter,
-} from '../../formatters/parameterKoefFormatter';
-import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
+} from 'angular-slickgrid'
+import { ActivatedRoute } from '@angular/router'
+import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select'
+import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component'
+import { ParameterKoefModel } from 'src/app/models/parameter-koef.model'
+import { ParameterKoefService } from 'src/app/services/parameter-koef.service'
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
+import { ReportSharedService } from 'src/app/services/report-shared.service'
+import { ReportCommentModel } from 'src/app/models/report-comment.model'
+import { NotificationService } from 'src/app/services/notification.service'
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+import { ReportCommentService } from 'src/app/services/report-comment.service'
 @Component({
   selector: 'app-report-parameter-koef',
   templateUrl: './report-parameter-koef.component.html',
@@ -32,61 +28,87 @@ import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTree
   encapsulation: ViewEncapsulation.None,
 })
 export class ReportParameterKoefComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: ParameterKoefModel[] = [];
-  cadasterId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  isExcludingChildWhenFiltering = false;
-  isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  dicUnitList: any[] = [];
-  private _commandQueue: any[] = [];
-
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: ParameterKoefModel[] = []
+  cadasterId!: number
+  gridObj: any
+  dataViewObj: any
+  isExcludingChildWhenFiltering = false
+  isAutoApproveParentItemWhenTreeColumnIsValid = true
+  dicUnitList: any[] = []
+  cdrReportId: number = 2
+  editMode = false
+  commentList: any[] = []
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header';
-      const item = this.dataViewObj.getItem(row);
-      if (item.__hasChildren) {
+      const newCssClass = 'inactive__header'
+      const materialClass = 'sub__header-material'
+      const processClass = 'sub__header-process'
+
+      const item = this.dataViewObj.getItem(row)
+
+      if (item.__hasChildren && item.__treeLevel === 0) {
         return {
           cssClasses: newCssClass,
-        };
-      } else {
-        return '';
-      }
-    };
+        }
+      } else if (item.key == 'material') {
+        return {
+          cssClasses: materialClass,
+        }
+      } else if (item.key == 'processes') {
+        return {
+          cssClasses: processClass,
+        }
+      } else return ''
+    }
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
-        return false;
+        return false
       }
-      return true;
-    });
+      return true
+    })
   }
   constructor(
     private parameterKoefService: ParameterKoefService,
     private activatedRoute: ActivatedRoute,
-    private angularUtilService: AngularUtilService
+    private angularUtilService: AngularUtilService,
+    private sharedDataService: ReportSharedService,
+    private notificationService: NotificationService,
+    private commentService: ReportCommentService,
   ) {}
 
   ngOnInit(): void {
+    this.getCommentList()
     this.activatedRoute.data.subscribe((response: any) => {
-      this.dicUnitList = response.dicUnit;
-    });
-    this.refreshList(4);
-    this.prepareGrid();
+      this.dicUnitList = response.dicUnit
+    })
+    this.refreshList(2)
+    this.prepareGrid()
+  }
+  getCommentList(): void {
+    this.commentService
+      .getReportCommentList((this.cdrReportId = 2), 'calc')
+      .subscribe((data: any) => {
+        this.commentList = data
+      })
   }
 
   goToCadasterReports(id: number) {
-    this.refreshList(id);
+    this.cdrReportId = id
+    this.refreshList(id)
   }
+
   refreshList(reportId: number) {
     this.parameterKoefService
       .getParameterKoefById(reportId)
       .subscribe((data) => {
+        let group: any[] = []
+
         data.forEach((items) => {
           items.materials.forEach((material: any) => {
             Object.assign(material, {
@@ -123,27 +145,117 @@ export class ReportParameterKoefComponent implements OnInit {
                 id: material.koefN2OUnitId,
                 name: material.koefN2OUnitName,
               },
-              // Перфторуглероды
               koefPerfluorocarbonsUnit: {
                 id: material.koefPerfluorocarbonsUnitId,
                 name: material.koefPerfluorocarbonsUnitName,
               },
-            });
-          });
-        });
-        console.log(data);
+            })
+          })
+          items.processes.forEach((process: any) => {
+            Object.assign(process, {
+              processName: process.dicMaterialName,
+            })
+          })
 
-        this.dataset = data;
-      });
+          group = [
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Сырье',
+              group: [...items.materials],
+              key: 'material',
+            },
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Подпроцессы',
+              group: [...items.processes],
+              key: 'processes',
+            },
+          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
+          Object.assign(items, { group })
+        })
+
+        this.dataset = data
+      })
   }
-  addGridService(data: any) {
-    this.angularGrid.gridService.addItem(
-      { ...data },
-      {
-        highlightRow: false,
+
+  onCellClicked(e: Event, args: OnEventArgs) {
+    if (!this.editMode) {
+      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+        args,
+      )
+      const { id } = metadata.dataContext
+      const { field } = metadata.columnDef
+
+      if (field !== 'processName') {
+        for (const item in metadata.dataContext) {
+          if (field === item) {
+            let controlValue = metadata.dataContext[item]
+            let newControlValue
+
+            if (typeof controlValue === 'object' && controlValue !== null) {
+              newControlValue = controlValue.name
+            } else if (controlValue === null) {
+              newControlValue = controlValue
+            } else newControlValue = controlValue.toString()
+
+            const comment: ReportCommentModel = {
+              id: 0,
+              note: '',
+              recordId: id.toString(),
+              controlId: field,
+              controlValue: newControlValue,
+              discriminator: 'calc',
+              isMark: true,
+              isActive: true,
+              reportId: this.cdrReportId,
+            }
+            this.sharedDataService.sendComment(comment)
+          }
+        }
       }
-    );
+    }
   }
+
+  onCellChanged(e: Event, args: OnEventArgs) {
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
+
+    for (let item in metadata.dataContext) {
+      if (field === item) {
+        let nameField = item[0].toUpperCase() + item.slice(1)
+        let valueField = metadata.dataContext[item]
+        let newValueField
+        let discriminator = metadata.dataContext.discriminator
+
+        if (typeof valueField === 'object') {
+          return
+        } else newValueField = valueField.toString()
+
+        const data = {
+          id,
+          nameField,
+          valueField: newValueField,
+          discriminator,
+        }
+
+        this.parameterKoefService
+          .addParameterKoef(data)
+          .subscribe((result: any) => {
+            result.isSuccess
+              ? this.notificationService.success(
+                  '“Ваши данные сохранены”',
+                  'Done',
+                )
+              : this.notificationService.error(`${result.message}`, 'Done')
+          })
+      }
+    }
+  }
+
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -151,10 +263,9 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Наименование производственного процесса',
         field: 'processName',
         type: FieldType.string,
-        width: 120,
+        width: 170,
         formatter: reportCadasterTreeFormatter,
         filterable: true,
-        sortable: true,
       },
 
       /// Фактический объем
@@ -163,22 +274,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Фактический объем',
         field: 'koefVolume',
         columnGroup: 'Наименование сырья',
-        formatter: koefVolumeFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefVolume = args.dataContext.koefVolume;
-          const data = {
-            id,
-            nameField: 'KoefVolume',
-            valueField: koefVolume.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefVolume',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -201,16 +308,16 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const dicUnit = args.dataContext.dicUnit;
+          const id = args.dataContext.id
+          const dicUnit = args.dataContext.dicUnit
           const data = {
             id,
             nameField: 'DicUnitId',
             valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -220,22 +327,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Содержание углерода  ',
         field: 'koefOperatingWeight',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefOperatingWeightFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefOperatingWeight = args.dataContext.koefOperatingWeight;
-          const data = {
-            id,
-            nameField: 'KoefOperatingWeight',
-            valueField: koefOperatingWeight.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefOperatingWeight',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -258,9 +361,9 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
+          const id = args.dataContext.id
           const koefOperatingWeightUnit =
-            args.dataContext.koefOperatingWeightUnit;
+            args.dataContext.koefOperatingWeightUnit
           const data = {
             id,
             nameField: 'KoefOperatingWeightUnitId',
@@ -268,11 +371,11 @@ export class ReportParameterKoefComponent implements OnInit {
               koefOperatingWeightUnit.id != null
                 ? koefOperatingWeightUnit.id.toString()
                 : koefOperatingWeightUnit.id,
-          };
+          }
 
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -282,22 +385,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Коэффициент низшей теплоты сгорания',
         field: 'koefLowerCalorific',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefLowerCalorificFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefLowerCalorific = args.dataContext.koefLowerCalorific;
-          const data = {
-            id,
-            nameField: 'KoefLowerCalorific',
-            valueField: koefLowerCalorific.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefLowerCalorific',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -320,9 +419,8 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefLowerCalorificUnit =
-            args.dataContext.koefLowerCalorificUnit;
+          const id = args.dataContext.id
+          const koefLowerCalorificUnit = args.dataContext.koefLowerCalorificUnit
           const data = {
             id,
             nameField: 'KoefLowerCalorificUnitId',
@@ -330,10 +428,10 @@ export class ReportParameterKoefComponent implements OnInit {
               koefLowerCalorificUnit.id != null
                 ? koefLowerCalorificUnit.id.toString()
                 : koefLowerCalorificUnit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -343,24 +441,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Коэффициент окисления',
         field: 'koefCaseBurning',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefCaseBurningFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefCaseBurning = args.dataContext.koefCaseBurning;
-          const data = {
-            id,
-            nameField: 'KoefCaseBurning',
-            valueField: koefCaseBurning.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {
-              this.addGridService(args.dataContext);
-            });
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefCaseBurning',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -383,8 +475,8 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefCaseBurningUnit = args.dataContext.koefCaseBurningUnit;
+          const id = args.dataContext.id
+          const koefCaseBurningUnit = args.dataContext.koefCaseBurningUnit
           const data = {
             id,
             nameField: 'KoefCaseBurningUnitId',
@@ -392,10 +484,10 @@ export class ReportParameterKoefComponent implements OnInit {
               koefCaseBurningUnit.id != null
                 ? koefCaseBurningUnit.id.toString()
                 : koefCaseBurningUnit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -405,22 +497,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Двуокись углерода (СО2)',
         field: 'koefCo2',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefCo2Formatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefCo2 = args.dataContext.koefCo2;
-          const data = {
-            id,
-            nameField: 'KoefCo2',
-            valueField: koefCo2.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefCo2',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -443,8 +531,8 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefCo2Unit = args.dataContext.koefCo2Unit;
+          const id = args.dataContext.id
+          const koefCo2Unit = args.dataContext.koefCo2Unit
           const data = {
             id,
             nameField: 'KoefCo2UnitId',
@@ -452,10 +540,10 @@ export class ReportParameterKoefComponent implements OnInit {
               koefCo2Unit.id != null
                 ? koefCo2Unit.id.toString()
                 : koefCo2Unit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -465,22 +553,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Метан (СН4)',
         field: 'koefCh4',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefCh4Formatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefCh4 = args.dataContext.koefCh4;
-          const data = {
-            id,
-            nameField: 'KoefCh4',
-            valueField: koefCh4.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefCh4',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -503,8 +587,8 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefCh4Unit = args.dataContext.koefCh4Unit;
+          const id = args.dataContext.id
+          const koefCh4Unit = args.dataContext.koefCh4Unit
           const data = {
             id,
             nameField: 'KoefCh4UnitId',
@@ -512,10 +596,10 @@ export class ReportParameterKoefComponent implements OnInit {
               koefCh4Unit.id != null
                 ? koefCh4Unit.id.toString()
                 : koefCh4Unit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -525,22 +609,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Закиси азота (N2O)',
         field: 'koefN2O',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefN2OFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefN2O = args.dataContext.koefN2O;
-          const data = {
-            id,
-            nameField: 'KoefN2O',
-            valueField: koefN2O.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefN2O',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -563,8 +643,8 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefN2OUnit = args.dataContext.koefN2OUnit;
+          const id = args.dataContext.id
+          const koefN2OUnit = args.dataContext.koefN2OUnit
           const data = {
             id,
             nameField: 'KoefN2OUnitId',
@@ -572,10 +652,10 @@ export class ReportParameterKoefComponent implements OnInit {
               koefN2OUnit.id != null
                 ? koefN2OUnit.id.toString()
                 : koefN2OUnit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
 
@@ -585,22 +665,18 @@ export class ReportParameterKoefComponent implements OnInit {
         name: 'Перфторуглероды',
         field: 'koefPerfluorocarbons',
         columnGroup: 'Коэффициенты, использованные для расчетов',
-        formatter: koefPerfluorocarbonsFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const koefPerfluorocarbons = args.dataContext.koefPerfluorocarbons;
-          const data = {
-            id,
-            nameField: 'KoefPerfluorocarbons',
-            valueField: koefPerfluorocarbons.toString(),
-          };
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.koefCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'koefPerfluorocarbons',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
         },
       },
       {
@@ -623,9 +699,9 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
+          const id = args.dataContext.id
           const koefPerfluorocarbonsUnit =
-            args.dataContext.koefPerfluorocarbonsUnit;
+            args.dataContext.koefPerfluorocarbonsUnit
           const data = {
             id,
             nameField: 'KoefPerfluorocarbonsUnitId',
@@ -633,13 +709,13 @@ export class ReportParameterKoefComponent implements OnInit {
               koefPerfluorocarbonsUnit.id != null
                 ? koefPerfluorocarbonsUnit.id.toString()
                 : koefPerfluorocarbonsUnit.id,
-          };
+          }
           this.parameterKoefService
             .addParameterKoef(data)
-            .subscribe((res: any) => this.addGridService(args.dataContext));
+            .subscribe((res: any) => {})
         },
       },
-    ];
+    ]
 
     this.gridOptions = {
       autoResize: {
@@ -665,18 +741,22 @@ export class ReportParameterKoefComponent implements OnInit {
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       treeDataOptions: {
         columnId: 'processName',
-        childrenPropName: 'materials',
+        childrenPropName: 'group',
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
 
-        autoApproveParentItemWhenTreeColumnIsValid:
-          this.isAutoApproveParentItemWhenTreeColumnIsValid,
+        autoApproveParentItemWhenTreeColumnIsValid: this
+          .isAutoApproveParentItemWhenTreeColumnIsValid,
+          initialSort: {
+            columnId: 'processName',
+            direction: 'DESC',
+          },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
       // change header/cell row height for salesforce theme
       headerRowHeight: 45,
-      rowHeight: 45,
+      rowHeight: 50,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
@@ -711,6 +791,26 @@ export class ReportParameterKoefComponent implements OnInit {
         iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
         iconColumnHideCommand: 'mdi mdi-close',
       },
-    };
+    }
+  }
+  koefCommentFormatter: Formatter = (
+    row: number,
+    cell: number,
+    value: any,
+    columnDef: Column,
+    dataContext: any,
+    grid?: any,
+  ) => {
+    const { id } = dataContext
+    const { field } = columnDef
+
+    const res = this.commentList.find((comment) => {
+      return comment.recordId === id.toString() && comment.controlId === field
+    })
+
+    return {
+      addClasses: res ? 'border' : '',
+      text: value ? value : '',
+    }
   }
 }

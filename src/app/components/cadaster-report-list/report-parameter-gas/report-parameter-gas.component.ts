@@ -1,98 +1,106 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'
 import {
   AngularGridInstance,
   AngularUtilService,
   Column,
-  Editors,
   FieldType,
   Formatter,
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { ActivatedRoute } from '@angular/router';
-import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select';
-import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component';
-import { ParameterGasService } from 'src/app/services/parameter-gas.service';
-import { ParameterGasModel } from 'src/app/models/parameter-gas.model';
-import {
-  gasCh4Formatter,
-  gasN2OFormatter,
-} from '../../formatters/parameterGasFormatter';
-import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
-import { ReportCommentModel } from 'src/app/models/report-comment.model';
-import { MatDialog } from '@angular/material/dialog';
-import { ReportCommentService } from 'src/app/services/report-comment.service';
- import { NotificationService } from 'src/app/services/notification.service';
-import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component';
+} from 'angular-slickgrid'
+import { ActivatedRoute } from '@angular/router'
+import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select'
+import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component'
+import { ParameterGasService } from 'src/app/services/parameter-gas.service'
+import { ParameterGasModel } from 'src/app/models/parameter-gas.model'
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
+import { ReportCommentModel } from 'src/app/models/report-comment.model'
+import { ReportCommentService } from 'src/app/services/report-comment.service'
+import { NotificationService } from 'src/app/services/notification.service'
+import { ReportSharedService } from 'src/app/services/report-shared.service'
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
 @Component({
   selector: 'app-report-parameter-gas',
   templateUrl: './report-parameter-gas.component.html',
   styleUrls: ['./report-parameter-gas.component.css'],
 })
 export class ReportParameterGasComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: ParameterGasModel[] = [];
-  cadasterId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  isExcludingChildWhenFiltering = false;
-  isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  dicUnitList: any[] = [];
-  cdrReportId!: number;
-  dialogRef: any;
-  commentList: ReportCommentModel[] = [];
-  editMode: boolean = false;
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: ParameterGasModel[] = []
+  cadasterId!: number
+  gridObj: any
+  dataViewObj: any
+  isExcludingChildWhenFiltering = false
+  isAutoApproveParentItemWhenTreeColumnIsValid = true
+  dicUnitList: any[] = []
+  cdrReportId!: number
+  dialogRef: any
+  commentList: ReportCommentModel[] = []
+  editMode: boolean = false
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header';
-      const item = this.dataViewObj.getItem(row);
-      if (item.__hasChildren) {
+      const newCssClass = 'inactive__header'
+      const materialClass = 'sub__header-material'
+      const processClass = 'sub__header-process'
+
+      const item = this.dataViewObj.getItem(row)
+
+      if (item.__hasChildren && item.__treeLevel === 0) {
         return {
           cssClasses: newCssClass,
-        };
-      }
-      return '';
-    };
+        }
+      } else if (item.key == 'material') {
+        return {
+          cssClasses: materialClass,
+        }
+      } else if (item.key == 'processes') {
+        return {
+          cssClasses: processClass,
+        }
+      } else return ''
+    }
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (!args.item.__hasChildren && !this.editMode) {
-        return true;
+        return true
       }
-      return false;
-    });
+      return false
+    })
   }
   constructor(
     private parameterGasService: ParameterGasService,
     private activatedRoute: ActivatedRoute,
     private angularUtilService: AngularUtilService,
-    public dialog: MatDialog,
     private commentService: ReportCommentService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private sharedDataService: ReportSharedService,
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList();
+    this.getCommentList()
     this.activatedRoute.data.subscribe(
-      (res: any) => (this.dicUnitList = res.dicUnit)
-    );
-    this.refreshList(2);
-    this.prepareGrid();
+      (res: any) => (this.dicUnitList = res.dicUnit),
+    )
+    this.refreshList(2)
+    this.prepareGrid()
   }
 
   goToCadasterReports(id: number) {
-    this.cdrReportId = id;
-    this.refreshList(this.cdrReportId);
+    this.cdrReportId = id
+    this.refreshList(this.cdrReportId)
   }
 
   refreshList(cdrReportId: number) {
     this.parameterGasService
       .getParameterGasById(cdrReportId)
       .subscribe((data) => {
+        let group: any[] = []
         data.forEach((items) => {
           items.materials.forEach((material: any) => {
             Object.assign(material, {
@@ -105,19 +113,40 @@ export class ReportParameterGasComponent implements OnInit {
                 id: material.gasN2OUnitId,
                 name: material.gasN2OUnitName,
               },
-            });
-          });
-        });
-        this.dataset = data;
-      });
+            })
+          })
+          items.processes.forEach((process: any) => {
+            Object.assign(process, {
+              processName: process.dicMaterialName,
+            })
+          })
+
+          group = [
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Сырье',
+              group: [...items.materials],
+              key: 'material',
+            },
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Подпроцессы',
+              group: [...items.processes],
+              key: 'processes',
+            },
+          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
+          Object.assign(items, { group })
+        })
+        this.dataset = data
+      })
   }
 
   getCommentList(): void {
     this.commentService
       .getReportCommentList((this.cdrReportId = 2), 'calc')
       .subscribe((data: any) => {
-        this.commentList = data;
-      });
+        this.commentList = data
+      })
   }
 
   gasCommentFormatter: Formatter = (
@@ -126,59 +155,40 @@ export class ReportParameterGasComponent implements OnInit {
     value: any,
     columnDef: Column,
     dataContext: any,
-    grid?: any
+    grid?: any,
   ) => {
-    const { id } = dataContext;
-    const { field } = columnDef;
+    const { id } = dataContext
+    const { field } = columnDef
 
     const res = this.commentList.find((comment) => {
-      return comment.recordId === id.toString() && comment.controlId === field;
-    });
+      return comment.recordId === id.toString() && comment.controlId === field
+    })
 
     return {
       addClasses: res ? 'border border-danger' : '',
-      text: value,
-    };
-  };
-
-  openCommentDialog(comment: ReportCommentModel) {
-    this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
-      autoFocus: true,
-      minWidth: '400px',
-      width: '500px',
-      data: { ...comment },
-      backdropClass: 'dialog-bg-trans',
-      panelClass: 'my-dialog',
-    });
-
-    this.dialogRef.componentInstance.saveComment.subscribe((result: any) => {
-      !result.isError
-        ? this.notificationService.success('Successfully', 'Done')
-        : this.notificationService.error('Error', 'Done');
-
-      this.getCommentList();
-      this.refreshList(this.cdrReportId);
-    });
+      text: value ? value : '',
+    }
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
     if (!this.editMode) {
-      const metadata =
-        this.angularGrid.gridService.getColumnFromEventArguments(args);
-      const { id } = metadata.dataContext;
-      const { field } = metadata.columnDef;
+      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+        args,
+      )
+      const { id } = metadata.dataContext
+      const { field } = metadata.columnDef
 
       if (field !== 'processName') {
         for (const item in metadata.dataContext) {
           if (field === item) {
-            let controlValue = metadata.dataContext[item];
-            let newControlValue;
+            let controlValue = metadata.dataContext[item]
+            let newControlValue
 
             if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name;
+              newControlValue = controlValue.name
             } else if (controlValue === null) {
-              newControlValue = controlValue;
-            } else newControlValue = controlValue.toString();
+              newControlValue = controlValue
+            } else newControlValue = controlValue.toString()
 
             const comment: ReportCommentModel = {
               id: 0,
@@ -190,8 +200,8 @@ export class ReportParameterGasComponent implements OnInit {
               isMark: true,
               isActive: true,
               reportId: this.cdrReportId,
-            };
-            // this.openCommentDialog(comment);
+            }
+            this.sharedDataService.sendComment(comment)
           }
         }
       }
@@ -199,43 +209,47 @@ export class ReportParameterGasComponent implements OnInit {
   }
 
   onCellChanged(e: Event, args: OnEventArgs) {
-    const metadata =
-      this.angularGrid.gridService.getColumnFromEventArguments(args);
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
 
-    const { id } = metadata.dataContext;
-    const { field } = metadata.columnDef;
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
 
     for (let item in metadata.dataContext) {
       if (field === item) {
-        let nameField = item[0].toUpperCase() + item.slice(1);
-        let valueField = metadata.dataContext[item];
-        let newValueField;
+        let nameField = item[0].toUpperCase() + item.slice(1)
+        let valueField = metadata.dataContext[item]
+        let newValueField
+        let discriminator = metadata.dataContext.discriminator
 
         if (typeof valueField === 'object') {
-          return;
-        } else newValueField = valueField.toString();
+          return
+        } else newValueField = valueField.toString()
 
         const data = {
           id,
           nameField,
           valueField: newValueField,
-        };
+          discriminator,
+        }
 
         this.parameterGasService
           .addParameterGas(data)
           .subscribe((result: any) => {
-            console.log(result);
+            console.log(result)
 
             result.isSuccess
               ? this.notificationService.success(
                   '“Ваши данные сохранены”',
-                  'Done'
+                  'Done',
                 )
-              : this.notificationService.error(`${result.message}`, 'Done');
-          });
+              : this.notificationService.error(`${result.message}`, 'Done')
+          })
       }
     }
   }
+
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -255,11 +269,19 @@ export class ReportParameterGasComponent implements OnInit {
         name: 'Концентрация метана',
         field: 'gasCh4',
         columnGroup: 'Коэффициент выбросов',
-        formatter: this.gasCommentFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.gasCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'gasCh4',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
       {
         id: 'gasCh4Unit',
@@ -282,17 +304,17 @@ export class ReportParameterGasComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const gasCh4Unit = args.dataContext.gasCh4Unit;
+          const id = args.dataContext.id
+          const gasCh4Unit = args.dataContext.gasCh4Unit
           const data = {
             id,
             nameField: 'GasCh4UnitId',
             valueField:
               gasCh4Unit.id != null ? gasCh4Unit.id.toString() : gasCh4Unit.id,
-          };
+          }
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {})
         },
       },
 
@@ -302,11 +324,19 @@ export class ReportParameterGasComponent implements OnInit {
         name: 'Концентрация закиси азота',
         field: 'gasN2O',
         columnGroup: 'Коэффициент выбросов',
-        formatter: this.gasCommentFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.gasCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'gasN2O',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
       {
         id: 'gasN2OUnit',
@@ -329,17 +359,17 @@ export class ReportParameterGasComponent implements OnInit {
           },
         },
         onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const gasN2OUnit = args.dataContext.gasN2OUnit;
+          const id = args.dataContext.id
+          const gasN2OUnit = args.dataContext.gasN2OUnit
           const data = {
             id,
             nameField: 'GasN2OUnitId',
             valueField:
               gasN2OUnit.id != null ? gasN2OUnit.id.toString() : gasN2OUnit.id,
-          };
+          }
           this.parameterGasService
             .addParameterGas(data)
-            .subscribe((res: any) => {});
+            .subscribe((res: any) => {})
         },
       },
 
@@ -349,11 +379,19 @@ export class ReportParameterGasComponent implements OnInit {
         name: 'Концентрация кислорода (О2)',
         field: 'gasProcО2',
         columnGroup: 'Коэффициент выбросов',
-        formatter: this.gasCommentFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.gasCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'gasProcО2',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
 
       /// Коэффициент, учитывающий характер топлива
@@ -362,11 +400,19 @@ export class ReportParameterGasComponent implements OnInit {
         name: 'учитывающий характер топлива',
         field: 'gasKoeffFuelNature',
         columnGroup: 'Коэффициент выбросов',
-        formatter: this.gasCommentFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.gasCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'gasKoeffFuelNature',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
 
       /// Удельная масса загрязняющих веществ ,закись азота (N2O), кг/нм^3
@@ -375,11 +421,19 @@ export class ReportParameterGasComponent implements OnInit {
         name: 'Удельная масса загрязняющих веществ,закись азота (N2O), кг/нм^3',
         field: 'gasWeightN2O',
         columnGroup: 'Коэффициент выбросов',
-        formatter: this.gasCommentFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.gasCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'gasWeightN2O',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
 
       /// Удельная масса загрязняющих веществ, метан (CH4), кг/нм^3
@@ -388,13 +442,21 @@ export class ReportParameterGasComponent implements OnInit {
         name: 'Удельная масса загрязняющих веществ, метан (CH4)',
         field: 'gasWeightCh4',
         columnGroup: 'Коэффициент выбросов',
-        formatter: this.gasCommentFormatter,
         filterable: true,
         sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
+        formatter: Formatters.multiple,
+        params: {
+          formatters: [this.gasCommentFormatter, Formatters.complexObject],
+          complexFieldLabel: 'gasWeightCh4',
+        },
+        editor: {
+          model: CustomInputEditor,
+          params: {
+            component: CustomInputEditorComponent,
+          },
+        },
       },
-    ];
+    ]
 
     this.gridOptions = {
       autoResize: {
@@ -420,18 +482,22 @@ export class ReportParameterGasComponent implements OnInit {
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       treeDataOptions: {
         columnId: 'processName',
-        childrenPropName: 'materials',
+        childrenPropName: 'group',
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
 
-        autoApproveParentItemWhenTreeColumnIsValid:
-          this.isAutoApproveParentItemWhenTreeColumnIsValid,
+        autoApproveParentItemWhenTreeColumnIsValid: this
+          .isAutoApproveParentItemWhenTreeColumnIsValid,
+        initialSort: {
+          columnId: 'processName',
+          direction: 'DESC',
+        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
       // change header/cell row height for salesforce theme
       headerRowHeight: 45,
-      rowHeight: 45,
+      rowHeight: 50,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
@@ -466,6 +532,6 @@ export class ReportParameterGasComponent implements OnInit {
         iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
         iconColumnHideCommand: 'mdi mdi-close',
       },
-    };
+    }
   }
 }

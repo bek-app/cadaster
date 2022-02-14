@@ -172,7 +172,7 @@ export class ReportParameterCalcComponent implements OnInit {
               group: [...items.processes],
               key: 'processes',
             },
-          ]
+          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
           Object.assign(items, { group })
         })
         this.dataset = data
@@ -230,6 +230,7 @@ export class ReportParameterCalcComponent implements OnInit {
         let nameField = item[0].toUpperCase() + item.slice(1)
         let valueField = metadata.dataContext[item]
         let newValueField
+        let discriminator = metadata.dataContext.discriminator
 
         if (typeof valueField === 'object') {
           return
@@ -239,6 +240,7 @@ export class ReportParameterCalcComponent implements OnInit {
           id,
           nameField,
           valueField: newValueField,
+          discriminator,
         }
 
         this.parameterCalcService
@@ -507,7 +509,10 @@ export class ReportParameterCalcComponent implements OnInit {
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
         autoApproveParentItemWhenTreeColumnIsValid: this
           .isAutoApproveParentItemWhenTreeColumnIsValid,
-      
+        initialSort: {
+          columnId: 'processName',
+          direction: 'DESC',
+        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)

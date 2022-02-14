@@ -38,25 +38,33 @@ export const reportCadasterTreeFormatter: Formatter = (
       dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'
     }">
     </span>`
+
     if (dataContext.__collapsed) {
-      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix}   <span class="mat-typography"> &nbsp;${value}</span>`
+      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"> </span>${folderPrefix}
+       <strong style="font-weight:bold; font-size:18px; "> ${value}</strong>`
     } else {
-      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix}  &nbsp;${value}`
+      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>  ${folderPrefix}
+      <strong style="font-weight:bold; font-size:18px;   "> ${value}</strong>`
     }
   } else if (
     data[idx + 1] &&
     data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName] &&
     dataContext.__treeLevel === 1
   ) {
-    const folderPrefix = `<span  class="mdi ${
+    const folderPrefix = `<span   class="mdi color-muted-light ${
       dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'
     }"></span>`
 
     if (dataContext.__collapsed) {
-      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>  ${folderPrefix}&nbsp;${value}`
+      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>  ${folderPrefix}&nbsp;
+       <strong style="font-weight:bold; font-size:16px; color: #7B848D;"> ${value}</strong>`
     } else {
-      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix}&nbsp;${value}`
+      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix}&nbsp;
+       <strong style="font-weight:bold; font-size:16px; color: #7B848D;"> ${value}</strong>`
     }
+  } else if (dataContext.__treeLevel === 1) {
+    return `${spacer} <span  class="slick-group-toggle collapsed> </span> <span  class="mdi  mdi-folder></span>
+    <strong style="font-weight:bold; font-size:16px; color: #7B848D;"> ${value}</strong>`
   } else {
     return `${spacer} <span class="slick-group-toggle " level="${dataContext[treeLevelPropName]}"></span> &nbsp;${value}`
   }
