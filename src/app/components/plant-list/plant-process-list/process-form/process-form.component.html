@@ -1,8 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>Процессы</h2>
+  <h2 mat-dialog-title>{{ 'PLANT.PROCESS.TITLE' | translate }}</h2>
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>Наименование производственного процесса</mat-label>
+      <mat-label>{{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}</mat-label>
       <mat-select formControlName="dicProcessId">
         <div class="custom-panel">
           <mat-option
@@ -19,14 +19,20 @@
             color="primary"
             (click)="openDicFormDialog('dicProcess')"
           >
-            Добавить не существующий в списке
+          {{ 'DIC_FORM.ADD_DIC' | translate }}
+
           </button>
         </footer>
       </mat-select>
+      <mat-error>
+        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Наименование производственного подпроцессов</mat-label>
+      <mat-label>
+        {{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}
+      </mat-label>
       <mat-select formControlName="subProccesses" multiple>
         <div class="custom-panel">
           <mat-option
@@ -43,14 +49,17 @@
             color="primary"
             (click)="openDicFormDialog('subProccesses')"
           >
-            Добавить не существующий в списке
+          {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </footer>
       </mat-select>
+      <mat-error>
+        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Наименование топлива или сырья</mat-label>
+      <mat-label>{{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}</mat-label>
       <mat-select formControlName="materials" multiple>
         <div class="custom-panel">
           <mat-option
@@ -67,52 +76,51 @@
             color="primary"
             (click)="openDicFormDialog('dicMaterial')"
           >
-            Добавить не существующий в списке
+          {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </footer>
       </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>
-        Уровень коэффициентов выбросов парниковых газов
-      </mat-label>
-      <input matInput formControlName="oddsLevel" />
       <mat-error>
-        Поле обязательно для заполнения
+        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
       </mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        Источник данных о количестве потребляемого топлива или сырья
+        {{ 'PLANT.PROCESS.FORM.ODDS_LEVEL' | translate }}
+      </mat-label>
+      <input matInput formControlName="oddsLevel" />
+      <mat-error>
+        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>
+        {{ 'PLANT.PROCESS.FORM.AMOUNT_CONSUMED' | translate }}
       </mat-label>
       <textarea matInput formControlName="amountConsumed"></textarea>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        Источник данных для расчета коэффициента низшей теплоты сгорания
+        {{ 'PLANT.PROCESS.FORM.CALCULATION_CALORIFIC' | translate }}
       </mat-label>
       <textarea matInput formControlName="calculatingCalorific"></textarea>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        Источник данных для расчета коэффициента преобразования (в случае
-        промышленных процессов)
+        {{ 'PLANT.PROCESS.FORM.CALCULATION_CONVERSION' | translate }}
       </mat-label>
       <textarea matInput formControlName="calculatingConversion"></textarea>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        Источник данных для расчета коэффициента содержания углерода
+        {{ 'PLANT.PROCESS.FORM.CALCULATION_CARBON' | translate }}
       </mat-label>
       <textarea matInput formControlName="calculatingCarbon"></textarea>
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
     </mat-form-field>
   </mat-dialog-content>
 
@@ -124,10 +132,10 @@
       mat-dialog-close
       (click)="hideProcessModal()"
     >
-      Отмена
+      {{ 'CANCEL' | translate }}
     </button>
     <button type="submit" mat-raised-button color="primary">
-      Сохранить
+      {{ 'SAVE' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

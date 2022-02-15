@@ -1,77 +1,148 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
- import {
+import { Component, OnInit } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
+import { TranslateService } from '@ngx-translate/core'
+import {
   AngularGridInstance,
   Column,
   Formatters,
   GridOption,
   Observable,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { PlantSourceModel } from 'src/app/models/plant-source.model';
-import { PlantSourceService } from 'src/app/services/plant-source.service';
-import { PlantService } from 'src/app/services/plant.service';
-import { SourceFormComponent } from './source-form/source-form.component';
+} from 'angular-slickgrid'
+import { PlantSourceModel } from 'src/app/models/plant-source.model'
+import { PlantSourceService } from 'src/app/services/plant-source.service'
+import { PlantService } from 'src/app/services/plant.service'
+import { SourceFormComponent } from './source-form/source-form.component'
 @Component({
   selector: 'app-plant-source-list',
   templateUrl: './plant-source-list.component.html',
   styleUrls: ['./plant-source-list.component.css'],
- })
+})
 export class PlantSourceListComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: any[] = [];
-  plantId!: number;
-  plantSourceId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  ref: any;
-  namePlant!: string;
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: any[] = []
+  plantId!: number
+  plantSourceId!: number
+  gridObj: any
+  dataViewObj: any
+  ref: any
+  namePlant!: string
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
   }
   constructor(
     private plantSourceDialog: MatDialog,
     private plantSourceService: PlantSourceService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    translate: TranslateService,
   ) {
+    translate.get('PLANT.SOURCE').subscribe((translations: string) => {
+      this.columnDefinitions = [
+        {
+          id: 'nameSource',
+          name: translations['NAME_SOURCE' as any],
+          field: 'nameSource',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'characteristic',
+          name: translations['CHARACTERISTIC' as any],
+          field: 'characteristic',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'installedCapacity',
+          name: translations['INSTALLED_CAPACITY' as any],
+          field: 'installedCapacity',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'workinHours',
+          name: translations['WORKINHOURS' as any],
+          field: 'workinHours',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.plantSourceId = args.dataContext.id
+            this.openPlantSourceDialog()
+            this.ref.componentInstance.editForm(this.plantSourceId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantSourceService
+                .deletePlantSource(id)
+                .subscribe((data) => {
+                  this.refreshList(this.plantId)
+                })
+            }
+          },
+        },
+      ]
+    })
   }
   ngOnInit(): void {
-    this.prepareGrid();
+    this.prepareGrid()
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
-      this.plantId = item.id;
+      this.plantId = item.id
       // this.namePlant = item.namePlant;
-      this.refreshList(this.plantId);
-    });
+      this.refreshList(this.plantId)
+    })
   }
 
   goToPlants(id: number) {
-    this.plantId = id;
-    this.refreshList(id);
+    this.plantId = id
+    this.refreshList(id)
   }
 
   refreshList(id: number) {
     this.plantSourceService.getPlantSourceList(id).subscribe((data) => {
-      this.dataset = data;
-    });
+      this.dataset = data
+    })
   }
   openPlantSourceDialog() {
-    this.ref = this.plantSourceDialog.open(SourceFormComponent, {});
-    this.onPlantSourceAdded();
-    this.onPlantSourceUpdated();
+    this.ref = this.plantSourceDialog.open(SourceFormComponent, {})
+    this.onPlantSourceAdded()
+    this.onPlantSourceUpdated()
   }
   onPlantSourceAdded() {
     this.ref.componentInstance.onPlantSourceAdded.subscribe(
       (data: PlantSourceModel) => {
-        const newData = { id: 0, plantId: this.plantId, ...data };
+        const newData = { id: 0, plantId: this.plantId, ...data }
         this.plantSourceService
           .addPlantSource(newData)
-          .subscribe((res) => this.refreshList(this.plantId));
-      }
-    );
+          .subscribe((res) => this.refreshList(this.plantId))
+      },
+    )
   }
 
   onPlantSourceUpdated() {
@@ -81,81 +152,15 @@ export class PlantSourceListComponent implements OnInit {
           id: this.plantSourceId,
           plantId: this.plantId,
           ...data,
-        };
+        }
         this.plantSourceService
           .updatePlantSource(newData)
-          .subscribe((res) => this.refreshList(this.plantId));
-      }
-    );
+          .subscribe((res) => this.refreshList(this.plantId))
+      },
+    )
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'nameSource',
-        name: 'Наименование источника',
-        field: 'nameSource',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'characteristic',
-        name: 'Характеристика используемой технологии ',
-        field: 'characteristic',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'installedCapacity',
-        name: 'Установленная мощность  (единицы измерения)    (при наличии) ',
-        field: 'installedCapacity',
-        filterable: true,
-        sortable: true,
-      },
-
-      {
-        id: 'workinHours',
-        name: 'Время работы',
-        field: 'workinHours',
-        filterable: true,
-        sortable: true,
-      },
-
-      {
-        id: 'edit',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.editIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          this.plantSourceId = args.dataContext.id;
-          this.openPlantSourceDialog();
-          this.ref.componentInstance.editForm(this.plantSourceId);
-        },
-      },
-      {
-        id: 'delete',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.deleteIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          if (confirm('Уверены ли вы?')) {
-            this.plantSourceService.deletePlantSource(id).subscribe((data) => {
-              this.refreshList(this.plantId);
-            });
-          }
-        },
-      },
-    ];
-
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
@@ -197,6 +202,6 @@ export class PlantSourceListComponent implements OnInit {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-    };
+    }
   }
 }

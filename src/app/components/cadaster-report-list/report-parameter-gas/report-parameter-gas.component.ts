@@ -21,6 +21,7 @@ import { NotificationService } from 'src/app/services/notification.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
 import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-parameter-gas',
   templateUrl: './report-parameter-gas.component.html',
@@ -80,6 +81,7 @@ export class ReportParameterGasComponent implements OnInit {
     private commentService: ReportCommentService,
     private notificationService: NotificationService,
     private sharedDataService: ReportSharedService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -251,212 +253,231 @@ export class ReportParameterGasComponent implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'processName',
-        name: 'Наименование производственного процесса',
-        field: 'processName',
-        type: FieldType.string,
-        width: 120,
-        formatter: reportCadasterTreeFormatter,
-        filterable: true,
-        sortable: true,
-      },
+    this.translate
+      .get('CDR_REPORTS.PARAMETER_GAS')
+      .subscribe((translations: any) => {
+        const {
+          PROCESS_NAME,
+          GAS_CH4,
+          EMISSION_COEF,
+          UNIT_NAME,
+          GAS_N20,
+          GAS_PROC_O2,
+          GAS_COEF_FUEL_NATURE,
+          GAS_WEIGTH_N20,
+          GAS_WEIGTH_CH4,
+        } = translations
+        this.columnDefinitions = [
+          {
+            id: 'processName',
+            name: PROCESS_NAME,
+            field: 'processName',
+            type: FieldType.string,
+            width: 120,
+            formatter: reportCadasterTreeFormatter,
+            filterable: true,
+            sortable: true,
+          },
 
-      // Измеренная объемная концентрация метана (CH4) в выхлопных газах при коэффициенте избытка воздуха α
-      {
-        id: 'gasCh4',
-        name: 'Концентрация метана',
-        field: 'gasCh4',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.gasCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'gasCh4',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Измеренная объемная концентрация метана (CH4) в выхлопных газах при коэффициенте избытка воздуха α
+          {
+            id: 'gasCh4',
+            name: GAS_CH4,
+            field: 'gasCh4',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.gasCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'gasCh4',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'gasCh4Unit',
-        name: 'Единица измерения ',
-        field: 'gasCh4Unit',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject, this.gasCommentFormatter],
-          complexFieldLabel: 'gasCh4Unit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'gasCh4Unit',
+            name: UNIT_NAME,
+            field: 'gasCh4Unit',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject, this.gasCommentFormatter],
+              complexFieldLabel: 'gasCh4Unit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const gasCh4Unit = args.dataContext.gasCh4Unit
+              const data = {
+                id,
+                nameField: 'GasCh4UnitId',
+                valueField:
+                  gasCh4Unit.id != null
+                    ? gasCh4Unit.id.toString()
+                    : gasCh4Unit.id,
+              }
+              this.parameterGasService
+                .addParameterGas(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const gasCh4Unit = args.dataContext.gasCh4Unit
-          const data = {
-            id,
-            nameField: 'GasCh4UnitId',
-            valueField:
-              gasCh4Unit.id != null ? gasCh4Unit.id.toString() : gasCh4Unit.id,
-          }
-          this.parameterGasService
-            .addParameterGas(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      /// Измеренная объемная концентрация закиси азота (N2O) в выхлопных газах при коэффициенте избытка воздуха α
-      {
-        id: 'gasN2O',
-        name: 'Концентрация закиси азота',
-        field: 'gasN2O',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.gasCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'gasN2O',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          /// Измеренная объемная концентрация закиси азота (N2O) в выхлопных газах при коэффициенте избытка воздуха α
+          {
+            id: 'gasN2O',
+            name: GAS_N20,
+            field: 'gasN2O',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.gasCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'gasN2O',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'gasN2OUnit',
-        name: 'Единица измерения ',
-        field: 'gasN2OUnit',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject, this.gasCommentFormatter],
-          complexFieldLabel: 'gasN2OUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'gasN2OUnit',
+            name: UNIT_NAME,
+            field: 'gasN2OUnit',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject, this.gasCommentFormatter],
+              complexFieldLabel: 'gasN2OUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const gasN2OUnit = args.dataContext.gasN2OUnit
+              const data = {
+                id,
+                nameField: 'GasN2OUnitId',
+                valueField:
+                  gasN2OUnit.id != null
+                    ? gasN2OUnit.id.toString()
+                    : gasN2OUnit.id,
+              }
+              this.parameterGasService
+                .addParameterGas(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const gasN2OUnit = args.dataContext.gasN2OUnit
-          const data = {
-            id,
-            nameField: 'GasN2OUnitId',
-            valueField:
-              gasN2OUnit.id != null ? gasN2OUnit.id.toString() : gasN2OUnit.id,
-          }
-          this.parameterGasService
-            .addParameterGas(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      /// Измеренная концентрация кислорода (О2) в месте отбора пробы дымовых газов, %
-      {
-        id: 'gasProcО2',
-        name: 'Концентрация кислорода (О2)',
-        field: 'gasProcО2',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.gasCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'gasProcО2',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          /// Измеренная концентрация кислорода (О2) в месте отбора пробы дымовых газов, %
+          {
+            id: 'gasProcО2',
+            name: GAS_PROC_O2,
+            field: 'gasProcО2',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.gasCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'gasProcО2',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
 
-      /// Коэффициент, учитывающий характер топлива
-      {
-        id: 'gasKoeffFuelNature',
-        name: 'учитывающий характер топлива',
-        field: 'gasKoeffFuelNature',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.gasCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'gasKoeffFuelNature',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          /// Коэффициент, учитывающий характер топлива
+          {
+            id: 'gasKoeffFuelNature',
+            name: GAS_COEF_FUEL_NATURE,
+            field: 'gasKoeffFuelNature',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.gasCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'gasKoeffFuelNature',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
 
-      /// Удельная масса загрязняющих веществ ,закись азота (N2O), кг/нм^3
-      {
-        id: 'gasWeightN2O',
-        name: 'Удельная масса загрязняющих веществ,закись азота (N2O), кг/нм^3',
-        field: 'gasWeightN2O',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.gasCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'gasWeightN2O',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          /// Удельная масса загрязняющих веществ ,закись азота (N2O), кг/нм^3
+          {
+            id: 'gasWeightN2O',
+            name: GAS_WEIGTH_N20,
+            field: 'gasWeightN2O',
+            columnGroup:EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.gasCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'gasWeightN2O',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
 
-      /// Удельная масса загрязняющих веществ, метан (CH4), кг/нм^3
-      {
-        id: 'gasWeightCh4',
-        name: 'Удельная масса загрязняющих веществ, метан (CH4)',
-        field: 'gasWeightCh4',
-        columnGroup: 'Коэффициент выбросов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.gasCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'gasWeightCh4',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          /// Удельная масса загрязняющих веществ, метан (CH4), кг/нм^3
+          {
+            id: 'gasWeightCh4',
+            name: GAS_WEIGTH_CH4,
+            field: 'gasWeightCh4',
+            columnGroup: EMISSION_COEF,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.gasCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'gasWeightCh4',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-    ]
+        ]
+      })
 
     this.gridOptions = {
       autoResize: {

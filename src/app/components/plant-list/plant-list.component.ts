@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
+import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
   Column,
@@ -7,11 +8,10 @@ import {
   Formatters,
   GridOption,
   OnEventArgs,
-  Subscription,
-} from 'angular-slickgrid';
-import { PlantModel } from 'src/app/models/plant.model';
-import { PlantService } from 'src/app/services/plant.service';
-import { PlantFormComponent } from './plant-form/plant-form.component';
+} from 'angular-slickgrid'
+import { PlantModel } from 'src/app/models/plant.model'
+import { PlantService } from 'src/app/services/plant.service'
+import { PlantFormComponent } from './plant-form/plant-form.component'
 
 @Component({
   selector: 'app-plant-list',
@@ -19,187 +19,188 @@ import { PlantFormComponent } from './plant-form/plant-form.component';
   styleUrls: ['./plant-list.component.css'],
 })
 export class PlantListComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: any[] = [];
-  plantId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  modalRef: any;
-  plantRoute: any[] = [];
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: any[] = []
+  plantId!: number
+  gridObj: any
+  dataViewObj: any
+  modalRef: any
+  plantRoute: any[] = []
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
   }
   constructor(
     private plantService: PlantService,
     private plantDialog: MatDialog,
-  ) { }
+    private translate: TranslateService,
+  ) {
+    translate.get('PLANT').subscribe((translations: string) => {
+      const { MENU, FORM }: any = translations
+      const { NAME, OBLAST, REGION, ADDRESS, INACTIVE }: any = FORM
+      this.columnDefinitions = [
+        {
+          id: 'namePlant',
+          name: NAME,
+          field: 'namePlant',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'oblastName',
+          name: OBLAST,
+          field: 'oblastName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'regionName',
+          name: REGION,
+          field: 'regionName',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'address',
+          name: ADDRESS,
+          field: 'address',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'inactive',
+          name: INACTIVE,
+          field: 'inactive',
+          minWidth: 100,
+          maxWidth: 100,
+          type: FieldType.boolean,
+          sortable: true,
+          exportCustomFormatter: Formatters.complexObject,
+          formatter: Formatters.multiple,
+          params: {
+            formatters: [Formatters.checkmark],
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openPlantDialog()
+            this.modalRef.componentInstance.editForm(this.plantId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantService.deletePlant(id).subscribe(() => {
+                this.refreshList()
+              })
+            }
+          },
+        },
+      ]
+      const { SOURCE, PROCESS, SAMPLING, DEVICE, PRODUCT }: any = MENU
+      this.plantRoute = [
+        {
+          src: 'source',
+          name: SOURCE,
+        },
+        {
+          src: 'process',
+          name: PROCESS,
+        },
+        {
+          src: 'sampling',
+          name: SAMPLING,
+        },
+        {
+          src: 'device',
+          name: DEVICE,
+        },
+        {
+          src: 'product',
+          name: PRODUCT,
+        },
+      ]
+    })
+  }
 
   ngOnInit(): void {
-    this.prepareGrid();
-    this.refreshList();
-    this.plantRoute = [
-      {
-        id: 1,
-        name: 'source',
-        title: 'Источники',
-      },
+    this.prepareGrid()
 
-      {
-        id: 2,
-        name: 'process',
-        title: 'Процессы',
-      },
-      {
-        id: 3,
-        name: 'sampling',
-        title: 'Отбор проб',
-      },
-      {
-        id: 4,
-        name: 'device',
-        title: 'Приборы',
-      },
-      {
-        id: 5,
-        name: 'product',
-        title: 'Продукты',
-      },
-    ];
+    this.refreshList()
   }
 
   onCellClicked(e: any, args: any) {
-    const item = this.gridObj.getDataItem(args.row);
-    this.plantId = item.id;
-    this.plantService.plantIdRefreshList.next(item);
+    const item = this.gridObj.getDataItem(args.row)
+    this.plantId = item.id
+    this.plantService.plantIdRefreshList.next(item)
   }
+
   onActivate(componentReference: any) {
     if (this.plantId !== undefined) {
-      componentReference.goToPlants(this.plantId);
+      componentReference.goToPlants(this.plantId)
     }
   }
+
   refreshList() {
     this.plantService.getPlantList(1).subscribe((data) => {
-      this.dataset = data;
-    });
+      this.dataset = data
+    })
   }
+
   openPlantDialog() {
     this.modalRef = this.plantDialog.open(PlantFormComponent, {
       width: '700px',
-    });
+    })
 
-    this.addPlant();
-    this.updatePlant();
+    this.addPlant()
+    this.updatePlant()
   }
 
   addPlant() {
     this.modalRef.componentInstance.addPlant.subscribe((data: PlantModel) => {
       this.plantService.addPlant({ id: 0, ...data }).subscribe(() => {
-        this.refreshList();
+        this.refreshList()
         this.modalRef.close()
-      });
-    });
+      })
+    })
   }
+
   updatePlant() {
     this.modalRef.componentInstance.updatePlant.subscribe(
       (data: PlantModel) => {
         this.plantService
           .updatePlant({ id: this.plantId, ...data })
           .subscribe(() => {
-            this.refreshList(); this.modalRef.close()
-
-          });
-      }
-    );
+            this.refreshList()
+            this.modalRef.close()
+          })
+      },
+    )
   }
+
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'namePlant',
-        name: 'Наименование установки',
-        field: 'namePlant',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'oblastName',
-        name: 'Область',
-        field: 'oblastName',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'regionName',
-        name: 'Город',
-        field: 'regionName',
-        filterable: true,
-        sortable: true,
-      },
-
-      // {
-      //   id: 'note',
-      //   name: 'Описание',
-      //   field: 'note',
-      // },
-      {
-        id: 'address',
-        name: 'Географическое место',
-        field: 'address',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'inactive',
-        name: 'Активен',
-        field: 'inactive',
-        minWidth: 100,
-        maxWidth: 100,
-        type: FieldType.boolean,
-        sortable: true,
-        exportCustomFormatter: Formatters.complexObject,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.checkmark],
-        },
-      },
-      {
-        id: 'edit',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.editIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          this.openPlantDialog();
-          this.modalRef.componentInstance.editForm(this.plantId);
-        },
-      },
-      {
-        id: 'delete',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.deleteIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          if (confirm('Уверены ли вы?')) {
-            this.plantService.deletePlant(id).subscribe(() => {
-              this.refreshList();
-            });
-          }
-        },
-      },
-    ];
-
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
@@ -243,6 +244,6 @@ export class PlantListComponent implements OnInit {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-    };
+    }
   }
 }

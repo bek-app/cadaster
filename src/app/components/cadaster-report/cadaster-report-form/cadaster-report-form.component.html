@@ -1,31 +1,32 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 matDialogTitle>Установка</h2>
+  <h2 matDialogTitle>{{ 'CDR_REPORT.TITLE' | translate }}</h2>
 
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>reportYear</mat-label>
-      <input matInput formControlName="reportYear" type="text" />
+      <mat-label>{{ 'CDR_REPORT.FORM.REPORT_YEAR' | translate }}</mat-label>
+      <input matInput formControlName="reportYear" type="number" />
       <mat-error>
-        Не указано reportYear
+        {{ 'ERROR_MESSAGE' | translate }}
       </mat-error>
     </mat-form-field>
+
     <mat-form-field>
-      <mat-label>Наименование установка</mat-label>
+      <mat-label>{{ 'CDR_REPORT.FORM.NAME_PLANT' | translate }}</mat-label>
       <mat-select
-        formControlName="oblastId"
+        formControlName="plantId"
         (ngModelChange)="plantChange($event)"
       >
         <mat-option *ngFor="let plant of plantList" [value]="plant.id">
-          {{ plant.name }}
+          {{ plant.namePlant }}
         </mat-option>
       </mat-select>
       <mat-error>
-        Не выбрано установка
+        {{ 'ERROR_MESSAGE' | translate }}
       </mat-error>
     </mat-form-field>
   </mat-dialog-content>
 
-  <mat-dialog-actions>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
     <button
       mat-raised-button
       mat-dialog-close
@@ -33,8 +34,10 @@
       type="button"
       (click)="hideCdrReportFormDialog()"
     >
-      Отмена
+      {{ 'CANCEL' | translate }}
     </button>
-    <button mat-raised-button color="primary" type="submit">Сохранить</button>
+    <button mat-raised-button color="primary" type="submit">
+      {{ 'SAVE' | translate }}
+    </button>
   </mat-dialog-actions>
 </form>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -72,7 +73,182 @@ export class ReportActualEmissionComponent implements OnInit {
     private angularUtilService: AngularUtilService,
     private actualEmissionService: ActualEmissionService,
     private sharedDataService: ReportSharedService,
-  ) {}
+    private translate: TranslateService,
+  ) {
+    translate
+      .get('CDR_REPORTS.ACTUAL_EMISSION')
+      .subscribe((translations: string) => {
+        const {
+          PROCESS_NAME,
+          CARBON_DIOXIDE,
+          METHAN_EMISSION_TON,
+          MATHAN_EMISSION_CO2,
+          METHAN_COLUMN_GROUP,
+          NITROUS_OXIDE_TON,
+          NITROUS_OXIDE_CO2,
+          NITROUS_COLUMN_GROUP,
+          PERFLUORO_CARBON_TON,
+          PERFLUORO_CARBON_CO2,
+          PERFLUORO_CARBON_COLUMN_GROUP,
+          TOTAL_CO2,
+        }: any = translations
+        this.columnDefinitions = [
+          {
+            id: 'processName',
+            name: PROCESS_NAME,
+            field: 'processName',
+            type: FieldType.string,
+            width: 170,
+            formatter: reportCadasterTreeFormatter,
+            filterable: true,
+            sortable: true,
+          },
+
+          {
+            id: 'carbonDioxide',
+            name: CARBON_DIOXIDE,
+            field: 'carbonDioxide',
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'carbonDioxide',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+          {
+            id: 'methaneEmissionsTon',
+            name: METHAN_EMISSION_TON,
+            field: 'methaneEmissionsTon',
+            columnGroup: METHAN_COLUMN_GROUP,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'methaneEmissionsTon',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+          {
+            id: 'methaneEmissionsCo2',
+            name: MATHAN_EMISSION_CO2,
+            field: 'methaneEmissionsCo2',
+            columnGroup: METHAN_COLUMN_GROUP,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'methaneEmissionsCo2',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+
+          {
+            id: 'nitrousOxideTon',
+            name: NITROUS_OXIDE_TON,
+            field: 'nitrousOxideTon',
+            columnGroup: NITROUS_COLUMN_GROUP,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'nitrousOxideTon',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+          {
+            id: 'nitrousOxideCo2',
+            name: NITROUS_OXIDE_CO2,
+            field: 'nitrousOxideCo2',
+            columnGroup: NITROUS_COLUMN_GROUP,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'nitrousOxideCo2',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+          {
+            id: 'perfluorocarbonTon',
+            name: PERFLUORO_CARBON_TON,
+            field: 'perfluorocarbonTon',
+            columnGroup: PERFLUORO_CARBON_COLUMN_GROUP,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'perfluorocarbonTon',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+          {
+            id: 'perfluorocarbonCo2',
+            name: PERFLUORO_CARBON_CO2,
+            field: 'perfluorocarbonCo2',
+            columnGroup: PERFLUORO_CARBON_COLUMN_GROUP,
+
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [Formatters.complexObject],
+              complexFieldLabel: 'perfluorocarbonCo2',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+          },
+
+          {
+            id: 'totalCo2',
+            name: TOTAL_CO2,
+            field: 'totalCo2',
+            filterable: true,
+            sortable: true,
+          },
+        ]
+      })
+  }
 
   ngOnInit(): void {
     this.prepareGrid()
@@ -193,162 +369,6 @@ export class ReportActualEmissionComponent implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'processName',
-        name: 'Наименование процесса',
-        field: 'processName',
-        type: FieldType.string,
-        width: 170,
-        formatter: reportCadasterTreeFormatter,
-        filterable: true,
-        sortable: true,
-      },
-
-      {
-        id: 'carbonDioxide',
-        name: ' Объем выбросов двуокиси углерода,тонн',
-        field: 'carbonDioxide',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'carbonDioxide',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-      {
-        id: 'methaneEmissionsTon',
-        name: 'тонн',
-        field: 'methaneEmissionsTon',
-        columnGroup: 'Объем выбросов метана',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'methaneEmissionsTon',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-      {
-        id: 'methaneEmissionsCo2',
-        name: 'в эквиваленте тонны двуокиси углерода',
-        field: 'methaneEmissionsCo2',
-        columnGroup: 'Объем выбросов метана',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'methaneEmissionsCo2',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-
-      {
-        id: 'nitrousOxideTon',
-        name: 'тонн',
-        field: 'nitrousOxideTon',
-        columnGroup: 'Объем выбросов закиси азота',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'nitrousOxideTon',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-      {
-        id: 'nitrousOxideCo2',
-        name: 'в эквиваленте тонны двуокиси углерода',
-        field: 'nitrousOxideCo2',
-        columnGroup: 'Объем выбросов закиси азота',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'nitrousOxideCo2',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-      {
-        id: 'perfluorocarbonTon',
-        name: 'тонн',
-        field: 'perfluorocarbonTon',
-        columnGroup: 'Объем выбросов перфторуглеродов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'perfluorocarbonTon',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-      {
-        id: 'perfluorocarbonCo2',
-        name: 'в эквиваленте тонны двуокиси углерода',
-        field: 'perfluorocarbonCo2',
-        columnGroup: 'Объем выбросов перфторуглеродов',
-
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [Formatters.complexObject],
-          complexFieldLabel: 'perfluorocarbonCo2',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-
-      {
-        id: 'totalCo2',
-        name: 'totalCo2',
-        field: 'totalCo2',
-        filterable: true,
-        sortable: true,
-      },
-    ]
-
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

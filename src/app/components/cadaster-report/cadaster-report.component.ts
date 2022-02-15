@@ -1,146 +1,161 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
+import { ActivatedRoute, Router } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
   Column,
+  FieldType,
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { CadasterReportModel } from 'src/app/models/cadaster-report.model';
-import { CadasterReportService } from 'src/app/services/cadaster-report.service';
-import { CadasterReportFormComponent } from './cadaster-report-form/cadaster-report-form.component';
+} from 'angular-slickgrid'
+import { CadasterReportModel } from 'src/app/models/cadaster-report.model'
+import { CadasterReportService } from 'src/app/services/cadaster-report.service'
+import { CadasterReportFormComponent } from './cadaster-report-form/cadaster-report-form.component'
 @Component({
   selector: 'app-cadaster-report',
   templateUrl: './cadaster-report.component.html',
   styleUrls: ['./cadaster-report.component.css'],
 })
 export class CadasterReportComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: CadasterReportModel[] = [];
-  cadasterId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  modalRef: any;
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: CadasterReportModel[] = []
+  cdrReportId!: number
+  gridObj: any
+  dataViewObj: any
+  modalRef: any
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
   }
   constructor(
     private cdrReportDialog: MatDialog,
     private cadasterService: CadasterReportService,
     private router: Router,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
-    this.prepareGrid();
-    this.refreshList();
+    this.prepareGrid()
+    this.refreshList()
   }
 
   refreshList() {
     this.cadasterService.getCadasterReportList(0).subscribe((data) => {
-      this.dataset = data;
-    });
+      this.dataset = data
+    })
   }
 
   openCdrReportDialog() {
     this.modalRef = this.cdrReportDialog.open(CadasterReportFormComponent, {
-      width: '800px',
-    });
+      width: '600px',
+    })
+    this.modalRef.componentInstance.addCdrReport.subscribe((data: any) => {
+      const newData = {
+        id: 0,
+        statusId: 0,
+        ...data,
+      }
+      this.cadasterService
+        .addCadasterReport(newData)
+        .subscribe((result) => console.log(result))
+      this.modalRef.close()
+    })
+    // this.modalRef.componentInstance.updateCdrReport.subscribe((data: any) => {
+    //   const newData = {
+    //     id: this.cdrReportId,
+    //     statusId: 0,
+    //     ...data,
+    //   }
+    //   this.cadasterService
+    //     .updateCadasterReport(newData)
+    //     .subscribe((result) => console.log(result))
+    //   this.modalRef.close()
+    // })
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'namePlant',
-        name: 'Наименование установки',
-        field: 'namePlant',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'oblastName',
-        name: 'Область',
-        field: 'oblastName',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'regionName',
-        name: 'Город',
-        field: 'regionName',
-        filterable: true,
-        sortable: true,
-      },
+    this.translate.get('CDR_REPORT.FORM').subscribe((translations: any) => {
+      const { NAME, OBLAST, REGION, ADDRESS, INACTIVE }: any = translations
 
-      {
-        id: 'address',
-        name: 'Географическое место',
-        field: 'address',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'action',
-        field: 'action',
-        width: 30,
-        minWidth: 30,
-        maxWidth: 50,
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter:
-          () => `<div class='d-flex justify-content-center' style='width: 35px; cursor: pointer'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square' viewBox='0 0 16 16'>
-        <path d='M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/>
-        <path d='m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z'/>
-      </svg> </div>`,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          this.router.navigate(['/cadaster-report-list', id], {
-            relativeTo: this.route,
-          });
+      this.columnDefinitions = [
+        {
+          id: 'namePlant',
+          name: NAME,
+          field: 'namePlant',
+          filterable: true,
+          sortable: true,
         },
-      },
-      {
-        id: 'edit',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.editIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          this.cadasterId = args.dataContext.id;
-          this.openCdrReportDialog();
-          this.modalRef.componentInstance.editForm(this.cadasterId);
+        {
+          id: 'oblastName',
+          name: OBLAST,
+          field: 'oblastName',
+          filterable: true,
+          sortable: true,
         },
-      },
-      {
-        id: 'delete',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.deleteIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          if (confirm('Уверены ли вы?')) {
-            this.cadasterService.deleteCadasterReport(id).subscribe(() => {
-              this.refreshList();
-            });
-          }
+        {
+          id: 'regionName',
+          name: REGION,
+          field: 'regionName',
+          filterable: true,
+          sortable: true,
         },
-      },
-    ];
+
+        {
+          id: 'address',
+          name: ADDRESS,
+          field: 'address',
+          filterable: true,
+          sortable: true,
+        },
+       
+        {
+          id: 'action',
+          field: 'action',
+          width: 30,
+          minWidth: 30,
+          maxWidth: 40,
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: () => `<div class='d-flex justify-content-center' style='width: 35px; cursor: pointer'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square' viewBox='0 0 16 16'>
+          <path d='M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z'/>
+          <path d='m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z'/>
+        </svg> </div>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            this.router.navigate(['/cadaster-report-list', id], {
+              relativeTo: this.route,
+            })
+          },
+        },
+
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.cadasterService.deleteCadasterReport(id).subscribe(() => {
+                this.refreshList()
+              })
+            }
+          },
+        },
+      ]
+    })
 
     this.gridOptions = {
       autoResize: {
@@ -184,6 +199,6 @@ export class CadasterReportComponent implements OnInit {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-    };
+    }
   }
 }

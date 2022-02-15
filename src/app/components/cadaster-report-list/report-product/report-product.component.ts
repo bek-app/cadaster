@@ -1,5 +1,5 @@
-import { ReportProductModel } from './../../../models/report-product.model';
-import { Component, OnInit } from '@angular/core';
+import { ReportProductModel } from './../../../models/report-product.model'
+import { Component, OnInit } from '@angular/core'
 import {
   AngularGridInstance,
   Column,
@@ -7,197 +7,208 @@ import {
   FieldType,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { ActivatedRoute } from '@angular/router';
-import { ReportProductService } from '../../../services/report-product.service';
+} from 'angular-slickgrid'
+ import { ReportProductService } from '../../../services/report-product.service'
+import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-product',
   templateUrl: './report-product.component.html',
   styleUrls: ['./report-product.component.css'],
 })
 export class ReportProductComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: ReportProductModel[] = [];
-  cadasterId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  isExcludingChildWhenFiltering = false;
-  isAutoApproveParentItemWhenTreeColumnIsValid = true;
-  dicUnitList: any[] = [];
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: ReportProductModel[] = []
+  cadasterId!: number
+  gridObj: any
+  dataViewObj: any
+  isExcludingChildWhenFiltering = false
+  isAutoApproveParentItemWhenTreeColumnIsValid = true
+  dicUnitList: any[] = []
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header';
-      const item = this.dataViewObj.getItem(row);
+      const newCssClass = 'inactive__header'
+      const item = this.dataViewObj.getItem(row)
       if (item.__hasChildren) {
         return {
           cssClasses: newCssClass,
-        };
+        }
       } else {
-        return '';
+        return ''
       }
-    };
+    }
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
-        return false;
+        return false
       }
-      return true;
-    });
+      return true
+    })
   }
-  constructor(private reportProductService: ReportProductService) {}
+  constructor(
+    private reportProductService: ReportProductService,
+    private translateService: TranslateService,
+  ) {}
 
   ngOnInit(): void {
-    this.prepareGrid();
+    this.prepareGrid()
   }
 
   goToCadasterReports(id: number) {
-    this.refreshList(id);
+    this.refreshList(id)
   }
   refreshList(reportId: number) {
     this.reportProductService
       .getReportProductById(reportId)
       .subscribe((data) => {
-        this.dataset = data;
-      });
+        this.dataset = data
+      })
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'productName',
-        name: 'Вид продукции',
-        field: 'productName',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'productVolume',
-        name: 'Объем продукции',
-        field: 'productVolume',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const productVolume = args.dataContext.productVolume;
-          const data = {
-            id,
-            nameField: 'ProductVolume',
-            valueField: productVolume.toString(),
-          };
-          this.reportProductService
-            .addReportProduct(data)
-            .subscribe((res: any) => {});
+    this.translateService.get('CDR_REPORTS.PRODUCT').subscribe((translations: any) => {
+      const {
+        PRODUCT_NAME,
+        PRODUCT_VOLUME,
+        UNIT_NAME,
+        PRODUCT_CARBON_DIOXIDE,
+        PRODUCT_METHANE,
+        PRODUCT_NITROUS_OXIDE,
+        PRODUCT_PERFLUORO_CARBONS,
+        GAS_EMISSION_VOLUME,
+      } = translations
+      this.columnDefinitions = [
+        {
+          id: 'productName',
+          name: PRODUCT_NAME,
+          field: 'productName',
+          filterable: true,
+          sortable: true,
         },
-      },
-      {
-        id: 'unitName',
-        name: 'Ед. измерение',
-        field: 'unitName',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'productCarbonDioxide',
-        name: 'Двуокись углерода',
-        field: 'productCarbonDioxide',
-        columnGroup:
-          'Объем выбросов парниковых газов (в эквиваленте тонны двуокиси углерода)*',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const productCarbonDioxide = args.dataContext.productCarbonDioxide;
-          const data = {
-            id,
-            nameField: 'ProductCarbonDioxide',
-            valueField: productCarbonDioxide.toString(),
-          };
-          this.reportProductService
-            .addReportProduct(data)
-            .subscribe((res: any) => {});
+        {
+          id: 'productVolume',
+          name: PRODUCT_VOLUME,
+          field: 'productVolume',
+          filterable: true,
+          sortable: true,
+          type: FieldType.number,
+          editor: { model: Editors.integer },
+          onCellChange: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            const productVolume = args.dataContext.productVolume
+            const data = {
+              id,
+              nameField: 'ProductVolume',
+              valueField: productVolume.toString(),
+            }
+            this.reportProductService
+              .addReportProduct(data)
+              .subscribe((res: any) => {})
+          },
         },
-      },
-      {
-        id: 'productMethane',
-        name: 'Метан',
-        field: 'productMethane',
-        columnGroup:
-          'Объем выбросов парниковых газов (в эквиваленте тонны двуокиси углерода)*',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const productMethane = args.dataContext.productMethane;
-          const data = {
-            id,
-            nameField: 'ProductMethane',
-            valueField: productMethane.toString(),
-          };
-          this.reportProductService
-            .addReportProduct(data)
-            .subscribe((res: any) => {});
+        {
+          id: 'unitName',
+          name: UNIT_NAME,
+          field: 'unitName',
+          filterable: true,
+          sortable: true,
         },
-      },
-      {
-        id: 'productNitrousOxide',
-        name: 'Закись азота',
-        field: 'productNitrousOxide',
-        columnGroup:
-          'Объем выбросов парниковых газов (в эквиваленте тонны двуокиси углерода)*',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const productNitrousOxide = args.dataContext.productNitrousOxide;
-          const data = {
-            id,
-            nameField: 'ProductNitrousOxide',
-            valueField: productNitrousOxide.toString(),
-          };
-          this.reportProductService
-            .addReportProduct(data)
-            .subscribe((res: any) => {});
+        {
+          id: 'productCarbonDioxide',
+          name: PRODUCT_CARBON_DIOXIDE,
+          field: 'productCarbonDioxide',
+          columnGroup: GAS_EMISSION_VOLUME,
+          filterable: true,
+          sortable: true,
+          type: FieldType.number,
+          editor: { model: Editors.integer },
+          onCellChange: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            const productCarbonDioxide = args.dataContext.productCarbonDioxide
+            const data = {
+              id,
+              nameField: 'ProductCarbonDioxide',
+              valueField: productCarbonDioxide.toString(),
+            }
+            this.reportProductService
+              .addReportProduct(data)
+              .subscribe((res: any) => {})
+          },
         },
-      },
+        {
+          id: 'productMethane',
+          name: PRODUCT_METHANE,
+          field: 'productMethane',
+          columnGroup: GAS_EMISSION_VOLUME,
+          filterable: true,
+          sortable: true,
+          type: FieldType.number,
+          editor: { model: Editors.integer },
+          onCellChange: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            const productMethane = args.dataContext.productMethane
+            const data = {
+              id,
+              nameField: 'ProductMethane',
+              valueField: productMethane.toString(),
+            }
+            this.reportProductService
+              .addReportProduct(data)
+              .subscribe((res: any) => {})
+          },
+        },
+        {
+          id: 'productNitrousOxide',
+          name: PRODUCT_NITROUS_OXIDE,
+          field: 'productNitrousOxide',
+          columnGroup: GAS_EMISSION_VOLUME,
+          filterable: true,
+          sortable: true,
+          type: FieldType.number,
+          editor: { model: Editors.integer },
+          onCellChange: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            const productNitrousOxide = args.dataContext.productNitrousOxide
+            const data = {
+              id,
+              nameField: 'ProductNitrousOxide',
+              valueField: productNitrousOxide.toString(),
+            }
+            this.reportProductService
+              .addReportProduct(data)
+              .subscribe((res: any) => {})
+          },
+        },
 
-      {
-        id: 'productPerfluorocarbons',
-        name: 'Перфторуглероды',
-        field: 'productPerfluorocarbons',
-        columnGroup:
-          'Объем выбросов парниковых газов (в эквиваленте тонны двуокиси углерода)*',
-        filterable: true,
-        sortable: true,
-        type: FieldType.number,
-        editor: { model: Editors.integer },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          const productPerfluorocarbons =
-            args.dataContext.productPerfluorocarbons;
-          const data = {
-            id,
-            nameField: 'ProductPerfluorocarbons',
-            valueField: productPerfluorocarbons.toString(),
-          };
-          this.reportProductService
-            .addReportProduct(data)
-            .subscribe((res: any) => {});
+        {
+          id: 'productPerfluorocarbons',
+          name: PRODUCT_PERFLUORO_CARBONS,
+          field: 'productPerfluorocarbons',
+          columnGroup: '',
+          filterable: true,
+          sortable: true,
+          type: FieldType.number,
+          editor: { model: Editors.integer },
+          onCellChange: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            const productPerfluorocarbons =
+              args.dataContext.productPerfluorocarbons
+            const data = {
+              id,
+              nameField: 'ProductPerfluorocarbons',
+              valueField: productPerfluorocarbons.toString(),
+            }
+            this.reportProductService
+              .addReportProduct(data)
+              .subscribe((res: any) => {})
+          },
         },
-      },
-    ];
+      ]
+    })
 
     this.gridOptions = {
       autoResize: {
@@ -259,6 +270,6 @@ export class ReportProductComponent implements OnInit {
         iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
         iconColumnHideCommand: 'mdi mdi-close',
       },
-    };
+    }
   }
 }

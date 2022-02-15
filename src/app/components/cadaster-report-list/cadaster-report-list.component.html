@@ -6,9 +6,9 @@
       *ngFor="let report of cdrReportRoute"
       [routerLinkActiveOptions]="{ exact: true }"
       routerLinkActive="active"
-      [routerLink]="[report.name]"
+      [routerLink]="[report.src]"
     >
-      {{ report.title }}
+      {{ report.name }}
     </a>
   </nav>
 

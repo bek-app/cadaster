@@ -1,12 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import {
   AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
-} from '@angular/forms';
-import { CadasterReportService } from 'src/app/services/cadaster-report.service';
+} from '@angular/forms'
+import { CadasterReportService } from 'src/app/services/cadaster-report.service'
+import { PlantService } from 'src/app/services/plant.service'
 
 @Component({
   selector: 'app-cadaster-report-form',
@@ -14,50 +15,51 @@ import { CadasterReportService } from 'src/app/services/cadaster-report.service'
   styleUrls: ['./cadaster-report-form.component.css'],
 })
 export class CadasterReportFormComponent implements OnInit {
-  isActive = false;
-  form: FormGroup;
-  submitted?: boolean;
+  form: FormGroup
+  submitted?: boolean
   plantList: any[] = []
-  @Output() addPlant: EventEmitter<any> = new EventEmitter();
-  @Output() updatePlant: EventEmitter<any> = new EventEmitter();
-  constructor(
-    private fb: FormBuilder,
-    private cadasterReportService: CadasterReportService
-  ) {
+  @Output() addCdrReport: EventEmitter<any> = new EventEmitter()
+  constructor(private fb: FormBuilder, private plantService: PlantService) {
     this.form = this.fb.group({
-      namePlant: new FormControl('', Validators.required),
-      reportYear: new FormControl('', Validators.required),
-    });
+      reportYear: new FormControl(2022, Validators.required),
+      plantId: new FormControl('', Validators.required),
+    })
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.plantService.getPlantList(1).subscribe((plantList) => {
+      console.log(plantList)
+      this.plantList = plantList
+    })
+  }
 
   onSubmit() {
-    this.submitted = true;
+    this.submitted = true
     if (this.form.invalid) {
-      return;
+      return
     }
 
-    const data = { userId: 1, ...this.form.value };
-    !this.isActive ? this.addPlant.emit(data) : this.updatePlant.emit(data);
-    this.hideCdrReportFormDialog();
+    const data = { userId: 1, ...this.form.value }
+    this.addCdrReport.emit(data)
+    this.hideCdrReportFormDialog()
   }
-  plantChange(event: any) {
 
-  }
+  plantChange(event: any) {}
+
   hideCdrReportFormDialog() {
-    this.submitted = false;
-    this.isActive = false;
-    this.form.reset();
+    this.submitted = false
+    this.form.reset()
   }
 
-  editForm(id: number) {
-    this.isActive = true;
-    this.cadasterReportService
-      .getCadasterReportById(id)
-      .subscribe((cdrReport) => this.form.patchValue(cdrReport));
-  }
+  // editForm(id: number) {
+  //   this.isActive = true
+  //   this.cadasterReportService
+  //     .getCadasterReportById(id)
+  //     .subscribe((cdrReport) => {
+  //       this.form.patchValue(cdrReport)
+  //     })
+  // }
   get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
+    return this.form.controls
   }
 }

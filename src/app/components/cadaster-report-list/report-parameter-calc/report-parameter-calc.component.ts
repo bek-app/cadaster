@@ -16,17 +16,16 @@ import { ParameterCalcService } from 'src/app/services/parameter-calc.service'
 import { ActivatedRoute } from '@angular/router'
 import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select'
 import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component'
-import { parameterCalcFormatter } from '../../formatters/parameterCalcFormatter'
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
 import { MatDialog } from '@angular/material/dialog'
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin'
 import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
-import { ReportCommentEditorComponent } from '../report-comment-editor/report-comment-editor.component'
 import { NotificationService } from 'src/app/services/notification.service'
 import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-report-parameter-calc',
@@ -93,6 +92,7 @@ export class ReportParameterCalcComponent implements OnInit {
     private commentService: ReportCommentService,
     private notificationService: NotificationService,
     private sharedDataService: ReportSharedService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -258,229 +258,261 @@ export class ReportParameterCalcComponent implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'processName',
-        name: 'Наименование производственного процесса',
-        field: 'processName',
-        type: FieldType.string,
-        width: 150,
-        formatter: reportCadasterTreeFormatter,
-        filterable: true,
-        sortable: true,
-      },
-
-      {
-        id: 'q4',
-        name:
-          'Потеря тепла вследствии механической неполнотой сгорания (q4), %',
-        field: 'q4',
-        columnGroup: 'Вариант А',
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
-          complexFieldLabel: 'q4',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+    this.translate
+      .get('CDR_REPORTS.PARAMETER_CALC')
+      .subscribe((translations: string) => {
+        const {
+          PROCESS_NAME,
+          Q4,
+          Q3,
+          VARIANT_A,
+          SLAG_CARBON,
+          VARIANT_B,
+          DIC_UNIT,
+          SLAG_AMOUNT,
+          FUEL_CONSUMPTION,
+        }: any = translations
+        this.columnDefinitions = [
+          {
+            id: 'processName',
+            name: PROCESS_NAME,
+            field: 'processName',
+            type: FieldType.string,
+            width: 150,
+            formatter: reportCadasterTreeFormatter,
+            filterable: true,
+            sortable: true,
           },
-        },
-        exportWithFormatter: true,
-        filterable: true,
-        sortable: true,
-        customTooltip: {
-          position: 'right-align',
-          formatter: () =>
-            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
-          asyncProcess: (
-            row: number,
-            cell: number,
-            value: any,
-            column: Column,
-            dataContext: any,
-          ) => {
-            const id = dataContext.id.toString()
-            let item = this.commentList.find(
-              (comment: any) =>
-                comment.recordId === id && comment.controlId === 'q4',
-            )
-            return new Promise((resolve, reject) => {
-              item?.note ? resolve(item) : resolve({})
-            })
-          },
-          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
-        },
-      },
 
-      {
-        id: 'q3',
-        name: 'Потеря тепла вследствии химической неполнотой сгорания (q3), %',
-        field: 'q3',
-        columnGroup: 'Вариант А',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
-          complexFieldLabel: 'q3',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          {
+            id: 'q4',
+            name: Q4,
+            field: 'q4',
+            columnGroup: VARIANT_A,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [
+                this.parameterCalcFormatter,
+                Formatters.complexObject,
+              ],
+              complexFieldLabel: 'q4',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+            exportWithFormatter: true,
+            filterable: true,
+            sortable: true,
+            customTooltip: {
+              position: 'right-align',
+              formatter: () =>
+                `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+              asyncProcess: (
+                row: number,
+                cell: number,
+                value: any,
+                column: Column,
+                dataContext: any,
+              ) => {
+                const id = dataContext.id.toString()
+                let item = this.commentList.find(
+                  (comment: any) =>
+                    comment.recordId === id && comment.controlId === 'q4',
+                )
+                return new Promise((resolve, reject) => {
+                  item?.note ? resolve(item) : resolve({})
+                })
+              },
+              asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
+            },
           },
-        },
-        customTooltip: {
-          position: 'right-align',
-          formatter: () =>
-            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
-          asyncProcess: (
-            row: number,
-            cell: number,
-            value: any,
-            column: Column,
-            dataContext: any,
-          ) => {
-            const id = dataContext.id.toString()
-            let item = this.commentList.find(
-              (comment: any) =>
-                comment.recordId === id && comment.controlId === 'q3',
-            )
-            return new Promise((resolve, reject) => {
-              item?.note ? resolve(item) : resolve({})
-            })
+
+          {
+            id: 'q3',
+            name: Q3,
+            field: 'q3',
+            columnGroup: VARIANT_A,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [
+                this.parameterCalcFormatter,
+                Formatters.complexObject,
+              ],
+              complexFieldLabel: 'q3',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+            customTooltip: {
+              position: 'right-align',
+              formatter: () =>
+                `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+              asyncProcess: (
+                row: number,
+                cell: number,
+                value: any,
+                column: Column,
+                dataContext: any,
+              ) => {
+                const id = dataContext.id.toString()
+                let item = this.commentList.find(
+                  (comment: any) =>
+                    comment.recordId === id && comment.controlId === 'q3',
+                )
+                return new Promise((resolve, reject) => {
+                  item?.note ? resolve(item) : resolve({})
+                })
+              },
+              asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
+            },
           },
-          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
-        },
-      },
 
-      {
-        id: 'slagCarbon',
-        name: 'Содержание углерода в шлаке',
-        field: 'slagCarbon',
-        columnGroup: 'Вариант Б',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
-          complexFieldLabel: 'slagCarbon',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          {
+            id: 'slagCarbon',
+            name: SLAG_CARBON,
+            field: 'slagCarbon',
+            columnGroup: VARIANT_B,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [
+                this.parameterCalcFormatter,
+                Formatters.complexObject,
+              ],
+              complexFieldLabel: 'slagCarbon',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
+            customTooltip: {
+              position: 'right-align',
+              formatter: () =>
+                `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
+              asyncProcess: (
+                row: number,
+                cell: number,
+                value: any,
+                column: Column,
+                dataContext: any,
+              ) => {
+                const id = dataContext.id.toString()
+                let item = this.commentList.find(
+                  (comment: any) =>
+                    comment.recordId === id && comment.controlId === 'q3',
+                )
+                return new Promise((resolve, reject) => {
+                  item?.note ? resolve(item) : resolve({})
+                })
+              },
+              asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
+            },
           },
-        },
-        customTooltip: {
-          position: 'right-align',
-          formatter: () =>
-            `<div><span class="fa fa-spinner fa-pulse fa-fw"></span> loading...</div>`,
-          asyncProcess: (
-            row: number,
-            cell: number,
-            value: any,
-            column: Column,
-            dataContext: any,
-          ) => {
-            const id = dataContext.id.toString()
-            let item = this.commentList.find(
-              (comment: any) =>
-                comment.recordId === id && comment.controlId === 'q3',
-            )
-            return new Promise((resolve, reject) => {
-              item?.note ? resolve(item) : resolve({})
-            })
+
+          {
+            id: 'dicUnit',
+            name: DIC_UNIT,
+            field: 'dicUnit',
+            columnGroup: 'Вариант Б',
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'dicUnit.name',
+            },
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            exportWithFormatter: true,
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const dicUnit = args.dataContext.dicUnit
+
+              const data = {
+                id,
+                nameField: 'ParamCalcUnitId',
+                valueField:
+                  dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
+              }
+
+              this.parameterCalcService
+                .addParameterCalc(data)
+                .subscribe((result) => {
+                  result.isSuccess
+                    ? this.notificationService.success(
+                        '“Ваши данные сохранены”',
+                        'Done',
+                      )
+                    : this.notificationService.error(
+                        `${result.message}`,
+                        'Done',
+                      )
+                })
+            },
           },
-          asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
-        },
-      },
 
-      {
-        id: 'dicUnit',
-        name: 'Единица измерения ',
-        field: 'dicUnit',
-        columnGroup: 'Вариант Б',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'dicUnit.name',
-        },
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'slagAmount',
+            name: SLAG_AMOUNT,
+            field: 'slagAmount',
+            columnGroup: VARIANT_B,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [
+                this.parameterCalcFormatter,
+                Formatters.complexObject,
+              ],
+              complexFieldLabel: 'slagAmount',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-        exportWithFormatter: true,
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const dicUnit = args.dataContext.dicUnit
 
-          const data = {
-            id,
-            nameField: 'ParamCalcUnitId',
-            valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
-          }
-
-          this.parameterCalcService
-            .addParameterCalc(data)
-            .subscribe((result) => {
-              result.isSuccess
-                ? this.notificationService.success(
-                    '“Ваши данные сохранены”',
-                    'Done',
-                  )
-                : this.notificationService.error(`${result.message}`, 'Done')
-            })
-        },
-      },
-
-      {
-        id: 'slagAmount',
-        name: ' Количество шлака, образованного за период z, тонн',
-        field: 'slagAmount',
-        columnGroup: 'Вариант Б',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
-          complexFieldLabel: 'slagAmount',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          {
+            id: 'fuelConsumption',
+            name: FUEL_CONSUMPTION,
+            field: 'fuelConsumption',
+            columnGroup: VARIANT_B,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [
+                this.parameterCalcFormatter,
+                Formatters.complexObject,
+              ],
+              complexFieldLabel: 'fuelConsumption',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-
-      {
-        id: 'fuelConsumption',
-        name: 'Расход топлива в натуральном виде за период z, тонн',
-        field: 'fuelConsumption',
-        columnGroup: 'Вариант Б',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.parameterCalcFormatter, Formatters.complexObject],
-          complexFieldLabel: 'fuelConsumption',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
-          },
-        },
-      },
-    ]
-
+        ]
+      })
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

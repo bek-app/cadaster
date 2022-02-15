@@ -1,21 +1,16 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>Отбор Проб</h2>
+  <h2 mat-dialog-title>{{ 'PLANT.SAMPLING.TITLE' | translate }}</h2>
 
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>
-        Точка отбора проб (обозначение)
-      </mat-label>
+      <mat-label>{{ 'PLANT.SAMPLING.FORM.NAME' | translate }}</mat-label>
       <input matInput formControlName="nameSampling" type="text" />
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <div class="row">
       <label for="materials" class="form-label">
-        Вид топлива, сырья или продукции
-        <span class="text-danger">*</span>
+        {{ 'PLANT.SAMPLING.FORM.MATERIALS' | translate }}
       </label>
       <ng-select
         [items]="dicMaterialsList"
@@ -39,7 +34,7 @@
             color="primary"
             (click)="openDicFormModal('dicMaterial')"
           >
-            Добавить не существующий в списке
+            {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
       </ng-select>
@@ -48,51 +43,39 @@
           (f.materials.touched || submitted) && f.materials.errors?.required
         "
       >
-        Поле обязательно для заполнения
+        {{ 'ERROR_MESSAGE' | translate }}
       </mat-error>
     </div>
 
     <mat-form-field>
-      <mat-label>
-        Параметр отбора проб
-      </mat-label>
+      <mat-label>{{ 'PLANT.SAMPLING.FORM.PARAM' | translate }}</mat-label>
       <textarea matInput formControlName="param" type="text"></textarea>
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        Метод отбора проб (краткое описание)
-      </mat-label>
+      <mat-label>{{ 'PLANT.SAMPLING.FORM.METHOD' | translate }}</mat-label>
       <textarea
         matInput
         formControlName="methodSampling"
         type="text"
       ></textarea>
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        Периодичность отбора проб
-      </mat-label>
+      <mat-label>{{ 'PLANT.SAMPLING.FORM.FREQUENCY' | translate }}</mat-label>
       <textarea
         matInput
         formControlName="frequencySampling"
         type="text"
       ></textarea>
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        Периодичность передачи данных для расчетов выбросов парниковых газов
+        {{ 'PLANT.SAMPLING.FORM.PERIOD_TRANSMISSION' | translate }}
       </mat-label>
       <textarea
         matInput
@@ -100,7 +83,7 @@
         type="text"
       ></textarea>
       <mat-error>
-        Поле обязательно для заполнения
+        {{ 'ERROR_MESSAGE' | translate }}
       </mat-error>
     </mat-form-field>
   </mat-dialog-content>
@@ -113,8 +96,10 @@
       mat-dialog-close
       (click)="hideSamplingModal()"
     >
-      Отмена
+      {{ 'CANCEL' | translate }}
     </button>
-    <button type="submit" mat-raised-button color="primary">Сохранить</button>
+    <button type="submit" mat-raised-button color="primary">
+      {{ 'SAVE' | translate }}
+    </button>
   </mat-dialog-actions>
 </form>

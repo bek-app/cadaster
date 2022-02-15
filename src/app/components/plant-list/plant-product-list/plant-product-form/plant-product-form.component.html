@@ -1,5 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>Продукт</h2>
+  <h2 mat-dialog-title></h2>
 
   <mat-dialog-content
     fxLayout="column"
@@ -8,8 +8,7 @@
   >
     <div class="row">
       <label for="dicProductId" class="form-label">
-        Вид
-        <span class="text-danger">*</span>
+        {{ 'PLANT.PRODUCT.FORM.PRODUCT_NAME' | translate }}
       </label>
       <ng-select
         [items]="dicProductList"
@@ -32,7 +31,7 @@
             color="primary"
             (click)="openDicModal('dicProduct')"
           >
-            Добавить не существующий в списке
+            <small>{{ 'DIC_FORM.ADD_DIC' | translate }}</small>
           </button>
         </ng-template>
       </ng-select>
@@ -42,14 +41,13 @@
           f.dicProductId.errors?.required
         "
       >
-        <small>Поле обязательно для заполнения</small>
+        <small>{{ 'ERROR_MESSAGE' | translate }}</small>
       </mat-error>
     </div>
 
     <div class="row">
       <label for="dicUnitId" class="form-label">
-        Ед. измерения
-        <span class="text-danger">*</span>
+        <small>{{ 'PLANT.PRODUCT.FORM.DIC_UNIT' | translate }}</small>
       </label>
       <ng-select
         [items]="dicUnitList"
@@ -71,7 +69,7 @@
             color="primary"
             (click)="openDicModal('dicUnit')"
           >
-            Добавить не существующий в списке
+            <small>{{ 'DIC_FORM.ADD_DIC' | translate }}</small>
           </button>
         </ng-template>
       </ng-select>
@@ -80,7 +78,7 @@
           (f.dicUnitId.touched || submitted) && f.dicUnitId.errors?.required
         "
       >
-        <small>Поле обязательно для заполнения</small>
+        <small>{{ 'ERROR_MESSAGE' | translate }}</small>
       </mat-error>
     </div>
   </mat-dialog-content>
@@ -93,8 +91,10 @@
       mat-dialog-close
       (click)="hideProductModal()"
     >
-      Отмена
+      {{ 'CANCEL' | translate }}
     </button>
-    <button mat-raised-button color="primary" type="submit">Сохранить</button>
+    <button mat-raised-button color="primary" type="submit">
+      {{ 'SAVE' | translate }}
+    </button>
   </mat-dialog-actions>
 </form>

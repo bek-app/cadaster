@@ -1,75 +1,176 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
+import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
   Column,
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid';
-import { Dictionary } from 'src/app/models/dictionary.model';
-import { PlantProcessModel } from 'src/app/models/plant-process.model ';
-import { PlantService } from 'src/app/services/plant.service';
-import { PlantProcessService } from '../../../services/plant-process.service';
-import { ProcessFormComponent } from './process-form/process-form.component';
+} from 'angular-slickgrid'
+import { Dictionary } from 'src/app/models/dictionary.model'
+import { PlantProcessModel } from 'src/app/models/plant-process.model '
+import { PlantService } from 'src/app/services/plant.service'
+import { PlantProcessService } from '../../../services/plant-process.service'
+import { ProcessFormComponent } from './process-form/process-form.component'
 @Component({
   selector: 'app-plant-process-list',
   templateUrl: './plant-process-list.component.html',
   styleUrls: ['./plant-process-list.component.css'],
 })
 export class PlantProcessListComponent implements OnInit {
-  angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
-  gridOptions: GridOption = {};
-  dataset: PlantProcessModel[] = [];
-  plantId!: number;
-  processId!: number;
-  gridObj: any;
-  dataViewObj: any;
-  isActive = false;
-  submitted = false;
+  angularGrid!: AngularGridInstance
+  columnDefinitions: Column[] = []
+  gridOptions: GridOption = {}
+  dataset: PlantProcessModel[] = []
+  plantId!: number
+  processId!: number
+  gridObj: any
+  dataViewObj: any
+  isActive = false
+  submitted = false
   namePlant!: string
-  dicProcessList: Dictionary[] = [];
-  @ViewChild('content') content: any;
-  ref: any;
+  dicProcessList: Dictionary[] = []
+  @ViewChild('content') content: any
+  ref: any
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
-    this.gridObj = angularGrid.slickGrid;
-    this.dataViewObj = angularGrid.dataView;
+    this.angularGrid = angularGrid
+    this.gridObj = angularGrid.slickGrid
+    this.dataViewObj = angularGrid.dataView
   }
 
   constructor(
     private plantProcessDialog: MatDialog,
     private plantProcessService: PlantProcessService,
-    private plantService: PlantService
-  ) { }
+    private plantService: PlantService,
+    private translate: TranslateService,
+  ) {
+    translate.get('PLANT.PROCESS.LIST').subscribe((translations: string) => {
+      this.columnDefinitions = [
+        {
+          id: 'processName',
+          name: translations['PROCESS_NAME' as any],
+          field: 'processName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'subProccessNames',
+          name: translations['SUBPROCESS_NAME' as any],
+          field: 'subProccessNames',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'materialNames',
+          name: translations['MATERIALS_NAMES' as any],
+          field: 'materialNames',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'oddsLevel',
+          name: translations['ODDS_LEVEL' as any],
+          field: 'oddsLevel',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'amountConsumed',
+          name: translations['AMOUNT_CONSUMED' as any],
+          field: 'amountConsumed',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'calculatingCalorific',
+          name: translations['CALCULATION_CALORIFIC' as any],
+          columnGroup: translations['COLUMN_GROUP' as any],
+          field: 'calculatingCalorific',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'calculatingConversion',
+          name: translations['CALCULATION_CONVERSION' as any],
+          columnGroup: translations['COLUMN_GROUP' as any],
+          field: 'calculatingConversion',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'calculatingCarbon',
+          name: translations['CALCULATION_CARBON' as any],
+          columnGroup: translations['COLUMN_GROUP' as any],
+          field: 'calculatingCarbon',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.processId = args.dataContext.id
+            this.openProcessFormDialog()
+            this.ref.componentInstance.editForm(this.processId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantProcessService
+                .deletePlantProcess(id)
+                .subscribe(() => this.refreshList(this.plantId))
+            }
+          },
+        },
+      ]
+    })
+  }
 
   ngOnInit(): void {
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
-      this.plantId = item.id;
+      this.plantId = item.id
+
       // this.namePlant = item.namePlant;
-      this.refreshList(this.plantId);
-    });
-    this.prepareGrid();
+      this.refreshList(this.plantId)
+    })
+    this.prepareGrid()
   }
 
   refreshList(id: number) {
     this.plantProcessService
       .getPlantProcessList(id)
-      .subscribe((data) => (this.dataset = data));
+      .subscribe((data) => (this.dataset = data))
   }
 
   goToPlants(id: number) {
-    this.plantId = id;
-    this.refreshList(id);
+    this.plantId = id
+    this.refreshList(id)
   }
 
   openProcessFormDialog() {
     this.ref = this.plantProcessDialog.open(ProcessFormComponent, {
-      width: "800px"
-    });
-    this.addProcess();
-    this.updateProcess();
+      width: '800px',
+    })
+    this.addProcess()
+    this.updateProcess()
   }
 
   addProcess() {
@@ -77,10 +178,10 @@ export class PlantProcessListComponent implements OnInit {
       this.plantProcessService
         .addPlantProcess({ id: 0, plantId: this.plantId, ...data })
         .subscribe(() => {
-          this.ref.close();
+          this.ref.close()
           this.refreshList(this.plantId)
-        });
-    });
+        })
+    })
   }
 
   updateProcess() {
@@ -91,107 +192,14 @@ export class PlantProcessListComponent implements OnInit {
           plantId: this.plantId,
           ...data,
         })
-        .subscribe(() => { this.ref.close(); this.refreshList(this.plantId) });
-    });
+        .subscribe(() => {
+          this.ref.close()
+          this.refreshList(this.plantId)
+        })
+    })
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'processName',
-        name: 'Наименование производственного процесса',
-        field: 'processName',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'subProccessNames',
-        name: 'Наименование производственного подпроцесса',
-        field: 'subProccessNames',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'materialNames',
-        name: 'Наименование топлива или сырья',
-        field: 'materialNames',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'oddsLevel',
-        name: 'Уровень коэффициентов выбросов парниковых газов',
-        field: 'oddsLevel',
-        filterable: true,
-        sortable: true,
-      },
-
-      {
-        id: 'amountConsumed',
-        name: 'Источник данных о количестве потребляемого топлива или сырья',
-        field: 'amountConsumed',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'calculatingCalorific',
-        name: 'низшей теплоты сгорания',
-        columnGroup: 'Источник данных для расчета коэффициента ',
-        field: 'calculatingCalorific',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'calculatingConversion',
-        name: 'преобразования (в случае промышленных процессов) ',
-        columnGroup: 'Источник данных для расчета коэффициента ',
-        field: 'calculatingConversion',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'calculatingCarbon',
-        name: 'содержания углерода ',
-        columnGroup: 'Источник данных для расчета коэффициента ',
-        field: 'calculatingCarbon',
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'edit',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.editIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          this.processId = args.dataContext.id;
-          this.openProcessFormDialog();
-          this.ref.componentInstance.editForm(this.processId);
-        },
-      },
-      {
-        id: 'delete',
-        field: 'id',
-        excludeFromColumnPicker: true,
-        excludeFromGridMenu: true,
-        excludeFromHeaderMenu: true,
-        formatter: Formatters.deleteIcon,
-        minWidth: 30,
-        maxWidth: 30,
-        onCellClick: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id;
-          if (confirm('Уверены ли вы?')) {
-            this.plantProcessService
-              .deletePlantProcess(id)
-              .subscribe(() => this.refreshList(this.plantId));
-          }
-        },
-      },
-    ];
-
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',
@@ -232,6 +240,6 @@ export class PlantProcessListComponent implements OnInit {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-    };
+    }
   }
 }

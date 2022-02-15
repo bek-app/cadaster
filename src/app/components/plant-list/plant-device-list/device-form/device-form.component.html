@@ -1,57 +1,37 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>Приборы</h2>
+  <h2 mat-dialog-title>{{ 'PLANT.DEVICE.TITLE' | translate }}</h2>
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>
-        Наименование измерительного прибора
-      </mat-label>
+      <mat-label>{{ 'PLANT.DEVICE.FORM.NAME_DEVICE' | translate }}</mat-label>
       <input matInput formControlName="nameDevice" />
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        Расположение
-      </mat-label>
+      <mat-label>{{ 'PLANT.DEVICE.FORM.NAME_DEVICE' | translate }}</mat-label>
       <input matInput formControlName="identificationNumber" />
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        единица измерений
-      </mat-label>
+      <mat-label>{{ 'PLANT.DEVICE.FORM.UNIT_DEVICE' | translate }}</mat-label>
       <input matInput formControlName="unitDevice" />
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        нижний предел
-      </mat-label>
+      <mat-label>{{ 'PLANT.DEVICE.FORM.LOWER_LIMIT' | translate }}</mat-label>
       <input matInput formControlName="lowerLimit" />
-      <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        верхний предел
-      </mat-label>
+      <mat-label>{{ 'PLANT.DEVICE.FORM.UPPER_LIMIT' | translate }}</mat-label>
       <input matInput formControlName="upperLimit" />
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>
-        Указанная неопределенность
-      </mat-label>
+      <mat-label>{{ 'PLANT.DEVICE.FORM.SPECIFIED_UNCERTAINTY' | translate }}</mat-label>
       <input matInput formControlName="specifiedUncertainty" />
     </mat-form-field>
   </mat-dialog-content>
@@ -64,8 +44,10 @@
       mat-dialog-close
       (click)="hidePlantDeviceModal()"
     >
-      Отмена
+      {{ 'CANCEL' | translate }}
     </button>
-    <button type="submit" mat-raised-button color="primary">Сохранить</button>
+    <button type="submit" mat-raised-button color="primary">
+      {{ 'SAVE' | translate }}
+    </button>
   </mat-dialog-actions>
 </form>

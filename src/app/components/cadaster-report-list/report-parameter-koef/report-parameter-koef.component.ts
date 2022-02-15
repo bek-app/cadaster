@@ -21,6 +21,7 @@ import { NotificationService } from 'src/app/services/notification.service'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
 import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
 import { ReportCommentService } from 'src/app/services/report-comment.service'
+import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-parameter-koef',
   templateUrl: './report-parameter-koef.component.html',
@@ -80,6 +81,7 @@ export class ReportParameterKoefComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private notificationService: NotificationService,
     private commentService: ReportCommentService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -257,465 +259,485 @@ export class ReportParameterKoefComponent implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
-      {
-        id: 'processName',
-        name: 'Наименование производственного процесса',
-        field: 'processName',
-        type: FieldType.string,
-        width: 170,
-        formatter: reportCadasterTreeFormatter,
-        filterable: true,
-      },
+    this.translate
+      .get('CDR_REPORTS.PARAMETER_COEFF')
+      .subscribe((translations: any) => {
+        const {
+          PROCESS_NAME,
+          COEF_VOLUME,
+          MATERIAL_NAME,
+          UNIT_NAME,
+          COEFF_OPERATING_WEIGTH,
+          COEFF_LOWER_CALORIFIC,
+          COEFF_CASE_BURNING,
+          COEF_CO2,
+          COEF_CH4,
+          COEF_N20,
+          COEF_PERFLURO_CARBONS,
+          COEF_USED_CALC,
+        } = translations
+        this.columnDefinitions = [
+          {
+            id: 'processName',
+            name: PROCESS_NAME,
+            field: 'processName',
+            type: FieldType.string,
+            width: 170,
+            formatter: reportCadasterTreeFormatter,
+            filterable: true,
+          },
 
-      /// Фактический объем
-      {
-        id: 'koefVolume',
-        name: 'Фактический объем',
-        field: 'koefVolume',
-        columnGroup: 'Наименование сырья',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefVolume',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          /// Фактический объем
+          {
+            id: 'koefVolume',
+            name: COEF_VOLUME,
+            field: 'koefVolume',
+            columnGroup: MATERIAL_NAME,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefVolume',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'dicUnit',
-        name: 'Ед. измерения ',
-        field: 'dicUnit',
-        columnGroup: 'Наименование сырья',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'dicUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'dicUnit',
+            name: UNIT_NAME,
+            field: 'dicUnit',
+            columnGroup: MATERIAL_NAME,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'dicUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const dicUnit = args.dataContext.dicUnit
+              const data = {
+                id,
+                nameField: 'DicUnitId',
+                valueField:
+                  dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const dicUnit = args.dataContext.dicUnit
-          const data = {
-            id,
-            nameField: 'DicUnitId',
-            valueField: dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      // Содержание углерода
-      {
-        id: 'koefOperatingWeight',
-        name: 'Содержание углерода  ',
-        field: 'koefOperatingWeight',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefOperatingWeight',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Содержание углерода
+          {
+            id: 'koefOperatingWeight',
+            name: COEFF_OPERATING_WEIGTH,
+            field: 'koefOperatingWeight',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefOperatingWeight',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefOperatingWeightUnit',
-        name: 'Ед.измерения',
-        field: 'koefOperatingWeightUnit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefOperatingWeightUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
-          },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefOperatingWeightUnit =
-            args.dataContext.koefOperatingWeightUnit
-          const data = {
-            id,
-            nameField: 'KoefOperatingWeightUnitId',
-            valueField:
-              koefOperatingWeightUnit.id != null
-                ? koefOperatingWeightUnit.id.toString()
-                : koefOperatingWeightUnit.id,
-          }
+          {
+            id: 'koefOperatingWeightUnit',
+            name: UNIT_NAME,
+            field: 'koefOperatingWeightUnit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefOperatingWeightUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefOperatingWeightUnit =
+                args.dataContext.koefOperatingWeightUnit
+              const data = {
+                id,
+                nameField: 'KoefOperatingWeightUnitId',
+                valueField:
+                  koefOperatingWeightUnit.id != null
+                    ? koefOperatingWeightUnit.id.toString()
+                    : koefOperatingWeightUnit.id,
+              }
 
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
+          },
 
-      // Коэффициент низшей теплоты сгорания
-      {
-        id: 'koefLowerCalorific',
-        name: 'Коэффициент низшей теплоты сгорания',
-        field: 'koefLowerCalorific',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefLowerCalorific',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Коэффициент низшей теплоты сгорания
+          {
+            id: 'koefLowerCalorific',
+            name: COEFF_LOWER_CALORIFIC,
+            field: 'koefLowerCalorific',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefLowerCalorific',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefLowerCalorificUnit',
-        name: 'Ед.измерения',
-        field: 'koefLowerCalorificUnit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefLowerCalorificUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'koefLowerCalorificUnit',
+            name: UNIT_NAME,
+            field: 'koefLowerCalorificUnit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefLowerCalorificUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefLowerCalorificUnit =
+                args.dataContext.koefLowerCalorificUnit
+              const data = {
+                id,
+                nameField: 'KoefLowerCalorificUnitId',
+                valueField:
+                  koefLowerCalorificUnit.id != null
+                    ? koefLowerCalorificUnit.id.toString()
+                    : koefLowerCalorificUnit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefLowerCalorificUnit = args.dataContext.koefLowerCalorificUnit
-          const data = {
-            id,
-            nameField: 'KoefLowerCalorificUnitId',
-            valueField:
-              koefLowerCalorificUnit.id != null
-                ? koefLowerCalorificUnit.id.toString()
-                : koefLowerCalorificUnit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      // Коэффициент окисления
-      {
-        id: 'koefCaseBurning',
-        name: 'Коэффициент окисления',
-        field: 'koefCaseBurning',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefCaseBurning',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Коэффициент окисления
+          {
+            id: 'koefCaseBurning',
+            name: COEFF_CASE_BURNING,
+            field: 'koefCaseBurning',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefCaseBurning',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefCaseBurningUnit',
-        name: 'Ед.измерения',
-        field: 'koefCaseBurningUnit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefCaseBurningUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'koefCaseBurningUnit',
+            name: UNIT_NAME,
+            field: 'koefCaseBurningUnit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefCaseBurningUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefCaseBurningUnit = args.dataContext.koefCaseBurningUnit
+              const data = {
+                id,
+                nameField: 'KoefCaseBurningUnitId',
+                valueField:
+                  koefCaseBurningUnit.id != null
+                    ? koefCaseBurningUnit.id.toString()
+                    : koefCaseBurningUnit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefCaseBurningUnit = args.dataContext.koefCaseBurningUnit
-          const data = {
-            id,
-            nameField: 'KoefCaseBurningUnitId',
-            valueField:
-              koefCaseBurningUnit.id != null
-                ? koefCaseBurningUnit.id.toString()
-                : koefCaseBurningUnit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      // Двуокись углерода (СО2)
-      {
-        id: 'koefCo2',
-        name: 'Двуокись углерода (СО2)',
-        field: 'koefCo2',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefCo2',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Двуокись углерода (СО2)
+          {
+            id: 'koefCo2',
+            name:  COEF_CO2,
+            field: 'koefCo2',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefCo2',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefCo2Unit',
-        name: 'Ед.измерения',
-        field: 'koefCo2Unit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefCo2Unit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'koefCo2Unit',
+            name: UNIT_NAME,
+            field: 'koefCo2Unit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefCo2Unit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefCo2Unit = args.dataContext.koefCo2Unit
+              const data = {
+                id,
+                nameField: 'KoefCo2UnitId',
+                valueField:
+                  koefCo2Unit.id != null
+                    ? koefCo2Unit.id.toString()
+                    : koefCo2Unit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefCo2Unit = args.dataContext.koefCo2Unit
-          const data = {
-            id,
-            nameField: 'KoefCo2UnitId',
-            valueField:
-              koefCo2Unit.id != null
-                ? koefCo2Unit.id.toString()
-                : koefCo2Unit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      // Метан (СН4)
-      {
-        id: 'koefCh4',
-        name: 'Метан (СН4)',
-        field: 'koefCh4',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefCh4',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Метан (СН4)
+          {
+            id: 'koefCh4',
+            name: COEF_CH4,
+            field: 'koefCh4',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefCh4',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefCh4Unit',
-        name: 'Ед.измерения',
-        field: 'koefCh4Unit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefCh4Unit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'koefCh4Unit',
+            name: UNIT_NAME,
+            field: 'koefCh4Unit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefCh4Unit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefCh4Unit = args.dataContext.koefCh4Unit
+              const data = {
+                id,
+                nameField: 'KoefCh4UnitId',
+                valueField:
+                  koefCh4Unit.id != null
+                    ? koefCh4Unit.id.toString()
+                    : koefCh4Unit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefCh4Unit = args.dataContext.koefCh4Unit
-          const data = {
-            id,
-            nameField: 'KoefCh4UnitId',
-            valueField:
-              koefCh4Unit.id != null
-                ? koefCh4Unit.id.toString()
-                : koefCh4Unit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      // Закиси азота (N2O)
-      {
-        id: 'koefN2O',
-        name: 'Закиси азота (N2O)',
-        field: 'koefN2O',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefN2O',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Закиси азота (N2O)
+          {
+            id: 'koefN2O',
+            name: COEF_N20,
+            field: 'koefN2O',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefN2O',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefN2OUnit',
-        name: 'Ед.измерения',
-        field: 'koefN2OUnit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefN2OUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'koefN2OUnit',
+            name: UNIT_NAME,
+            field: 'koefN2OUnit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefN2OUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefN2OUnit = args.dataContext.koefN2OUnit
+              const data = {
+                id,
+                nameField: 'KoefN2OUnitId',
+                valueField:
+                  koefN2OUnit.id != null
+                    ? koefN2OUnit.id.toString()
+                    : koefN2OUnit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefN2OUnit = args.dataContext.koefN2OUnit
-          const data = {
-            id,
-            nameField: 'KoefN2OUnitId',
-            valueField:
-              koefN2OUnit.id != null
-                ? koefN2OUnit.id.toString()
-                : koefN2OUnit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
 
-      // Перфторуглероды
-      {
-        id: 'koefPerfluorocarbons',
-        name: 'Перфторуглероды',
-        field: 'koefPerfluorocarbons',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.multiple,
-        params: {
-          formatters: [this.koefCommentFormatter, Formatters.complexObject],
-          complexFieldLabel: 'koefPerfluorocarbons',
-        },
-        editor: {
-          model: CustomInputEditor,
-          params: {
-            component: CustomInputEditorComponent,
+          // Перфторуглероды
+          {
+            id: 'koefPerfluorocarbons',
+            name: COEF_PERFLURO_CARBONS,
+            field: 'koefPerfluorocarbons',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.multiple,
+            params: {
+              formatters: [this.koefCommentFormatter, Formatters.complexObject],
+              complexFieldLabel: 'koefPerfluorocarbons',
+            },
+            editor: {
+              model: CustomInputEditor,
+              params: {
+                component: CustomInputEditorComponent,
+              },
+            },
           },
-        },
-      },
-      {
-        id: 'koefPerfluorocarbonsUnit',
-        name: 'Ед.измерения',
-        field: 'koefPerfluorocarbonsUnit',
-        columnGroup: 'Коэффициенты, использованные для расчетов',
-        filterable: true,
-        sortable: true,
-        formatter: Formatters.complexObject,
-        params: {
-          complexFieldLabel: 'koefPerfluorocarbonsUnit.name',
-        },
-        exportWithFormatter: true,
-        editor: {
-          model: CustomSelectEditor,
-          collection: this.dicUnitList,
-          params: {
-            component: CustomSelectEditorComponent,
+          {
+            id: 'koefPerfluorocarbonsUnit',
+            name: UNIT_NAME,
+            field: 'koefPerfluorocarbonsUnit',
+            columnGroup: COEF_USED_CALC,
+            filterable: true,
+            sortable: true,
+            formatter: Formatters.complexObject,
+            params: {
+              complexFieldLabel: 'koefPerfluorocarbonsUnit.name',
+            },
+            exportWithFormatter: true,
+            editor: {
+              model: CustomSelectEditor,
+              collection: this.dicUnitList,
+              params: {
+                component: CustomSelectEditorComponent,
+              },
+            },
+            onCellChange: (e: Event, args: OnEventArgs) => {
+              const id = args.dataContext.id
+              const koefPerfluorocarbonsUnit =
+                args.dataContext.koefPerfluorocarbonsUnit
+              const data = {
+                id,
+                nameField: 'KoefPerfluorocarbonsUnitId',
+                valueField:
+                  koefPerfluorocarbonsUnit.id != null
+                    ? koefPerfluorocarbonsUnit.id.toString()
+                    : koefPerfluorocarbonsUnit.id,
+              }
+              this.parameterKoefService
+                .addParameterKoef(data)
+                .subscribe((res: any) => {})
+            },
           },
-        },
-        onCellChange: (e: Event, args: OnEventArgs) => {
-          const id = args.dataContext.id
-          const koefPerfluorocarbonsUnit =
-            args.dataContext.koefPerfluorocarbonsUnit
-          const data = {
-            id,
-            nameField: 'KoefPerfluorocarbonsUnitId',
-            valueField:
-              koefPerfluorocarbonsUnit.id != null
-                ? koefPerfluorocarbonsUnit.id.toString()
-                : koefPerfluorocarbonsUnit.id,
-          }
-          this.parameterKoefService
-            .addParameterKoef(data)
-            .subscribe((res: any) => {})
-        },
-      },
-    ]
+        ]
+      })
 
     this.gridOptions = {
       autoResize: {
@@ -746,10 +768,10 @@ export class ReportParameterKoefComponent implements OnInit {
 
         autoApproveParentItemWhenTreeColumnIsValid: this
           .isAutoApproveParentItemWhenTreeColumnIsValid,
-          initialSort: {
-            columnId: 'processName',
-            direction: 'DESC',
-          },
+        initialSort: {
+          columnId: 'processName',
+          direction: 'DESC',
+        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)

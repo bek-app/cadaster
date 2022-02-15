@@ -1,36 +1,38 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
   <h2 mat-dialog-title>
-    Источники
+    {{ 'PLANT.SOURCE.TITLE' | translate }}
   </h2>
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>Наименование источника</mat-label>
+      <mat-label>{{ 'PLANT.SOURCE.NAME_SOURCE' | translate }}</mat-label>
       <input matInput formControlName="nameSource" type="text" />
       <mat-error>
-        Поле обязательно для заполнения
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Характеристика используемой технологии</mat-label>
-      <textarea matInput formControlName="characteristic"></textarea>
-      <mat-error>
-        Поле обязательно для заполнения
+        {{ 'PLANT.SOURCE.VALIDATOR' | translate }}
       </mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        Установленная мощность (единицы измерения) (при наличии)
+        {{ 'PLANT.SOURCE.CHARACTERISTIC' | translate }}
+      </mat-label>
+      <textarea matInput formControlName="characteristic"></textarea>
+      <mat-error>
+        {{ 'PLANT.SOURCE.VALIDATOR' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>
+        {{ 'PLANT.SOURCE.INSTALLED_CAPACITY' | translate }}
       </mat-label>
       <textarea matInput formControlName="installedCapacity"></textarea>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Время работы</mat-label>
+      <mat-label>{{ 'PLANT.SOURCE.WORKINHOURS' | translate }}</mat-label>
       <input matInput formControlName="workinHours" type="text" />
       <mat-error>
-        Поле обязательно для заполнения
+        {{ 'PLANT.SOURCE.VALIDATOR' | translate }}
       </mat-error>
     </mat-form-field>
   </mat-dialog-content>
@@ -41,10 +43,10 @@
       color="warn"
       (click)="hideSourceModal()"
     >
-      Отмена
+      {{ 'CANCEL' | translate }}
     </button>
     <button mat-raised-button color="primary" type="submit">
-      Сохранить
+      {{ 'SAVE' | translate }}
     </button>
   </mat-dialog-actions>
 </form>
