@@ -12,6 +12,8 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid'
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
+import { AuthService } from 'src/app/services/auth.service'
+import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
 import { ActualEmissionService } from '../../../services/actual-emission.service'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
@@ -33,7 +35,8 @@ export class ReportActualEmissionComponent implements OnInit {
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
   editMode = false
-
+  commentList: ReportCommentModel[] = []
+  role: string = ''
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -62,7 +65,7 @@ export class ReportActualEmissionComponent implements OnInit {
     }
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
+      if (args.item.__hasChildren || this.role !== 'ROLE_ADMIN') {
         return false
       }
       return true
@@ -74,10 +77,160 @@ export class ReportActualEmissionComponent implements OnInit {
     private actualEmissionService: ActualEmissionService,
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
-  ) {
-    translate
+    private commentService: ReportCommentService,
+    public authService: AuthService,
+  ) {}
+
+  ngOnInit(): void {
+    this.getCommentList(this.cdrReportId)
+    this.role = this.authService.getRole()
+
+    this.prepareGrid()
+    this.refreshList(2)
+  }
+  getCommentList(cdrReportId: number = 2): void {
+    this.commentService
+      .getReportCommentList(cdrReportId, 'actual')
+      .subscribe((data: any) => {
+        this.commentList = data
+      })
+  }
+
+  goToCadasterReports(id: number) {
+    this.cdrReportId = id
+    this.refreshList(id)
+  }
+
+  refreshList(reportId: number) {
+    this.actualEmissionService
+      .getActualEmissionById(reportId)
+      .subscribe((data) => {
+        let group: any[] = []
+        data.forEach((items) => {
+          items.processes.forEach((process: any) => {
+            Object.assign(process, {
+              processName: process.dicMaterialName,
+            })
+          })
+          items.materials.forEach((material: any) => {
+            Object.assign(material, {
+              processName: material.dicMaterialName,
+            })
+          })
+          group = [
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Сырье',
+              group: [...items.materials],
+              key: 'material',
+            },
+            {
+              id: '_' + Math.random().toString(36),
+              processName: 'Подпроцессы',
+              group: [...items.processes],
+              key: 'processes',
+            },
+          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
+          Object.assign(items, { group })
+        })
+        this.dataset = data
+      })
+  }
+
+  onCellClicked(e: Event, args: OnEventArgs) {
+    if (!this.editMode) {
+      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+        args,
+      )
+      const { id } = metadata.dataContext
+      const { field } = metadata.columnDef
+      if (field !== 'processName') {
+        for (const item in metadata.dataContext) {
+          if (field === item) {
+            let controlValue = metadata.dataContext[item]
+            let newControlValue
+
+            if (typeof controlValue === 'object' && controlValue !== null) {
+              newControlValue = controlValue.name
+            } else if (controlValue === null) {
+              newControlValue = controlValue
+            } else newControlValue = controlValue.toString()
+
+            const comment: ReportCommentModel = {
+              id: 0,
+              note: '',
+              recordId: id.toString(),
+              controlId: field,
+              controlValue: newControlValue,
+              discriminator: 'actual',
+              isMark: true,
+              isActive: true,
+              reportId: this.cdrReportId,
+            }
+
+            this.sharedDataService.sendComment(comment)
+          }
+        }
+      }
+    }
+  }
+
+  onCellChanged(e: Event, args: OnEventArgs) {
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
+
+    for (let item in metadata.dataContext) {
+      if (field === item) {
+        let nameField = item[0].toUpperCase() + item.slice(1)
+        let valueField = metadata.dataContext[item]
+        let newValueField
+        let discriminator = metadata.dataContext.discriminator
+        if (typeof valueField === 'object') {
+          return
+        } else newValueField = valueField.toString()
+
+        const data = {
+          id,
+          nameField,
+          valueField: newValueField,
+          discriminator,
+        }
+
+        this.actualEmissionService.addActualEmission(data).subscribe((res) => {
+          this.refreshList(this.cdrReportId)
+        })
+      }
+    }
+  }
+
+  commentFormatter: Formatter = (
+    row: number,
+    cell: number,
+    value: any,
+    columnDef: Column,
+    dataContext: any,
+    grid?: any,
+  ) => {
+    const { id } = dataContext
+    const { field } = columnDef
+
+    const res = this.commentList.find((comment) => {
+      return comment.recordId === id.toString() && comment.controlId === field
+    })
+    return {
+      addClasses: res ? 'border' : '',
+      text: value ? value : '',
+    }
+  }
+
+  prepareGrid() {
+    this.translate
       .get('CDR_REPORTS.ACTUAL_EMISSION')
-      .subscribe((translations: string) => {
+      .subscribe((translations: any) => {
         const {
           PROCESS_NAME,
           CARBON_DIOXIDE,
@@ -91,7 +244,8 @@ export class ReportActualEmissionComponent implements OnInit {
           PERFLUORO_CARBON_CO2,
           PERFLUORO_CARBON_COLUMN_GROUP,
           TOTAL_CO2,
-        }: any = translations
+        } = translations
+
         this.columnDefinitions = [
           {
             id: 'processName',
@@ -112,7 +266,7 @@ export class ReportActualEmissionComponent implements OnInit {
             sortable: true,
             formatter: Formatters.multiple,
             params: {
-              formatters: [Formatters.complexObject],
+              formatters: [Formatters.complexObject, this.commentFormatter],
               complexFieldLabel: 'carbonDioxide',
             },
             editor: {
@@ -122,6 +276,7 @@ export class ReportActualEmissionComponent implements OnInit {
               },
             },
           },
+
           {
             id: 'methaneEmissionsTon',
             name: METHAN_EMISSION_TON,
@@ -141,6 +296,7 @@ export class ReportActualEmissionComponent implements OnInit {
               },
             },
           },
+
           {
             id: 'methaneEmissionsCo2',
             name: MATHAN_EMISSION_CO2,
@@ -248,127 +404,7 @@ export class ReportActualEmissionComponent implements OnInit {
           },
         ]
       })
-  }
 
-  ngOnInit(): void {
-    this.prepareGrid()
-    this.refreshList(2)
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
-  }
-
-  refreshList(reportId: number) {
-    this.actualEmissionService
-      .getActualEmissionById(reportId)
-      .subscribe((data) => {
-        let group: any[] = []
-        data.forEach((items) => {
-          items.processes.forEach((process: any) => {
-            Object.assign(process, {
-              processName: process.dicMaterialName,
-            })
-          })
-          items.materials.forEach((material: any) => {
-            Object.assign(material, {
-              processName: material.dicMaterialName,
-            })
-          })
-          group = [
-            {
-              id: '_' + Math.random().toString(36),
-              processName: 'Сырье',
-              group: [...items.materials],
-              key: 'material',
-            },
-            {
-              id: '_' + Math.random().toString(36),
-              processName: 'Подпроцессы',
-              group: [...items.processes],
-              key: 'processes',
-            },
-          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
-          Object.assign(items, { group })
-        })
-        this.dataset = data
-      })
-  }
-
-  onCellClicked(e: Event, args: OnEventArgs) {
-    if (!this.editMode) {
-      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-        args,
-      )
-      const { id } = metadata.dataContext
-      const { field } = metadata.columnDef
-      if (field !== 'processName') {
-        for (const item in metadata.dataContext) {
-          if (field === item) {
-            let controlValue = metadata.dataContext[item]
-            let newControlValue
-
-            if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name
-            } else if (controlValue === null) {
-              newControlValue = controlValue
-            } else newControlValue = controlValue.toString()
-
-            const comment: ReportCommentModel = {
-              id: 0,
-              note: '',
-              recordId: id.toString(),
-              controlId: field,
-              controlValue: newControlValue,
-              discriminator: 'calc',
-              isMark: true,
-              isActive: true,
-              reportId: this.cdrReportId,
-            }
-
-            this.sharedDataService.sendComment(comment)
-          }
-        }
-      }
-    }
-  }
-
-  onCellChanged(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
-
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
-
-    for (let item in metadata.dataContext) {
-      if (field === item) {
-        let nameField = item[0].toUpperCase() + item.slice(1)
-        let valueField = metadata.dataContext[item]
-        let newValueField
-        let discriminator = metadata.dataContext.discriminator
-        if (typeof valueField === 'object') {
-          return
-        } else newValueField = valueField.toString()
-
-        const data = {
-          id,
-          nameField,
-          valueField: newValueField,
-          discriminator,
-        }
-
-        this.actualEmissionService.addActualEmission(data).subscribe((res) => {
-          console.log(res)
-
-          this.refreshList(this.cdrReportId)
-        })
-      }
-    }
-  }
-
-  prepareGrid() {
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

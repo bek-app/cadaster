@@ -17,20 +17,24 @@ import { PlantService } from 'src/app/services/plant.service'
 export class CadasterReportFormComponent implements OnInit {
   form: FormGroup
   submitted?: boolean
-  plantList: any[] = []
+  cdrReportPlants: any[] = []
   @Output() addCdrReport: EventEmitter<any> = new EventEmitter()
-  constructor(private fb: FormBuilder, private plantService: PlantService) {
+  constructor(
+    private fb: FormBuilder,
+    private cdrReportService: CadasterReportService,
+  ) {
     this.form = this.fb.group({
-      reportYear: new FormControl(2022, Validators.required),
+      reportYear: new FormControl(2021, Validators.required),
       plantId: new FormControl('', Validators.required),
     })
   }
 
   ngOnInit(): void {
-    this.plantService.getPlantList(1).subscribe((plantList) => {
-      console.log(plantList)
-      this.plantList = plantList
-    })
+    this.cdrReportService
+      .getCdrReportPlant(1, 2021)
+      .subscribe((cdrReportPlants) => {
+        this.cdrReportPlants = cdrReportPlants
+      })
   }
 
   onSubmit() {
@@ -39,11 +43,20 @@ export class CadasterReportFormComponent implements OnInit {
       return
     }
 
-    const data = { userId: 1, ...this.form.value }
+    const data = { userId: 1, id: 0, ...this.form.value }
     this.addCdrReport.emit(data)
     this.hideCdrReportFormDialog()
   }
 
+  yearChange(event: any) {
+    const year = event.target.value
+    this.cdrReportService
+      .getCdrReportPlant(1, year)
+      .subscribe((cdrReportPlants) => {
+        console.log(cdrReportPlants)
+        this.cdrReportPlants = cdrReportPlants
+      })
+  }
   plantChange(event: any) {}
 
   hideCdrReportFormDialog() {
@@ -51,14 +64,6 @@ export class CadasterReportFormComponent implements OnInit {
     this.form.reset()
   }
 
-  // editForm(id: number) {
-  //   this.isActive = true
-  //   this.cadasterReportService
-  //     .getCadasterReportById(id)
-  //     .subscribe((cdrReport) => {
-  //       this.form.patchValue(cdrReport)
-  //     })
-  // }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls
   }

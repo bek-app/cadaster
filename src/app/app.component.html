@@ -13,14 +13,39 @@
       </a>
       <a
         mat-button
-        routerLink="/cadaster-report"
+        (click)="goToDashBoard()"
         class="nav-link"
         [routerLinkActiveOptions]="{ exact: true }"
         routerLinkActive="active"
       >
         Отчет
       </a>
-      <mat-form-field appearance="fill">
+      <ng-container *ngIf="!authService.isLoggedIn()">
+        <button
+          mat-raised-button
+          class="btn btn-link"
+          (click)="openDialog()"
+          style="background-color: #1db9ec; color: #fff;"
+        >
+          <fa-icon [icon]="faSignIn"></fa-icon>
+
+          Login
+        </button>
+      </ng-container>
+
+      <button
+        mat-raised-button
+        *ngIf="authService.isLoggedIn()"
+        class="btn btn-link"
+        style="background-color: #1db9ec; color: #fff;"
+        (click)="logout()"
+      >
+        <i class="fas fa-sign-out-alt"></i>
+        <fa-icon [icon]="faSignOutAlt"></fa-icon>
+        Logout
+      </button>
+
+      <!-- <mat-form-field appearance="fill">
         <mat-select
           #selectedLang
           [value]="translate.currentLang"
@@ -30,7 +55,7 @@
             {{ lang }}
           </mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
     </mat-toolbar-row>
   </mat-toolbar>
 

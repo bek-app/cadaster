@@ -145,7 +145,7 @@ export class ReportParameterGasComponent implements OnInit {
 
   getCommentList(): void {
     this.commentService
-      .getReportCommentList((this.cdrReportId = 2), 'calc')
+      .getReportCommentList(this.cdrReportId, 'gas')
       .subscribe((data: any) => {
         this.commentList = data
       })
@@ -198,7 +198,7 @@ export class ReportParameterGasComponent implements OnInit {
               recordId: id.toString(),
               controlId: field,
               controlValue: newControlValue,
-              discriminator: 'calc',
+              discriminator: 'gas',
               isMark: true,
               isActive: true,
               reportId: this.cdrReportId,
@@ -440,7 +440,7 @@ export class ReportParameterGasComponent implements OnInit {
             id: 'gasWeightN2O',
             name: GAS_WEIGTH_N20,
             field: 'gasWeightN2O',
-            columnGroup:EMISSION_COEF,
+            columnGroup: EMISSION_COEF,
             filterable: true,
             sortable: true,
             formatter: Formatters.multiple,

@@ -1,24 +1,34 @@
-<h4 mat-dialog-title>{{ dicTitle }}</h4>
+<h2 mat-dialog-title>{{ dicTitle }}</h2>
 <mat-dialog-content>
-  <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="10px">
-      <mat-form-field>
-        <mat-label>
-          {{ dicLabel }}
-        </mat-label>
-        <input
-          matInput
-          formControlName="name"
-          (keypress)="checkValue($event)"
-          (paste)="checkValue($event)"
-        />
-        <mat-error
-          *ngIf="(f.name.touched || submitted) && f.name.errors?.required"
-        >
-          Поле обязательно для заполнения
-        </mat-error>
-      </mat-form-field>
-      <button type="submit" mat-raised-button color="primary">Добавить</button>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    fxLayout="column"
+    fxLayoutAlign="space-between end"
+  >
+    <mat-form-field>
+      <mat-label>
+        {{ dicLabel }}
+      </mat-label>
+      <input
+        matInput
+        formControlName="name"
+        (keypress)="checkValue($event)"
+        (paste)="checkValue($event)"
+      />
+      <mat-error
+        *ngIf="(f.name.touched || submitted) && f.name.errors?.required"
+      >
+        {{ 'ERROR_MESSAGE' | translate }}
+      </mat-error>
+    </mat-form-field>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between end">
+      <button type="button" mat-dialog-close mat-raised-button color="warn">
+        {{ 'CANCEL' | translate }}
+      </button>
+      <button type="submit" mat-raised-button color="primary">
+        {{ 'ADD' | translate }}
+      </button>
     </div>
   </form>
 </mat-dialog-content>

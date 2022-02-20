@@ -1,0 +1,9 @@
+<div class="angular-slickgrid" id="demo-container">
+  <angular-slickgrid
+    gridId="cadaster-report-check"
+    [columnDefinitions]="columnDefinitions"
+    [gridOptions]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  ></angular-slickgrid>
+</div>

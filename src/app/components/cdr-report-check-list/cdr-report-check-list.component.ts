@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
-import { filter } from 'rxjs'
-import { CadasterReportService } from 'src/app/services/cadaster-report.service'
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { CadasterReportService } from 'src/app/services/cadaster-report.service';
+
 @Component({
-  selector: 'app-cadaster-report-list',
-  templateUrl: './cadaster-report-list.component.html',
-  styleUrls: ['./cadaster-report-list.component.css'],
+  selector: 'app-cdr-report-check-list',
+  templateUrl: './cdr-report-check-list.component.html',
+  styleUrls: ['./cdr-report-check-list.component.css']
 })
-export class CadasterReportListComponent implements OnInit {
+export class CdrReportCheckListsComponent implements OnInit {
+
   reportCadasterId!: number
   cdrReportRoute: any
   cdrReportItem: any
@@ -16,8 +17,7 @@ export class CadasterReportListComponent implements OnInit {
     private route: ActivatedRoute,
     private translate: TranslateService,
     private cadasterService: CadasterReportService,
-    private router: Router,
-  ) {
+   ) {
     this.translate.get('CDR_REPORTS.MENU').subscribe((translations: any) => {
       const {
         ACTUAL_EMISSION,

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
@@ -28,6 +29,7 @@ export class PlantListComponent implements OnInit {
   dataViewObj: any
   modalRef: any
   plantRoute: any[] = []
+  faPlus = faPlus
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid

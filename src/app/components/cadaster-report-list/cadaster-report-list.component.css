@@ -4,11 +4,28 @@
 
 .tab-link {
   color: #fff;
-
 }
 
 .active {
   color: #ffffff;
   border-bottom: 1px solid #ffffff;
+}
+.report__header {
+  padding: 15px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template: 100px 100px;
+  gap: 5px;
+  align-items: center;
+  grid-template-areas:
+    '. .'
+    '. .';
+  font-weight: bold;
+  font-size: 16px;
+}
 
+.report__header .item span {
+  padding-left: 5px;
+  font-size: 18px;
+  color: #2d8d90;
 }

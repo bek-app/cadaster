@@ -94,7 +94,7 @@ export class ReportParameterKoefComponent implements OnInit {
   }
   getCommentList(): void {
     this.commentService
-      .getReportCommentList((this.cdrReportId = 2), 'calc')
+      .getReportCommentList((this.cdrReportId = 2), 'coeff')
       .subscribe((data: any) => {
         this.commentList = data
       })
@@ -206,7 +206,7 @@ export class ReportParameterKoefComponent implements OnInit {
               recordId: id.toString(),
               controlId: field,
               controlValue: newControlValue,
-              discriminator: 'calc',
+              discriminator: 'coeff',
               isMark: true,
               isActive: true,
               reportId: this.cdrReportId,
@@ -252,7 +252,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   '“Ваши данные сохранены”',
                   'Done',
                 )
-              : this.notificationService.error(`${result.message}`, 'Done')
+              : this.notificationService.error(`${result.message}`)
           })
       }
     }
@@ -337,7 +337,14 @@ export class ReportParameterKoefComponent implements OnInit {
               }
               this.parameterKoefService
                 .addParameterKoef(data)
-                .subscribe((res: any) => {})
+                .subscribe((result: any) => {
+                  result.isSuccess
+                    ? this.notificationService.success(
+                        '“Ваши данные сохранены”',
+                        'Done',
+                      )
+                    : this.notificationService.error(`${result.message}`)
+                })
             },
           },
 
@@ -515,7 +522,7 @@ export class ReportParameterKoefComponent implements OnInit {
           // Двуокись углерода (СО2)
           {
             id: 'koefCo2',
-            name:  COEF_CO2,
+            name: COEF_CO2,
             field: 'koefCo2',
             columnGroup: COEF_USED_CALC,
             filterable: true,

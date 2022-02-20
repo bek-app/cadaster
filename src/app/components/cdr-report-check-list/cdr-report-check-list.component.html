@@ -39,4 +39,43 @@
   <router-outlet (activate)="onActivate($event)"></router-outlet>
 </div>
 
+<div class="container">
+  <form>
+    <div class="row">
+      <div class="col-25">
+        <label for="fname">Статус</label>
+      </div>
+      <div class="col-75">
+        <input
+          type="text"
+          id="fname"
+          name="firstname"
+          placeholder="Status.."
+        />
+      </div>
+    </div>
 
+    <div class="row">
+      <div class="col-25">
+        <label for="subject">Описание</label>
+      </div>
+      <div class="col-75">
+        <textarea
+          id="subject"
+          name="subject"
+          placeholder="Write something.."
+          style="height: 200px;"
+        ></textarea>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <input
+        type="submit"
+        mat-raised-button
+        color="primary"
+        value="Отправить"
+      />
+    </div>
+  </form>
+</div>

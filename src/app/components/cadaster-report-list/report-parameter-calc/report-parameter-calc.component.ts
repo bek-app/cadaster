@@ -47,7 +47,6 @@ export class ReportParameterCalcComponent implements OnInit {
   dialogRef: any
   commentList: ReportCommentModel[] = []
   editMode: boolean = false
-  comments: any[] = []
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid

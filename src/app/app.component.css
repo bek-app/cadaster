@@ -1,8 +1,6 @@
 .container {
-  padding: 0 15px
+  padding: 0 15px;
 }
-
-
 
 .active {
   border-bottom: 2px solid #fff;
@@ -10,5 +8,8 @@
 
 mat-form-field {
   width: 200px;
+  margin-left: auto;
+}
+.btn-link {
   margin-left: auto;
 }

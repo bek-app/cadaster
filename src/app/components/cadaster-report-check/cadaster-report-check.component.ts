@@ -12,13 +12,12 @@ import {
 } from 'angular-slickgrid'
 import { CadasterReportModel } from 'src/app/models/cadaster-report.model'
 import { CadasterReportService } from 'src/app/services/cadaster-report.service'
-import { CadasterReportFormComponent } from './cadaster-report-form/cadaster-report-form.component'
 @Component({
-  selector: 'app-cadaster-report',
-  templateUrl: './cadaster-report.component.html',
-  styleUrls: ['./cadaster-report.component.css'],
+  selector: 'app-cadaster-report-check',
+  templateUrl: './cadaster-report-check.component.html',
+  styleUrls: ['./cadaster-report-check.component.css'],
 })
-export class CadasterReportComponent implements OnInit {
+export class CadasterReportCheckComponent implements OnInit {
   angularGrid!: AngularGridInstance
   columnDefinitions: Column[] = []
   gridOptions: GridOption = {}
@@ -48,31 +47,24 @@ export class CadasterReportComponent implements OnInit {
 
   refreshList() {
     this.cadasterService.getCadasterReportList(0).subscribe((data) => {
+      console.log(data)
+
       this.dataset = data
     })
   }
 
-  openCdrReportDialog() {
-    this.modalRef = this.cdrReportDialog.open(CadasterReportFormComponent, {
-      width: '600px',
-    })
-    this.modalRef.componentInstance.addCdrReport.subscribe((data: any) => {
-      this.cadasterService
-        .addCadasterReport(data)
-        .subscribe((result) => this.refreshList())
-      this.modalRef.close()
-    })
-  }
-
   prepareGrid() {
-    this.translate.get('CDR_REPORT.FORM').subscribe((translations: any) => {
+    this.translate.get('CDR_REPORT.FORM').subscribe((translations) => {
       const {
         NAME_PLANT,
         OBLAST,
         REGION,
         ADDRESS,
-        REPORT_YEAR,REG_NUMBER
-      }: any = translations
+        REPORT_YEAR,
+        BIN,
+        NAME_ORG,
+        REG_NUMBER,
+      } = translations
 
       this.columnDefinitions = [
         {
@@ -83,12 +75,27 @@ export class CadasterReportComponent implements OnInit {
           sortable: true,
         },
         {
+          id: 'bin',
+          name: BIN,
+          field: 'bin',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'nameOrg',
+          name: NAME_ORG,
+          field: 'nameOrg',
+          filterable: true,
+          sortable: true,
+        },
+        {
           id: 'namePlant',
           name: NAME_PLANT,
           field: 'namePlant',
           filterable: true,
           sortable: true,
         },
+
         {
           id: 'reportYear',
           name: REPORT_YEAR,
@@ -134,29 +141,10 @@ export class CadasterReportComponent implements OnInit {
         </svg> </div>`,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
-            this.router.navigate(['/cadaster-report-list', id], {
+            this.router.navigate(['/cdr-report-check-list/', id], {
               relativeTo: this.route,
             })
             this.cadasterService.sendReportData(args.dataContext)
-          },
-        },
-
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.cadasterService.deleteCadasterReport(id).subscribe(() => {
-                this.refreshList()
-              })
-            }
           },
         },
       ]
