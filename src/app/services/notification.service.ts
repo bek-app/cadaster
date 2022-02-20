@@ -13,12 +13,12 @@ export class NotificationService {
     verticalPosition: 'top',
   };
 
-  success(msg: string, action: string) {
+  success(msg: string, action: string="") {
     this.config['panelClass'] = ['success', 'notification'];
     this.snackBar.open(msg, action, this.config);
   }
 
-  error(msg: string, action: string) {
+  error(msg: string, action: string="") {
     this.config['panelClass'] = ['error', 'notification'];
     this.snackBar.open(msg, action, this.config);
   }
