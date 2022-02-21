@@ -16,8 +16,7 @@ import { ReportProductComponent } from './components/cadaster-report-list/report
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component'
 import { CadasterReportCheckComponent } from './components/cadaster-report-check/cadaster-report-check.component'
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
-import { AuthGuard } from './services/auth.guard'
-
+ 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
 
@@ -51,10 +50,7 @@ const routes: Routes = [
   {
     path: 'cadaster-report',
     component: CadasterReportComponent,
-    canActivate: [AuthGuard],
-    data: {
-      role: 'ROLE_ADMIN',
-    },
+
   },
   {
     path: 'cadaster-report-list/:id',
@@ -86,10 +82,7 @@ const routes: Routes = [
   {
     path: 'cadaster-report-check',
     component: CadasterReportCheckComponent,
-    canActivate: [AuthGuard],
-    data: {
-      role: 'ROLE_USER',
-    },
+
   },
   {
     path: 'cdr-report-check-list/:id',

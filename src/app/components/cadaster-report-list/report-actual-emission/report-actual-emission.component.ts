@@ -12,8 +12,7 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid'
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
-import { AuthService } from 'src/app/services/auth.service'
-import { ReportCommentService } from 'src/app/services/report-comment.service'
+ import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
 import { ActualEmissionService } from '../../../services/actual-emission.service'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
@@ -78,13 +77,11 @@ export class ReportActualEmissionComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
     private commentService: ReportCommentService,
-    public authService: AuthService,
-  ) {}
+   ) {}
 
   ngOnInit(): void {
     this.getCommentList(this.cdrReportId)
-    this.role = this.authService.getRole()
-
+ 
     this.prepareGrid()
     this.refreshList(2)
   }
