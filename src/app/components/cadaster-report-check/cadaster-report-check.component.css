@@ -1,0 +1,25 @@
+.status__provided{
+  background-color: #035db6 !important;
+  color: #fff !important;
+}
+.status__draft{
+  background-color: #041525 !important;
+  color: #fff !important;
+}
+.status__notCorrect{
+  background-color: #cf1919 !important;
+  color: #fff !important;
+}
+.status__approved{
+  background-color: #19cf50 !important;
+  color: #fff !important;
+}
+/* //4 */
+.status__explanations{
+  background-color: #8619cf !important;
+  color: #fff !important;
+}
+.status__incomplete{
+  background-color: #3b152b !important;
+  color: #fff !important;
+}

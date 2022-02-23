@@ -9,10 +9,7 @@ import { TranslateService } from '@ngx-translate/core'
 })
 export class AppComponent {
   title = 'cadaster'
-  @ViewChild('closeModal') closeModal!: ElementRef
-  faSignIn = faSignInAlt
-  faSignOutAlt = faSignOutAlt
-  dialogRef: any
+
   constructor(public translate: TranslateService) {
     translate.setDefaultLang('ru')
     translate.use('ru')

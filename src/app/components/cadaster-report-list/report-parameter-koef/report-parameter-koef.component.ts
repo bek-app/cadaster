@@ -25,8 +25,7 @@ import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-parameter-koef',
   templateUrl: './report-parameter-koef.component.html',
-  styleUrls: ['./report-parameter-koef.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./report-parameter-koef.component.css'], 
 })
 export class ReportParameterKoefComponent implements OnInit {
   angularGrid!: AngularGridInstance

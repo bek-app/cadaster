@@ -14,13 +14,10 @@ export class DicUnitService {
     }),
   };
 
-  private dicUnit = new BehaviorSubject('');
-  currentDicUnit = this.dicUnit.asObservable();
+
 
   constructor(private http: HttpClient) {}
-  changeDicUnit(data: any) {
-    this.dicUnit.next(data);
-  }
+
   getDicUnit(): Observable<any[]> {
     return this.http
       .get<any[]>('api/DicUnit')

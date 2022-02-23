@@ -14,14 +14,14 @@ export class CadasterReportService {
       'Content-Type': 'application/json; charset=utf-8 ',
     }),
   }
-  public editDataDetails: any = [];
-  public subject = new Subject<any>();
+  public editDataDetails: any = []
+  public subject = new Subject<any>()
 
-  private reportDataSource = new BehaviorSubject(this.editDataDetails);
-  currentReportData = this.reportDataSource.asObservable();
+  private reportDataSource = new BehaviorSubject(this.editDataDetails)
+  currentReportData = this.reportDataSource.asObservable()
 
   sendReportData(data: any) {
-    this.reportDataSource.next(data);
+    this.reportDataSource.next(data)
   }
   constructor(private http: HttpClient) {}
 
@@ -46,6 +46,14 @@ export class CadasterReportService {
     return this.http
       .get<CadasterReportModel[]>('api/KdrReport/list?userId=' + id)
       .pipe(map((response) => response))
+  }
+  
+  changeReportStatus(data: any): Observable<any> {
+    return this.http.put<any>(
+      'api/KdrReport/changeStatus',
+      JSON.stringify(data),
+      this.httpOptions,
+    )
   }
 
   addCadasterReport(

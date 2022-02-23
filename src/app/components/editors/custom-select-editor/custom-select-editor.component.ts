@@ -12,7 +12,6 @@ import { DicFormComponent } from '../../dic-form/dic-form.component';
   selector: 'app-custom-select-editor',
   templateUrl: './custom-select-editor.component.html',
   styleUrls: ['./custom-select-editor.component.css'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class CustomSelectEditorComponent implements OnInit {
   selectedId: any;

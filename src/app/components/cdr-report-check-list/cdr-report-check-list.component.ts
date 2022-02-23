@@ -1,23 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { CadasterReportService } from 'src/app/services/cadaster-report.service';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { ActivatedRoute, Params, Router } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
+import { Dictionary } from 'src/app/models/dictionary.model'
+import { CadasterReportService } from 'src/app/services/cadaster-report.service'
+import { DicReportStatusService } from 'src/app/services/dic-report-status.service'
 
 @Component({
   selector: 'app-cdr-report-check-list',
   templateUrl: './cdr-report-check-list.component.html',
-  styleUrls: ['./cdr-report-check-list.component.css']
+  styleUrls: ['./cdr-report-check-list.component.css'],
 })
 export class CdrReportCheckListsComponent implements OnInit {
-
   reportCadasterId!: number
   cdrReportRoute: any
   cdrReportItem: any
+  dicReportStatusList: Dictionary[] = []
+  form: FormGroup
+  submitted = false
   constructor(
     private route: ActivatedRoute,
     private translate: TranslateService,
     private cadasterService: CadasterReportService,
-   ) {
+    private router: Router,
+    private dicReportStatusService: DicReportStatusService,
+    private fb: FormBuilder,
+  ) {
+    this.form = this.fb.group({
+      statusId: new FormControl('', Validators.required),
+      design: new FormControl('', Validators.required),
+    })
     this.translate.get('CDR_REPORTS.MENU').subscribe((translations: any) => {
       const {
         ACTUAL_EMISSION,
@@ -56,9 +68,30 @@ export class CdrReportCheckListsComponent implements OnInit {
     this.route.params.subscribe(
       (param: Params) => (this.reportCadasterId = +param['id']),
     )
+    this.dicReportStatusService.getDicReportStatus().subscribe((list) => {
+      this.dicReportStatusList = list
+    })
 
     this.cadasterService.currentReportData.subscribe((result: any) => {
       this.cdrReportItem = result
+    })
+  }
+
+  onSubmit() {
+    this.submitted = true
+    if (this.form.invalid) {
+      return
+    }
+    const data = {
+      id: this.reportCadasterId,
+      ...this.form.value,
+    }
+    console.log(data)
+
+    this.cadasterService.changeReportStatus(data).subscribe((result: any) => {
+      console.log(result)
+
+      this.router.navigate(['/cadaster-report-check'])
     })
   }
 

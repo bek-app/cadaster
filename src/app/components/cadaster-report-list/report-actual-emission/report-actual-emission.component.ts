@@ -12,7 +12,7 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid'
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
- import { ReportCommentService } from 'src/app/services/report-comment.service'
+import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
 import { ActualEmissionService } from '../../../services/actual-emission.service'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
@@ -35,7 +35,7 @@ export class ReportActualEmissionComponent implements OnInit {
   isAutoApproveParentItemWhenTreeColumnIsValid = true
   editMode = false
   commentList: ReportCommentModel[] = []
-  role: string = ''
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -64,7 +64,7 @@ export class ReportActualEmissionComponent implements OnInit {
     }
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren || this.role !== 'ROLE_ADMIN') {
+      if (args.item.__hasChildren) {
         return false
       }
       return true
@@ -77,11 +77,11 @@ export class ReportActualEmissionComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
     private commentService: ReportCommentService,
-   ) {}
+  ) {}
 
   ngOnInit(): void {
     this.getCommentList(this.cdrReportId)
- 
+
     this.prepareGrid()
     this.refreshList(2)
   }
@@ -184,16 +184,15 @@ export class ReportActualEmissionComponent implements OnInit {
       if (field === item) {
         let nameField = item[0].toUpperCase() + item.slice(1)
         let valueField = metadata.dataContext[item]
-        let newValueField
         let discriminator = metadata.dataContext.discriminator
         if (typeof valueField === 'object') {
           return
-        } else newValueField = valueField.toString()
+        }
 
         const data = {
           id,
           nameField,
-          valueField: newValueField,
+          valueField: valueField.toString(),
           discriminator,
         }
 
@@ -227,7 +226,7 @@ export class ReportActualEmissionComponent implements OnInit {
   prepareGrid() {
     this.translate
       .get('CDR_REPORTS.ACTUAL_EMISSION')
-      .subscribe((translations: any) => {
+      .subscribe((translations) => {
         const {
           PROCESS_NAME,
           CARBON_DIOXIDE,
@@ -241,6 +240,8 @@ export class ReportActualEmissionComponent implements OnInit {
           PERFLUORO_CARBON_CO2,
           PERFLUORO_CARBON_COLUMN_GROUP,
           TOTAL_CO2,
+          TOTAL_TON,
+          TOTAL_GROUP,
         } = translations
 
         this.columnDefinitions = [
@@ -391,11 +392,19 @@ export class ReportActualEmissionComponent implements OnInit {
               },
             },
           },
-
+          {
+            id: 'totalTon',
+            name: TOTAL_TON,
+            field: 'totalTon',
+            columnGroup: TOTAL_GROUP,
+            filterable: true,
+            sortable: true,
+          },
           {
             id: 'totalCo2',
             name: TOTAL_CO2,
             field: 'totalCo2',
+            columnGroup: TOTAL_GROUP,
             filterable: true,
             sortable: true,
           },
@@ -440,7 +449,7 @@ export class ReportActualEmissionComponent implements OnInit {
       },
 
       // change header/cell row height for salesforce theme
-      headerRowHeight: 45,
+      headerRowHeight: 50,
       rowHeight: 50,
       showCustomFooter: true,
 

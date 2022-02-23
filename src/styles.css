@@ -6,6 +6,12 @@
   border: 1px solid rgb(231, 228, 228) !important;
 
 } */
+.slickgrid-container .slick-preheader-panel.ui-state-default .slick-header-columns .slick-header-column {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+
 .header__color {
   font-weight: bold;
 }
@@ -92,7 +98,7 @@ snack-bar-container.notification {
 }
 
 .mat-button-wrapper {
- 
+
 }
 
 /* mat-dialog overlay false */

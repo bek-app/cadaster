@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ViewEncapsulation } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -16,6 +16,7 @@ import { CadasterReportService } from 'src/app/services/cadaster-report.service'
   selector: 'app-cadaster-report-check',
   templateUrl: './cadaster-report-check.component.html',
   styleUrls: ['./cadaster-report-check.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class CadasterReportCheckComponent implements OnInit {
   angularGrid!: AngularGridInstance
@@ -31,6 +32,41 @@ export class CadasterReportCheckComponent implements OnInit {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
     this.dataViewObj = angularGrid.dataView
+    this.dataViewObj.getItemMetadata = (row: any) => {
+      //Черновик 1
+      const statusDraft = 'status__draft'
+      // Предоставил 2
+      const statusProvided = 'status__provided'
+
+      // 3
+      const statusApproved = 'status__approved'
+      // 4
+      const statusExplanations = 'status__explanations'
+
+      // 5
+      const statusIncomplete = 'status__incomplete'
+      // Не достоверная информация 6
+      const statusNotCorrect = 'status__notCorrect'
+
+      const item = this.dataViewObj.getItem(row)
+      console.log(item)
+
+      switch (item.statusId) {
+        case 1:
+          return { cssClasses: statusDraft }
+        case 2:
+          return { cssClasses: statusProvided }
+        case 3:
+          return { cssClasses: statusApproved }
+        case 4:
+          return { cssClasses: statusExplanations }
+        case 5:
+          return { cssClasses: statusIncomplete }
+        case 6:
+          return { cssClasses: statusNotCorrect }
+      }
+      return ''
+    }
   }
   constructor(
     private cdrReportDialog: MatDialog,
@@ -64,6 +100,7 @@ export class CadasterReportCheckComponent implements OnInit {
         BIN,
         NAME_ORG,
         REG_NUMBER,
+        STATUS_NAME,
       } = translations
 
       this.columnDefinitions = [
@@ -119,9 +156,9 @@ export class CadasterReportCheckComponent implements OnInit {
         },
 
         {
-          id: 'address',
-          name: ADDRESS,
-          field: 'address',
+          id: 'statusName',
+          name: STATUS_NAME,
+          field: 'statusName',
           filterable: true,
           sortable: true,
         },

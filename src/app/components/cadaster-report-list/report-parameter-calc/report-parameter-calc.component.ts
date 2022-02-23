@@ -30,8 +30,7 @@ import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-parameter-calc',
   templateUrl: './report-parameter-calc.component.html',
-  styleUrls: ['./report-parameter-calc.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./report-parameter-calc.component.css'], 
 })
 export class ReportParameterCalcComponent implements OnInit {
   angularGrid!: AngularGridInstance
