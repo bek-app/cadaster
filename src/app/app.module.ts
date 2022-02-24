@@ -53,6 +53,8 @@ import {
 } from '@angular/material/form-field'
 import { CadasterReportCheckComponent } from './components/cadaster-report-check/cadaster-report-check.component'
  import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component';
+import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component';
+import { PlannedChangesFormComponent } from './components/plant-list/plant-planned-changes/planned-changes-form/planned-changes-form.component';
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -122,6 +124,8 @@ export function appInitializerFactory(
     CustomInputEditorComponent,
     CadasterReportCheckComponent,
      CdrReportCheckListsComponent,
+     PlantPlannedChangesComponent,
+     PlannedChangesFormComponent,
    ],
   imports: [
     BrowserModule,

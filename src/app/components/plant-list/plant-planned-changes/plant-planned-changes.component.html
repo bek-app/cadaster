@@ -1,0 +1,20 @@
+<div class="planned__changes-header" >
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="openPlannedChangesDialog()"
+    *ngIf="plantId"
+  >
+    {{ 'CREATE' | translate }}
+  </button>
+  <h1>{{ 'PLANT.PLANNED_CHANGES.TITLE' | translate }}</h1>
+</div>
+<div class="angular-slickgrid" id="demo-container">
+  <angular-slickgrid
+    gridId="planned__changes"
+    [columnDefinitions]="columnDefinitions"
+    [gridOptions]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  ></angular-slickgrid>
+</div>

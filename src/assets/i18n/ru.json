@@ -101,7 +101,8 @@
       "PROCESS": "Процессы",
       "SAMPLING": "Отбор проб",
       "DEVICE": "Приборы",
-      "PRODUCT": "Продукты"
+      "PRODUCT": "Продукты",
+      "PLANNED_CHANGES": "Планируемые изменения"
     },
 
     "FORM": {
@@ -128,7 +129,13 @@
       "WORKINHOURS": "Время работы",
       "VALIDATOR": "Поле обязательно для заполнения"
     },
-
+    "PLANNED_CHANGES": {
+      "TITLE": "Планируемое изменение",
+      "CHANGE_YEAR": "Год изменения",
+      "PROCESS_NAME": "Наименование процесса",
+      "SOURCE_NAME": "Наименование источника",
+      "PLANNED_CHANGE": "Планируемое изменение"
+    },
     "PROCESS": {
       "TITLE": "Процессы",
       "FORM": {

@@ -16,7 +16,8 @@ import { ReportProductComponent } from './components/cadaster-report-list/report
 import { ReportParameterKoefComponent } from './components/cadaster-report-list/report-parameter-koef/report-parameter-koef.component'
 import { CadasterReportCheckComponent } from './components/cadaster-report-check/cadaster-report-check.component'
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
- 
+import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
+
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
 
@@ -28,6 +29,10 @@ const routes: Routes = [
       {
         path: 'source',
         component: PlantSourceListComponent,
+      },
+      {
+        path: 'planned-changes',
+        component: PlantPlannedChangesComponent,
       },
       {
         path: 'process',
@@ -50,7 +55,6 @@ const routes: Routes = [
   {
     path: 'cadaster-report',
     component: CadasterReportComponent,
-
   },
   {
     path: 'cadaster-report-list/:id',
@@ -82,7 +86,6 @@ const routes: Routes = [
   {
     path: 'cadaster-report-check',
     component: CadasterReportCheckComponent,
-
   },
   {
     path: 'cdr-report-check-list/:id',

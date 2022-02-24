@@ -121,12 +121,20 @@ export class PlantListComponent implements OnInit {
           },
         },
       ]
-      const { SOURCE, PROCESS, SAMPLING, DEVICE, PRODUCT }: any = MENU
+      const {
+        SOURCE,
+        PROCESS,
+        SAMPLING,
+        DEVICE,
+        PRODUCT,
+        PLANNED_CHANGES,
+      }: any = MENU
       this.plantRoute = [
         {
           src: 'source',
           name: SOURCE,
         },
+
         {
           src: 'process',
           name: PROCESS,
@@ -142,6 +150,10 @@ export class PlantListComponent implements OnInit {
         {
           src: 'product',
           name: PRODUCT,
+        },
+        {
+          src: 'planned-changes',
+          name: PLANNED_CHANGES,
         },
       ]
     })
