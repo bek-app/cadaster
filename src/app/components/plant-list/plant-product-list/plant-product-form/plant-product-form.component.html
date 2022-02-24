@@ -8,10 +8,9 @@
     style="overflow: visible;"
   >
     <div class="row">
-      <label for="dicProductId" class="form-label">
-        {{ 'PLANT.PRODUCT.FORM.PRODUCT_NAME' | translate }}
-      </label>
       <ng-select
+        appearance="outline"
+        placeholder="{{ 'PLANT.PRODUCT.FORM.PRODUCT_NAME' | translate }}"
         [items]="dicProductList"
         bindValue="id"
         bindLabel="name"
@@ -47,10 +46,9 @@
     </div>
 
     <div class="row">
-      <label for="dicUnitId" class="form-label">
-        <small>{{ 'PLANT.PRODUCT.FORM.DIC_UNIT' | translate }}</small>
-      </label>
       <ng-select
+        appearance="outline"
+        placeholder="{{ 'PLANT.PRODUCT.FORM.DIC_UNIT' | translate }}"
         [items]="dicUnitList"
         bindValue="id"
         bindLabel="name"

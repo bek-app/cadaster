@@ -1,18 +1,16 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <h2 mat-dialog-title>{{ 'PLANT.PROCESS.TITLE' | translate }}</h2>
-  <mat-dialog-content fxLayout="column" fxLayoutGap="10px">
+  <mat-dialog-content>
     <div class="row">
-      <label for="dicProcessId" class="form-label">
-        {{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}
-      </label>
       <ng-select
+        placeholder="{{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}"
+        appearance="outline"
         [items]="subProccessesList"
         bindValue="id"
         bindLabel="name"
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicProcessId"
-        [closeOnSelect]="false"
         [ngClass]="{
           invalid:
             (f.dicProcessId.touched || submitted) &&
@@ -41,10 +39,9 @@
     </div>
 
     <div class="row">
-      <label for="subProccesses" class="form-label">
-        {{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}
-      </label>
       <ng-select
+        placeholder="{{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}"
+        appearance="outline"
         [items]="subProccessesList"
         bindValue="id"
         bindLabel="name"
@@ -82,10 +79,9 @@
     </div>
 
     <div class="row">
-      <label for="materials" class="form-label">
-        {{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}
-      </label>
       <ng-select
+        placeholder="{{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}"
+        appearance="outline"
         [items]="dicMaterialsList"
         bindValue="id"
         bindLabel="name"
@@ -111,6 +107,7 @@
           </button>
         </ng-template>
       </ng-select>
+
       <mat-error
         *ngIf="
           (f.materials.touched || submitted) && f.materials.errors?.required

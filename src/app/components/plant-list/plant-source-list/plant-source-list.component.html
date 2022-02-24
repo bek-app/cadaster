@@ -1,4 +1,9 @@
-<button mat-raised-button color="primary" (click)="openPlantSourceDialog()">
+<button
+  mat-raised-button
+  color="primary"
+  (click)="openPlantSourceDialog()"
+  *ngIf="plantId"
+>
   {{ 'CREATE' | translate }}
 </button>
 

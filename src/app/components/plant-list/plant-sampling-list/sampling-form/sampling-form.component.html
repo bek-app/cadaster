@@ -8,24 +8,20 @@
       <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
 
-    <div class="row">
-      <label for="materials" class="form-label">
-        {{ 'PLANT.SAMPLING.FORM.MATERIALS' | translate }}
-      </label>
+    <div class="materials">
       <ng-select
+        placeholder="{{ 'PLANT.SAMPLING.FORM.MATERIALS' | translate }}"
+        appearance="outline"
         [items]="dicMaterialsList"
         bindValue="id"
         bindLabel="name"
         [hideSelected]="true"
         [minTermLength]="2"
         [multiple]="true"
-        typeToSearchText="Пожалуйста, введите 2 или более символов"
+        typeToSearchText="Пожалуйста, введите 2 или более
+        символов"
         formControlName="materials"
         [closeOnSelect]="false"
-        [ngClass]="{
-          invalid:
-            (f.materials.touched || submitted) && f.materials.errors?.required
-        }"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -38,13 +34,6 @@
           </button>
         </ng-template>
       </ng-select>
-      <mat-error
-        *ngIf="
-          (f.materials.touched || submitted) && f.materials.errors?.required
-        "
-      >
-        {{ 'ERROR_MESSAGE' | translate }}
-      </mat-error>
     </div>
 
     <mat-form-field>

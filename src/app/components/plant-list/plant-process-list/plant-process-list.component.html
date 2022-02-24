@@ -1,4 +1,9 @@
-<button mat-raised-button color="primary" (click)="openProcessFormDialog()">
+<button
+  mat-raised-button
+  color="primary"
+  (click)="openProcessFormDialog()"
+  *ngIf="plantId"
+>
   {{ 'CREATE' | translate }}
 </button>
 <div class="angular-slickgrid" id="demo-container">

@@ -5,3 +5,14 @@
 .ng-select.ng-select-single .ng-select-container {
   height: 30px;
 } */
+.ng-select {
+  padding: 0;
+}
+.row {
+  position: relative;
+}
+.col {
+  position: absolute;
+  top: -10px;
+  width: 100%;
+}
