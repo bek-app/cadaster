@@ -322,6 +322,8 @@ export class ReportParameterGasComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const gasCh4Unit = args.dataContext.gasCh4Unit
+              let discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'GasCh4UnitId',
@@ -329,6 +331,7 @@ export class ReportParameterGasComponent implements OnInit {
                   gasCh4Unit.id != null
                     ? gasCh4Unit.id.toString()
                     : gasCh4Unit.id,
+                discriminator,
               }
               this.parameterGasService
                 .addParameterGas(data)
@@ -379,6 +382,8 @@ export class ReportParameterGasComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const gasN2OUnit = args.dataContext.gasN2OUnit
+              let discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'GasN2OUnitId',
@@ -386,6 +391,7 @@ export class ReportParameterGasComponent implements OnInit {
                   gasN2OUnit.id != null
                     ? gasN2OUnit.id.toString()
                     : gasN2OUnit.id,
+                discriminator,
               }
               this.parameterGasService
                 .addParameterGas(data)

@@ -25,7 +25,7 @@ import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-parameter-koef',
   templateUrl: './report-parameter-koef.component.html',
-  styleUrls: ['./report-parameter-koef.component.css'], 
+  styleUrls: ['./report-parameter-koef.component.css'],
 })
 export class ReportParameterKoefComponent implements OnInit {
   angularGrid!: AngularGridInstance
@@ -91,6 +91,7 @@ export class ReportParameterKoefComponent implements OnInit {
     this.refreshList(2)
     this.prepareGrid()
   }
+
   getCommentList(): void {
     this.commentService
       .getReportCommentList((this.cdrReportId = 2), 'coeff')
@@ -328,12 +329,16 @@ export class ReportParameterKoefComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const dicUnit = args.dataContext.dicUnit
+              const discriminator = args.dataContext.discriminator
+              console.log(discriminator)
               const data = {
                 id,
                 nameField: 'DicUnitId',
                 valueField:
                   dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
+                discriminator,
               }
+
               this.parameterKoefService
                 .addParameterKoef(data)
                 .subscribe((result: any) => {
@@ -390,6 +395,7 @@ export class ReportParameterKoefComponent implements OnInit {
               const id = args.dataContext.id
               const koefOperatingWeightUnit =
                 args.dataContext.koefOperatingWeightUnit
+              const discriminator = args.dataContext.discriminator
               const data = {
                 id,
                 nameField: 'KoefOperatingWeightUnitId',
@@ -397,6 +403,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefOperatingWeightUnit.id != null
                     ? koefOperatingWeightUnit.id.toString()
                     : koefOperatingWeightUnit.id,
+                discriminator,
               }
 
               this.parameterKoefService
@@ -448,6 +455,8 @@ export class ReportParameterKoefComponent implements OnInit {
               const id = args.dataContext.id
               const koefLowerCalorificUnit =
                 args.dataContext.koefLowerCalorificUnit
+              const discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'KoefLowerCalorificUnitId',
@@ -455,6 +464,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefLowerCalorificUnit.id != null
                     ? koefLowerCalorificUnit.id.toString()
                     : koefLowerCalorificUnit.id,
+                discriminator,
               }
               this.parameterKoefService
                 .addParameterKoef(data)
@@ -504,6 +514,8 @@ export class ReportParameterKoefComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const koefCaseBurningUnit = args.dataContext.koefCaseBurningUnit
+              const discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'KoefCaseBurningUnitId',
@@ -511,6 +523,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefCaseBurningUnit.id != null
                     ? koefCaseBurningUnit.id.toString()
                     : koefCaseBurningUnit.id,
+                discriminator,
               }
               this.parameterKoefService
                 .addParameterKoef(data)
@@ -560,6 +573,8 @@ export class ReportParameterKoefComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const koefCo2Unit = args.dataContext.koefCo2Unit
+              const discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'KoefCo2UnitId',
@@ -567,6 +582,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefCo2Unit.id != null
                     ? koefCo2Unit.id.toString()
                     : koefCo2Unit.id,
+                discriminator,
               }
               this.parameterKoefService
                 .addParameterKoef(data)
@@ -616,6 +632,8 @@ export class ReportParameterKoefComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const koefCh4Unit = args.dataContext.koefCh4Unit
+              const discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'KoefCh4UnitId',
@@ -623,6 +641,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefCh4Unit.id != null
                     ? koefCh4Unit.id.toString()
                     : koefCh4Unit.id,
+                discriminator,
               }
               this.parameterKoefService
                 .addParameterKoef(data)
@@ -672,6 +691,8 @@ export class ReportParameterKoefComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const koefN2OUnit = args.dataContext.koefN2OUnit
+              const discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'KoefN2OUnitId',
@@ -679,6 +700,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefN2OUnit.id != null
                     ? koefN2OUnit.id.toString()
                     : koefN2OUnit.id,
+                discriminator,
               }
               this.parameterKoefService
                 .addParameterKoef(data)
@@ -729,6 +751,8 @@ export class ReportParameterKoefComponent implements OnInit {
               const id = args.dataContext.id
               const koefPerfluorocarbonsUnit =
                 args.dataContext.koefPerfluorocarbonsUnit
+              const discriminator = args.dataContext.discriminator
+
               const data = {
                 id,
                 nameField: 'KoefPerfluorocarbonsUnitId',
@@ -736,6 +760,7 @@ export class ReportParameterKoefComponent implements OnInit {
                   koefPerfluorocarbonsUnit.id != null
                     ? koefPerfluorocarbonsUnit.id.toString()
                     : koefPerfluorocarbonsUnit.id,
+                discriminator,
               }
               this.parameterKoefService
                 .addParameterKoef(data)

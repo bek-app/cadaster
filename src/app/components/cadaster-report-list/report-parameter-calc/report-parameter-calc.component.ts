@@ -30,7 +30,7 @@ import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-report-parameter-calc',
   templateUrl: './report-parameter-calc.component.html',
-  styleUrls: ['./report-parameter-calc.component.css'], 
+  styleUrls: ['./report-parameter-calc.component.css'],
 })
 export class ReportParameterCalcComponent implements OnInit {
   angularGrid!: AngularGridInstance
@@ -440,12 +440,14 @@ export class ReportParameterCalcComponent implements OnInit {
             onCellChange: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
               const dicUnit = args.dataContext.dicUnit
+              let discriminator = args.dataContext.discriminator
 
               const data = {
                 id,
                 nameField: 'ParamCalcUnitId',
                 valueField:
                   dicUnit.id != null ? dicUnit.id.toString() : dicUnit.id,
+                discriminator,
               }
 
               this.parameterCalcService

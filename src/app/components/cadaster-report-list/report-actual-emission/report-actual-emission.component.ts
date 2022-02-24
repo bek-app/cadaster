@@ -130,6 +130,8 @@ export class ReportActualEmissionComponent implements OnInit {
           ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
           Object.assign(items, { group })
         })
+        console.log(data);
+
         this.dataset = data
       })
   }
@@ -195,6 +197,7 @@ export class ReportActualEmissionComponent implements OnInit {
           valueField: valueField.toString(),
           discriminator,
         }
+console.log(metadata.dataContext);
 
         this.actualEmissionService.addActualEmission(data).subscribe((res) => {
           this.refreshList(this.cdrReportId)
