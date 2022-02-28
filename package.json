@@ -33,6 +33,7 @@
     "@ngx-translate/http-loader": "^7.0.0",
     "@slickgrid-universal/composite-editor-component": "^1.1.1",
     "@slickgrid-universal/custom-tooltip-plugin": "^1.2.1",
+    "@slickgrid-universal/excel-export": "^1.2.4",
     "angular-slickgrid": "^4.0.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.6.0",
