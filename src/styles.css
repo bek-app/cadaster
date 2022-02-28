@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@ng-select/ng-select/themes/material.theme.css";
- @import '~@mdi/font/css/materialdesignicons.css';
+@import '~@mdi/font/css/materialdesignicons.css';
 /* .slickgrid-container .grid-canvas .slick-cell {
   border: 1px solid rgb(231, 228, 228) !important;
 
@@ -103,4 +103,14 @@ snack-bar-container.notification {
 /* mat-dialog overlay false */
 .dialog-bg-trans {
   background-color: transparent;
+}
+
+
+.login-container {
+  height: 80vh;
+}
+
+.login-actions {
+  display: grid !important;
+  margin-left: unset !important;
 }

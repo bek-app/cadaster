@@ -17,103 +17,129 @@ import { ReportParameterKoefComponent } from './components/cadaster-report-list/
 import { CadasterReportCheckComponent } from './components/cadaster-report-check/cadaster-report-check.component'
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
+import { LoginComponent } from './components/authentication/login/login.component'
+import { RegistrationComponent } from './components/authentication/registration/registration.component'
+import { FullComponent } from './layouts/full/full.component'
+import { CommonComponent } from './layouts/common/common.component'
+import { AuthGuard } from './guards/auth.guard'
 
 const routes: Routes = [
-  { path: '', redirectTo: 'plant', pathMatch: 'full' },
+  { path: '', redirectTo: 'common/plant', pathMatch: 'full' },
 
   {
-    path: 'plant',
-    component: PlantListComponent,
+    path: 'full',
+    component: FullComponent,
     children: [
-      // { path: '', redirectTo: 'source', pathMatch: 'full' },
-      {
-        path: 'source',
-        component: PlantSourceListComponent,
+      { 
+        path: 'login',
+        component: LoginComponent
       },
-      {
-        path: 'planned-changes',
-        component: PlantPlannedChangesComponent,
-      },
-      {
-        path: 'process',
-        component: PlantProcessListComponent,
-      },
-      {
-        path: 'device',
-        component: PlantDeviceListComponent,
-      },
-      {
-        path: 'sampling',
-        component: PlantSamplingListComponent,
-      },
-      {
-        path: 'product',
-        component: PlantProductListComponent,
-      },
-    ],
+      { 
+        path: 'registration',
+        component: RegistrationComponent
+      }
+    ]
   },
   {
-    path: 'cadaster-report',
-    component: CadasterReportComponent,
-  },
-  {
-    path: 'cadaster-report-list/:id',
-    component: CadasterReportListComponent,
+    path: 'common',
+    component: CommonComponent,
+    canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
-      { path: 'actual-emission', component: ReportActualEmissionComponent },
       {
-        path: 'parameter-calc',
-        component: ReportParameterCalcComponent,
-        resolve: { dicUnit: DicUnitResolver },
+        path: 'plant',
+        component: PlantListComponent,
+        children: [
+          // { path: '', redirectTo: 'source', pathMatch: 'full' },
+          {
+            path: 'source',
+            component: PlantSourceListComponent,
+          },
+          {
+            path: 'planned-changes',
+            component: PlantPlannedChangesComponent,
+          },
+          {
+            path: 'process',
+            component: PlantProcessListComponent,
+          },
+          {
+            path: 'device',
+            component: PlantDeviceListComponent,
+          },
+          {
+            path: 'sampling',
+            component: PlantSamplingListComponent,
+          },
+          {
+            path: 'product',
+            component: PlantProductListComponent,
+          },
+        ],
       },
       {
-        path: 'parameter-gas',
-        component: ReportParameterGasComponent,
-        resolve: { dicUnit: DicUnitResolver },
+        path: 'cadaster-report',
+        component: CadasterReportComponent,
       },
       {
-        path: 'report-product',
-        component: ReportProductComponent,
+        path: 'cadaster-report-list/:id',
+        component: CadasterReportListComponent,
+        children: [
+          { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
+          { path: 'actual-emission', component: ReportActualEmissionComponent },
+          {
+            path: 'parameter-calc',
+            component: ReportParameterCalcComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+          {
+            path: 'parameter-gas',
+            component: ReportParameterGasComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+          {
+            path: 'report-product',
+            component: ReportProductComponent,
+          },
+          {
+            path: 'parameter-koef',
+            component: ReportParameterKoefComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+        ],
       },
       {
-        path: 'parameter-koef',
-        component: ReportParameterKoefComponent,
-        resolve: { dicUnit: DicUnitResolver },
-      },
-    ],
-  },
-  {
-    path: 'cadaster-report-check',
-    component: CadasterReportCheckComponent,
-  },
-  {
-    path: 'cdr-report-check-list/:id',
-    component: CdrReportCheckListsComponent,
-    children: [
-      { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
-      { path: 'actual-emission', component: ReportActualEmissionComponent },
-      {
-        path: 'parameter-calc',
-        component: ReportParameterCalcComponent,
-        resolve: { dicUnit: DicUnitResolver },
+        path: 'cadaster-report-check',
+        component: CadasterReportCheckComponent,
       },
       {
-        path: 'parameter-gas',
-        component: ReportParameterGasComponent,
-        resolve: { dicUnit: DicUnitResolver },
-      },
-      {
-        path: 'report-product',
-        component: ReportProductComponent,
-      },
-      {
-        path: 'parameter-koef',
-        component: ReportParameterKoefComponent,
-        resolve: { dicUnit: DicUnitResolver },
-      },
-    ],
-  },
+        path: 'cdr-report-check-list/:id',
+        component: CdrReportCheckListsComponent,
+        children: [
+          { path: '', redirectTo: 'actual-emission', pathMatch: 'full' },
+          { path: 'actual-emission', component: ReportActualEmissionComponent },
+          {
+            path: 'parameter-calc',
+            component: ReportParameterCalcComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+          {
+            path: 'parameter-gas',
+            component: ReportParameterGasComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+          {
+            path: 'report-product',
+            component: ReportProductComponent,
+          },
+          {
+            path: 'parameter-koef',
+            component: ReportParameterKoefComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+        ],
+      }
+    ]
+  }
 ]
 
 @NgModule({

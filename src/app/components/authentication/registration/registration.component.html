@@ -1,0 +1,37 @@
+<div class="container login-container" fxLayout="row" fxLayoutAlign="center center">
+    <form [formGroup]="registrationForm" fxFlex="50%" fxFlex.sm="50%" fxFlex.xs="90%">
+        <mat-card>
+            <mat-card-title>Кадастр</mat-card-title>
+            <mat-card-subtitle>Регистрация</mat-card-subtitle>
+            <mat-card-content>
+
+                <mat-form-field class="full-width">
+                    <input id="loginInput" matInput placeholder="БИН" formControlName="login" autocomplete="login"
+                        type="text">
+                    <mat-error id="requiredLoginError" *ngIf="registrationForm.controls['login'].hasError('required')">
+                        Пожалуйста, введите значения
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <input id="passwordInput" matInput placeholder="Пароль" formControlName="password" type="password"
+                        autocomplete="current-password">
+                    <mat-error id="requiredPasswordError" *ngIf="registrationForm.controls['password'].hasError('required')">
+                        Пожалуйста, введите значения
+                    </mat-error>
+                </mat-form-field>
+
+            </mat-card-content>
+
+            <mat-card-actions class="login-actions">
+                <button mat-raised-button id="login" color="primary" [disabled]="registrationForm.invalid || loading"
+                    (click)="register()">Зарегистрироваться</button>
+
+                <button mat-button id="resetPassword" (click)="toLogin()" type="button">Вход</button>
+            </mat-card-actions>
+
+        </mat-card>
+
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+    </form>
+</div>

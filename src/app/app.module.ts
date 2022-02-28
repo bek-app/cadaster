@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http'
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -55,6 +55,12 @@ import { CadasterReportCheckComponent } from './components/cadaster-report-check
  import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component';
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component';
 import { PlannedChangesFormComponent } from './components/plant-list/plant-planned-changes/planned-changes-form/planned-changes-form.component';
+import { LoginComponent } from './components/authentication/login/login.component';
+import { RegistrationComponent } from './components/authentication/registration/registration.component';
+import { FullComponent } from './layouts/full/full.component';
+import { CommonComponent } from './layouts/common/common.component';
+import { AuthInterceptor } from './interceptor/authentication.inteceptor';
+import { AuthGuard } from './guards/auth.guard';
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -123,10 +129,14 @@ export function appInitializerFactory(
     CommentHistoryComponent,
     CustomInputEditorComponent,
     CadasterReportCheckComponent,
-     CdrReportCheckListsComponent,
-     PlantPlannedChangesComponent,
-     PlannedChangesFormComponent,
-   ],
+    CdrReportCheckListsComponent,
+    PlantPlannedChangesComponent,
+    PlannedChangesFormComponent,
+    LoginComponent,
+    RegistrationComponent,
+    FullComponent,
+    CommonComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -145,9 +155,10 @@ export function appInitializerFactory(
     FontAwesomeModule,
     BrowserAnimationsModule,
     AngularMaterialModule,
-    FlexLayoutModule,
+    FlexLayoutModule
   ],
   providers: [
+    AuthGuard,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
@@ -157,6 +168,11 @@ export function appInitializerFactory(
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: appearance,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
     },
   ],
   bootstrap: [AppComponent],

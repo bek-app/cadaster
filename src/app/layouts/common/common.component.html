@@ -1,0 +1,57 @@
+<div class="container">
+    <mat-toolbar color="primary" class="toolbar">
+      <mat-toolbar-row>
+        <h1>Кадастр</h1>
+        <a
+          mat-button
+          routerLink="/common/plant"
+          class="nav-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active">
+          Установка
+        </a>
+        <a
+          mat-button
+          routerLink="/common/cadaster-report"
+          class="nav-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active">
+          Отчет
+        </a>
+  
+        <!-- <mat-form-field appearance="fill">
+          <mat-select
+            #selectedLang
+            [value]="translate.currentLang"
+            (selectionChange)="translate.use(selectedLang.value)"
+          >
+            <mat-option *ngFor="let lang of translate.getLangs()" [value]="lang">
+              {{ lang }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field> -->
+
+        <button mat-button [matMenuTriggerFor]="userMenu">
+          <mat-icon>person</mat-icon>
+          <span fxShow fxHide.xs>
+            {{ account ? account.name : 'Не найден' }}
+          </span>
+        </button>
+        <mat-menu #userMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false">
+    
+          <a mat-menu-item [routerLink]="['/account/profile']">
+            <mat-icon>person</mat-icon>
+            <span>Профайл</span>
+          </a>
+    
+          <a mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Выйти</span>
+          </a>
+    
+        </mat-menu>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  
+    <router-outlet></router-outlet>
+  </div>
