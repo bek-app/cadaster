@@ -312,6 +312,7 @@ export class ReportProductComponent implements OnInit {
       // change header/cell row height for salesforce theme
       headerRowHeight: 45,
       rowHeight: 50,
+      preHeaderPanelHeight: 50,
       showCustomFooter: true,
 
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)

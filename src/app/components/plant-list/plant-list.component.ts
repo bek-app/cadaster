@@ -148,13 +148,14 @@ export class PlantListComponent implements OnInit {
           name: DEVICE,
         },
         {
-          src: 'product',
-          name: PRODUCT,
-        },
-        {
           src: 'planned-changes',
           name: PLANNED_CHANGES,
         },
+        {
+          src: 'product',
+          name: PRODUCT,
+        },
+
       ]
     })
   }

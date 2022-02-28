@@ -130,7 +130,6 @@ export class ReportActualEmissionComponent implements OnInit {
           ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
           Object.assign(items, { group })
         })
-        console.log(data);
 
         this.dataset = data
       })
@@ -197,7 +196,7 @@ export class ReportActualEmissionComponent implements OnInit {
           valueField: valueField.toString(),
           discriminator,
         }
-console.log(metadata.dataContext);
+        console.log(metadata.dataContext)
 
         this.actualEmissionService.addActualEmission(data).subscribe((res) => {
           this.refreshList(this.cdrReportId)
@@ -452,10 +451,11 @@ console.log(metadata.dataContext);
       },
 
       // change header/cell row height for salesforce theme
-      headerRowHeight: 50,
+      headerRowHeight: 45,
       rowHeight: 50,
+      preHeaderPanelHeight: 50,
+      topPanelHeight: 35,
       showCustomFooter: true,
-
       // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
       presets: {
         treeData: { toggledItems: [{ itemId: 1, isCollapsed: true }] },

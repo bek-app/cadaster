@@ -32,6 +32,10 @@ export class CadasterReportListComponent implements OnInit {
           name: ACTUAL_EMISSION,
         },
         {
+          src: 'parameter-koef',
+          name: PARAMETER_KOEF,
+        },
+        {
           src: 'parameter-calc',
           name: PARAMETER_CALC,
         },
@@ -43,10 +47,6 @@ export class CadasterReportListComponent implements OnInit {
         {
           src: 'report-product',
           name: PRODUCT,
-        },
-        {
-          src: 'parameter-koef',
-          name: PARAMETER_KOEF,
         },
       ]
     })

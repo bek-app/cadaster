@@ -1,5 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title></h2>
+  <h2 mat-dialog-title>{{ 'PLANT.PRODUCT.TITLE' | translate }}</h2>
 
   <mat-dialog-content
     fxLayout="column"
@@ -19,7 +19,7 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicProductId"
         [ngClass]="{
-          invalid:
+          'is-invalid':
             (f.dicProductId.touched || submitted) &&
             f.dicProductId.errors?.required
         }"
@@ -57,7 +57,7 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicUnitId"
         [ngClass]="{
-          invalid:
+          'is-invalid':
             (f.dicUnitId.touched || submitted) && f.dicUnitId.errors?.required
         }"
       >

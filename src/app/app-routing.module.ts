@@ -25,7 +25,7 @@ const routes: Routes = [
     path: 'plant',
     component: PlantListComponent,
     children: [
-      // { path: '', redirectTo: 'source', pathMatch: 'full' },
+      { path: '', redirectTo: 'source', pathMatch: 'full' },
       {
         path: 'source',
         component: PlantSourceListComponent,

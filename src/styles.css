@@ -9,7 +9,16 @@
   display: flex !important;
   justify-content: center !important;
 }
-
+.is-invalid {
+  border: 2px solid red;
+  border-radius: 5px;
+}
+.ng-select {
+  padding: 0;
+}
+.materials{
+  margin-bottom: 1em;
+}
 
 .header__color {
   font-weight: bold;

@@ -22,6 +22,10 @@
         символов"
         formControlName="materials"
         [closeOnSelect]="false"
+        [ngClass]="{
+          'is-invalid':
+            (f.materials.touched || submitted) && f.materials.errors?.required
+        }"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -35,7 +39,11 @@
         </ng-template>
       </ng-select>
     </div>
-
+    <mat-error
+      *ngIf="(f.materials.touched || submitted) && f.materials.errors?.required"
+    >
+      <small>{{ 'ERROR_MESSAGE' | translate }}</small>
+    </mat-error>
     <mat-form-field>
       <mat-label>{{ 'PLANT.SAMPLING.FORM.PARAM' | translate }}</mat-label>
       <textarea matInput formControlName="param" type="text"></textarea>

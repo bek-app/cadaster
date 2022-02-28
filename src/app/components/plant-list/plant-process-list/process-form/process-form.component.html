@@ -12,7 +12,7 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicProcessId"
         [ngClass]="{
-          invalid:
+          'is-invalid':
             (f.dicProcessId.touched || submitted) &&
             f.dicProcessId.errors?.required
         }"
@@ -52,7 +52,7 @@
         formControlName="subProccesses"
         [closeOnSelect]="false"
         [ngClass]="{
-          invalid:
+          'is-invalid':
             (f.subProccesses.touched || submitted) &&
             f.subProccesses.errors?.required
         }"
@@ -92,7 +92,7 @@
         formControlName="materials"
         [closeOnSelect]="false"
         [ngClass]="{
-          invalid:
+          'is-invalid':
             (f.materials.touched || submitted) && f.materials.errors?.required
         }"
       >
