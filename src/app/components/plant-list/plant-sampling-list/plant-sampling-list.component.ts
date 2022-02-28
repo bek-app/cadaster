@@ -39,90 +39,8 @@ export class PlantSamplingListComponent implements OnInit {
     private plantService: PlantService,
     private samplingService: PlantSamplingService,
     private translate: TranslateService,
-  ) {
-    translate.get('PLANT.SAMPLING.FORM').subscribe((translations: string) => {
-      this.columnDefinitions = [
-        {
-          id: 'nameSampling',
-          name:  translations['NAME' as any],
-          field: 'nameSampling',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'materialNames',
-          name: translations['MATERIALS' as any],
-          field: 'materialNames',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'param',
-          name: translations['PARAM' as any],
-          field: 'param',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'methodSampling',
-          name: translations['METHOD' as any],
-          field: 'methodSampling',
-          filterable: true,
-          sortable: true,
-        },
+  ) {}
 
-        {
-          id: 'frequencySampling',
-          name: translations['FREQUENCY' as any],
-          field: 'frequencySampling',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'periodTransmission',
-          name: translations['PERIOD_TRANSMISSION' as any],
-          field: 'periodTransmission',
-          filterable: true,
-          sortable: true,
-        },
-
-        {
-          id: 'edit',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            this.samplingId = args.dataContext.id
-            this.openSamplingDialog()
-            this.ref.componentInstance.editForm(this.samplingId)
-          },
-        },
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.samplingService.deletePlantSampling(id).subscribe((data) => {
-                this.refreshList(this.plantId)
-              })
-            }
-          },
-        },
-      ]
-
-    })
-  }
   ngOnInit(): void {
     this.prepareGrid()
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
@@ -179,8 +97,107 @@ export class PlantSamplingListComponent implements OnInit {
     )
   }
 
-  prepareGrid() {
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row)
+    this.samplingId = item.id
+  }
 
+  prepareGrid() {
+    this.translate.get('PLANT.SAMPLING.FORM').subscribe((translations: any) => {
+      this.columnDefinitions = [
+        {
+          id: 'nameSampling',
+          name: translations['NAME'],
+          field: 'nameSampling',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'materialNames',
+          name: translations['MATERIALS'],
+          field: 'materialNames',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'param',
+          name: translations['PARAM'],
+          field: 'param',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'methodSampling',
+          name: translations['METHOD'],
+          field: 'methodSampling',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'frequencySampling',
+          name: translations['FREQUENCY'],
+          field: 'frequencySampling',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'periodTransmission',
+          name: translations['PERIOD_TRANSMISSION'],
+          field: 'periodTransmission',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openSamplingDialog()
+            this.ref.componentInstance.editForm(this.samplingId)
+            this.ref.componentInstance.form.disable()
+            this.ref.componentInstance.viewMode = true
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openSamplingDialog()
+            this.ref.componentInstance.editForm(this.samplingId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.samplingService.deletePlantSampling(id).subscribe((data) => {
+                this.refreshList(this.plantId)
+              })
+            }
+          },
+        },
+      ]
+    })
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

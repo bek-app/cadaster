@@ -44,105 +44,7 @@ export class PlantProcessListComponent implements OnInit {
     private plantProcessService: PlantProcessService,
     private plantService: PlantService,
     private translate: TranslateService,
-  ) {
-    translate.get('PLANT.PROCESS.LIST').subscribe((translations: string) => {
-      this.columnDefinitions = [
-        {
-          id: 'processName',
-          name: translations['PROCESS_NAME' as any],
-          field: 'processName',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'subProccessNames',
-          name: translations['SUBPROCESS_NAME' as any],
-          field: 'subProccessNames',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'materialNames',
-          name: translations['MATERIALS_NAMES' as any],
-          field: 'materialNames',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'oddsLevel',
-          name: translations['ODDS_LEVEL' as any],
-          field: 'oddsLevel',
-          filterable: true,
-          sortable: true,
-        },
-
-        {
-          id: 'amountConsumed',
-          name: translations['AMOUNT_CONSUMED' as any],
-          field: 'amountConsumed',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'calculatingCalorific',
-          name: translations['CALCULATION_CALORIFIC' as any],
-          columnGroup: translations['COLUMN_GROUP' as any],
-          field: 'calculatingCalorific',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'calculatingConversion',
-          name: translations['CALCULATION_CONVERSION' as any],
-          columnGroup: translations['COLUMN_GROUP' as any],
-          field: 'calculatingConversion',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'calculatingCarbon',
-          name: translations['CALCULATION_CARBON' as any],
-          columnGroup: translations['COLUMN_GROUP' as any],
-          field: 'calculatingCarbon',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'edit',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            this.processId = args.dataContext.id
-            this.openProcessFormDialog()
-            this.ref.componentInstance.editForm(this.processId)
-          },
-        },
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantProcessService
-                .deletePlantProcess(id)
-                .subscribe(() => this.refreshList(this.plantId))
-            }
-          },
-        },
-      ]
-    })
-  }
+  ) {}
 
   ngOnInit(): void {
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
@@ -199,7 +101,136 @@ export class PlantProcessListComponent implements OnInit {
     })
   }
 
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row)
+    this.processId = item.id
+  }
+
   prepareGrid() {
+    this.translate.get('PLANT.PROCESS.LIST').subscribe((translations: any) => {
+      const {
+        PROCESS_NAME,
+        SUBPROCESS_NAME,
+        MATERIALS_NAMES,
+        ODDS_LEVEL,
+        AMOUNT_CONSUMED,
+        CALCULATION_CALORIFIC,
+        COLUMN_GROUP,
+        CALCULATION_CARBON,
+        CALCULATION_CONVERSION,
+      } = translations
+
+      this.columnDefinitions = [
+        {
+          id: 'processName',
+          name: PROCESS_NAME,
+          field: 'processName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'subProccessNames',
+          name: SUBPROCESS_NAME,
+          field: 'subProccessNames',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'materialNames',
+          name: MATERIALS_NAMES,
+          field: 'materialNames',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'oddsLevel',
+          name: ODDS_LEVEL,
+          field: 'oddsLevel',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'amountConsumed',
+          name: AMOUNT_CONSUMED,
+          field: 'amountConsumed',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'calculatingCalorific',
+          name: CALCULATION_CALORIFIC,
+          columnGroup: COLUMN_GROUP,
+          field: 'calculatingCalorific',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'calculatingConversion',
+          name: CALCULATION_CONVERSION,
+          columnGroup: COLUMN_GROUP,
+          field: 'calculatingConversion',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'calculatingCarbon',
+          name: CALCULATION_CARBON,
+          columnGroup: COLUMN_GROUP,
+          field: 'calculatingCarbon',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openProcessFormDialog()
+            this.ref.componentInstance.editForm(this.processId)
+            this.ref.componentInstance.form.disable()
+            this.ref.componentInstance.viewMode = true
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openProcessFormDialog()
+            this.ref.componentInstance.editForm(this.processId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantProcessService
+                .deletePlantProcess(id)
+                .subscribe(() => this.refreshList(this.plantId))
+            }
+          },
+        },
+      ]
+    })
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

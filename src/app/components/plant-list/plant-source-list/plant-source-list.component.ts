@@ -38,78 +38,8 @@ export class PlantSourceListComponent implements OnInit {
     private plantSourceDialog: MatDialog,
     private plantSourceService: PlantSourceService,
     private plantService: PlantService,
-    translate: TranslateService,
-  ) {
-    translate.get('PLANT.SOURCE').subscribe((translations: string) => {
-      this.columnDefinitions = [
-        {
-          id: 'nameSource',
-          name: translations['NAME_SOURCE' as any],
-          field: 'nameSource',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'characteristic',
-          name: translations['CHARACTERISTIC' as any],
-          field: 'characteristic',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'installedCapacity',
-          name: translations['INSTALLED_CAPACITY' as any],
-          field: 'installedCapacity',
-          filterable: true,
-          sortable: true,
-        },
-
-        {
-          id: 'workinHours',
-          name: translations['WORKINHOURS' as any],
-          field: 'workinHours',
-          filterable: true,
-          sortable: true,
-        },
-
-        {
-          id: 'edit',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            this.plantSourceId = args.dataContext.id
-            this.openPlantSourceDialog()
-            this.ref.componentInstance.editForm(this.plantSourceId)
-          },
-        },
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantSourceService
-                .deletePlantSource(id)
-                .subscribe((data) => {
-                  this.refreshList(this.plantId)
-                })
-            }
-          },
-        },
-      ]
-    })
-  }
+    private translate: TranslateService,
+  ) {}
   ngOnInit(): void {
     this.prepareGrid()
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
@@ -160,7 +90,95 @@ export class PlantSourceListComponent implements OnInit {
     )
   }
 
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row)
+    this.plantSourceId = item.id
+  }
+
   prepareGrid() {
+    this.translate.get('PLANT.SOURCE').subscribe((translations: any) => {
+      this.columnDefinitions = [
+        {
+          id: 'nameSource',
+          name: translations['NAME_SOURCE'],
+          field: 'nameSource',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'characteristic',
+          name: translations['CHARACTERISTIC'],
+          field: 'characteristic',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'installedCapacity',
+          name: translations['INSTALLED_CAPACITY'],
+          field: 'installedCapacity',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'workinHours',
+          name: translations['WORKINHOURS'],
+          field: 'workinHours',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openPlantSourceDialog()
+            this.ref.componentInstance.editForm(this.plantSourceId)
+            this.ref.componentInstance.form.disable()
+            this.ref.componentInstance.viewMode = true
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openPlantSourceDialog()
+            this.ref.componentInstance.editForm(this.plantSourceId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantSourceService
+                .deletePlantSource(id)
+                .subscribe((data) => {
+                  this.refreshList(this.plantId)
+                })
+            }
+          },
+        },
+      ]
+    })
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

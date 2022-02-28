@@ -39,65 +39,7 @@ export class PlantProductListComponent implements OnInit {
     private plantProductService: PlantProductService,
     private plantService: PlantService,
     private translate: TranslateService,
-  ) {
-    translate.get('PLANT.PRODUCT.FORM').subscribe((translations: string) => {
-      this.columnDefinitions = [
-        {
-          id: 'dicProductName',
-          name:  translations['PRODUCT_NAME' as any],
-          field: 'dicProductName',
-          filterable: true,
-          sortable: true,
-        },
-
-        {
-          id: 'dicUnitName',
-          name:  translations['DIC_UNIT' as any],
-          field: 'dicUnitName',
-          filterable: true,
-          sortable: true,
-        },
-
-        {
-          id: 'edit',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            this.plantProductId = args.dataContext.id
-            this.openProductDialog()
-
-            this.ref.componentInstance.editForm(this.plantProductId)
-          },
-        },
-
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantProductService
-                .deletePlantProduct(id)
-                .subscribe((data) => {
-                  this.refreshList(this.plantId)
-                })
-            }
-          },
-        },
-      ]
-    })
-  }
+  ) {}
 
   ngOnInit(): void {
     this.prepareGrid()
@@ -113,10 +55,9 @@ export class PlantProductListComponent implements OnInit {
   }
 
   refreshList(id: number) {
-    this.plantProductService.getPlantProductList(id).subscribe((product) => {
-      console.log(product)
-      this.dataset = product
-    })
+    this.plantProductService
+      .getPlantProductList(id)
+      .subscribe((product) => (this.dataset = product))
   }
 
   openProductDialog() {
@@ -159,7 +100,82 @@ export class PlantProductListComponent implements OnInit {
     )
   }
 
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row)
+    this.plantProductId = item.id
+  }
+
   prepareGrid() {
+    this.translate.get('PLANT.PRODUCT.FORM').subscribe((translations: any) => {
+      this.columnDefinitions = [
+        {
+          id: 'dicProductName',
+          name: translations['PRODUCT_NAME'],
+          field: 'dicProductName',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'dicUnitName',
+          name: translations['DIC_UNIT'],
+          field: 'dicUnitName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openProductDialog()
+            this.ref.componentInstance.editForm(this.plantProductId)
+            this.ref.componentInstance.form.disable()
+            this.ref.componentInstance.viewMode = true
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openProductDialog()
+            this.ref.componentInstance.editForm(this.plantProductId)
+          },
+        },
+
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantProductService
+                .deletePlantProduct(id)
+                .subscribe((data) => {
+                  this.refreshList(this.plantId)
+                })
+            }
+          },
+        },
+      ]
+    })
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

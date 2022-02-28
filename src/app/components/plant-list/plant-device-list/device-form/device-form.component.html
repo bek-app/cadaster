@@ -1,5 +1,9 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>{{ 'PLANT.DEVICE.TITLE' | translate }}</h2>
+  <div class="dialog__title">
+    <h2 mat-dialog-title>{{ 'PLANT.DEVICE.TITLE' | translate }}</h2>
+    <span mat-dialog-close class="mdi mdi-close-outline"></span>
+  </div>
+
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ 'PLANT.DEVICE.FORM.NAME_DEVICE' | translate }}</mat-label>
@@ -31,12 +35,18 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>{{ 'PLANT.DEVICE.FORM.SPECIFIED_UNCERTAINTY' | translate }}</mat-label>
+      <mat-label>
+        {{ 'PLANT.DEVICE.FORM.SPECIFIED_UNCERTAINTY' | translate }}
+      </mat-label>
       <input matInput formControlName="specifiedUncertainty" />
     </mat-form-field>
   </mat-dialog-content>
 
-  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+  <mat-dialog-actions
+    fxLayout="row"
+    fxLayoutAlign="end center"
+    *ngIf="!viewMode"
+  >
     <button
       type="button"
       mat-raised-button

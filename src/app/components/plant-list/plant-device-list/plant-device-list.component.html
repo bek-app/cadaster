@@ -1,3 +1,4 @@
+<h3>{{ 'PLANT.DEVICE.TITLE' | translate }}</h3>
 <button
   mat-raised-button
   color="primary"
@@ -12,6 +13,9 @@
     [columnDefinitions]="columnDefinitions"
     [gridOptions]="gridOptions"
     [dataset]="dataset"
+    (onClick)="
+      onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+    "
     (onAngularGridCreated)="angularGridReady($any($event).detail)"
   ></angular-slickgrid>
 </div>

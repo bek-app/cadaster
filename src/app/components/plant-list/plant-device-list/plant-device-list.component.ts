@@ -40,99 +40,7 @@ export class PlantDeviceListComponent implements OnInit {
     private plantDeviceService: PlantDeviceService,
     private plantService: PlantService,
     private translate: TranslateService,
-  ) {
-    translate.get('PLANT.DEVICE.FORM').subscribe((translations: any) => {
-      const {
-        NAME_DEVICE,
-        IDENTIFICATION_NUMBER,
-        UNIT_DEVICE,
-        LOWER_LIMIT,
-        UPPER_LIMIT,
-        SPECIFIED_UNCERTAINTY,
-        MEASURING_RANGE,
-      } = translations
-      this.columnDefinitions = [
-        {
-          id: 'nameDevice',
-          name: NAME_DEVICE,
-          field: 'nameDevice',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'identificationNumber',
-          name: IDENTIFICATION_NUMBER,
-          field: 'identificationNumber',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'unitDevice',
-          name: UNIT_DEVICE,
-          columnGroup: MEASURING_RANGE,
-          field: 'unitDevice',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'lowerLimit',
-          name: LOWER_LIMIT,
-          field: 'lowerLimit',
-          columnGroup: MEASURING_RANGE,
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'upperLimit',
-          name: UPPER_LIMIT,
-          field: 'upperLimit',
-          columnGroup: MEASURING_RANGE,
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'specifiedUncertainty',
-          name: SPECIFIED_UNCERTAINTY,
-          field: 'specifiedUncertainty',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'edit',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            this.deviceId = args.dataContext.id
-            this.openDeviceDialog()
-            this.ref.componentInstance.editForm(this.deviceId)
-          },
-        },
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantDeviceService
-                .deletePlantDevice(id)
-                .subscribe(() => this.refreshList(this.plantId))
-            }
-          },
-        },
-      ]
-    })
-  }
+  ) {}
 
   ngOnInit(): void {
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
@@ -190,7 +98,121 @@ export class PlantDeviceListComponent implements OnInit {
     })
   }
 
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row)
+    this.deviceId = item.id
+  }
+
   prepareGrid() {
+    this.translate.get('PLANT.DEVICE.FORM').subscribe((translations: any) => {
+
+      const {
+        NAME_DEVICE,
+        IDENTIFICATION_NUMBER,
+        UNIT_DEVICE,
+        LOWER_LIMIT,
+        UPPER_LIMIT,
+        SPECIFIED_UNCERTAINTY,
+        MEASURING_RANGE,
+      } = translations
+
+      this.columnDefinitions = [
+        {
+          id: 'nameDevice',
+          name: NAME_DEVICE,
+          field: 'nameDevice',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'identificationNumber',
+          name: IDENTIFICATION_NUMBER,
+          field: 'identificationNumber',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'unitDevice',
+          name: UNIT_DEVICE,
+          columnGroup: MEASURING_RANGE,
+          field: 'unitDevice',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'lowerLimit',
+          name: LOWER_LIMIT,
+          field: 'lowerLimit',
+          columnGroup: MEASURING_RANGE,
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'upperLimit',
+          name: UPPER_LIMIT,
+          field: 'upperLimit',
+          columnGroup: MEASURING_RANGE,
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'specifiedUncertainty',
+          name: SPECIFIED_UNCERTAINTY,
+          field: 'specifiedUncertainty',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openDeviceDialog()
+            this.ref.componentInstance.editForm(this.deviceId)
+            this.ref.componentInstance.form.disable()
+            this.ref.componentInstance.viewMode = true
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openDeviceDialog()
+            this.ref.componentInstance.editForm(this.deviceId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantDeviceService
+                .deletePlantDevice(id)
+                .subscribe(() => this.refreshList(this.plantId))
+            }
+          },
+        },
+      ]
+    })
+
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

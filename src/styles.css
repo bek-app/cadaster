@@ -1,11 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@ng-select/ng-select/themes/material.theme.css";
- @import '~@mdi/font/css/materialdesignicons.css';
+@import '~@ng-select/ng-select/themes/material.theme.css';
+@import '~@mdi/font/css/materialdesignicons.css';
 /* .slickgrid-container .grid-canvas .slick-cell {
   border: 1px solid rgb(231, 228, 228) !important;
 
 } */
-.slickgrid-container .slick-preheader-panel.ui-state-default .slick-header-columns .slick-header-column {
+.slickgrid-container
+  .slick-preheader-panel.ui-state-default
+  .slick-header-columns
+  .slick-header-column {
   display: flex !important;
   justify-content: center !important;
 }
@@ -16,7 +19,7 @@
 .ng-select {
   padding: 0;
 }
-.materials{
+.materials {
   margin-bottom: 1em;
 }
 
@@ -25,19 +28,16 @@
 }
 
 .inactive__header {
-  background-color: #A0A9B2 !important;
+  background-color: #a0a9b2 !important;
   color: #fff !important;
-
 }
 
 .sub__header-material {
-  background-color: #DCEBF1 !important;
-
+  background-color: #dcebf1 !important;
 }
 
 .sub__header-process {
-  background-color: #FEFEDF !important;
-
+  background-color: #fefedf !important;
 }
 
 .border {
@@ -46,7 +46,7 @@
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 .mat-form-field {
@@ -73,8 +73,9 @@ body {
   margin-top: 10px;
 }
 
-
-.slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
+.slickgrid-container
+  .slick-header-columns
+  .slick-header-column.ui-state-default {
   font-size: 12px;
   border: 1px solid rgb(231, 228, 228) !important;
 }
@@ -83,20 +84,14 @@ body {
   margin: 10px 0;
 }
 
-
-
-
-
 snack-bar-container.success {
   background-color: green;
   color: white !important;
-
 }
 
 snack-bar-container.error {
   background-color: red;
   color: white !important;
-
 }
 
 snack-bar-container.notification {
@@ -106,10 +101,17 @@ snack-bar-container.notification {
 }
 
 .mat-button-wrapper {
-
 }
 
 /* mat-dialog overlay false */
 .dialog-bg-trans {
   background-color: transparent;
+}
+.dialog__title {
+  display: flex;
+  justify-content: space-between;
+}
+.dialog__title span {
+  font-size: 20px;
+  cursor: pointer;
 }

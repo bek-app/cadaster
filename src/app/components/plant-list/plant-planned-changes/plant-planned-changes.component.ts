@@ -47,7 +47,6 @@ export class PlantPlannedChangesComponent implements OnInit {
     this.prepareGrid()
     this.plantService.plantIdRefreshList.subscribe((item: any) => {
       this.plantId = item.id
-      console.log(item)
 
       // this.namePlant = item.namePlant;
       this.refreshList(this.plantId)
@@ -102,6 +101,11 @@ export class PlantPlannedChangesComponent implements OnInit {
     )
   }
 
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row)
+    this.plannedChangeId = item.id
+  }
+
   prepareGrid() {
     this.translate.get('PLANT.PLANNED_CHANGES').subscribe((translations) => {
       const {
@@ -141,7 +145,22 @@ export class PlantPlannedChangesComponent implements OnInit {
           filterable: true,
           sortable: true,
         },
-
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openPlannedChangesDialog()
+            this.ref.componentInstance.editForm(this.plannedChangeId)
+            this.ref.componentInstance.form.disable()
+            this.ref.componentInstance.viewMode = true
+          },
+        },
         {
           id: 'edit',
           field: 'id',
@@ -152,7 +171,6 @@ export class PlantPlannedChangesComponent implements OnInit {
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
-            this.plannedChangeId = args.dataContext.id
             this.openPlannedChangesDialog()
             this.ref.componentInstance.editForm(this.plannedChangeId)
           },

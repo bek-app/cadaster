@@ -23,6 +23,7 @@ export class PlannedChangesFormComponent implements OnInit {
   submitted?: boolean
   sourceList: any[] = []
   processList: any[] = []
+  viewMode = false
   @Output() onPlannedChangesAdded: EventEmitter<
     PlannedChangesModel
   > = new EventEmitter()
@@ -51,7 +52,7 @@ export class PlannedChangesFormComponent implements OnInit {
       this.sourceList = source
     })
     this.processService.getPlantProcessList(plantId).subscribe((process) => {
-      console.log(process);
+      console.log(process)
 
       this.processList = process
     })

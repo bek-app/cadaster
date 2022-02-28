@@ -23,7 +23,7 @@ export class SamplingFormComponent implements OnInit {
   submitted?: boolean
   dicMaterialsList: Dictionary[] = []
   ref: any
-
+  viewMode = false
   @Output() onSamplingAdded: EventEmitter<
     PlantSamplingModel
   > = new EventEmitter()
@@ -92,7 +92,7 @@ export class SamplingFormComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
- 
+
     const data = { ...this.form.value }
     !this.isActive
       ? this.onSamplingAdded.emit(data)

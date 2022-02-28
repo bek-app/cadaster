@@ -1,6 +1,8 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>{{ 'PLANT.SAMPLING.TITLE' | translate }}</h2>
-
+  <div class="dialog__title">
+    <h2 mat-dialog-title>{{ 'PLANT.SAMPLING.TITLE' | translate }}</h2>
+    <span mat-dialog-close class="mdi mdi-close-outline"></span>
+  </div>
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ 'PLANT.SAMPLING.FORM.NAME' | translate }}</mat-label>
@@ -85,7 +87,7 @@
     </mat-form-field>
   </mat-dialog-content>
 
-  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end">
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end" *ngIf="!viewMode">
     <button
       type="button"
       mat-raised-button

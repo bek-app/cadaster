@@ -40,87 +40,11 @@ export class PlantListComponent implements OnInit {
     private plantService: PlantService,
     private plantDialog: MatDialog,
     private translate: TranslateService,
-  ) {
-    translate.get('PLANT').subscribe((translations: string) => {
-      const { MENU, FORM }: any = translations
-      const { NAME, OBLAST, REGION, ADDRESS, INACTIVE }: any = FORM
-      this.columnDefinitions = [
-        {
-          id: 'namePlant',
-          name: NAME,
-          field: 'namePlant',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'oblastName',
-          name: OBLAST,
-          field: 'oblastName',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'regionName',
-          name: REGION,
-          field: 'regionName',
-          filterable: true,
-          sortable: true,
-        },
+  ) {}
 
-        {
-          id: 'address',
-          name: ADDRESS,
-          field: 'address',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'inactive',
-          name: INACTIVE,
-          field: 'inactive',
-          minWidth: 100,
-          maxWidth: 100,
-          type: FieldType.boolean,
-          sortable: true,
-          exportCustomFormatter: Formatters.complexObject,
-          formatter: Formatters.multiple,
-          params: {
-            formatters: [Formatters.checkmark],
-          },
-        },
-        {
-          id: 'edit',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            this.openPlantDialog()
-            this.modalRef.componentInstance.editForm(this.plantId)
-          },
-        },
-        {
-          id: 'delete',
-          field: 'id',
-          excludeFromColumnPicker: true,
-          excludeFromGridMenu: true,
-          excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
-          minWidth: 30,
-          maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantService.deletePlant(id).subscribe(() => {
-                this.refreshList()
-              })
-            }
-          },
-        },
-      ]
+  ngOnInit(): void {
+    this.translate.get('PLANT').subscribe((translations: any) => {
+      const { MENU } = translations
       const {
         SOURCE,
         PROCESS,
@@ -155,14 +79,10 @@ export class PlantListComponent implements OnInit {
           src: 'product',
           name: PRODUCT,
         },
-
       ]
     })
-  }
 
-  ngOnInit(): void {
     this.prepareGrid()
-
     this.refreshList()
   }
 
@@ -216,6 +136,103 @@ export class PlantListComponent implements OnInit {
   }
 
   prepareGrid() {
+    this.translate.get('PLANT').subscribe((translations: any) => {
+      const { FORM }: any = translations
+      const { NAME, OBLAST, REGION, ADDRESS, INACTIVE } = FORM
+      this.columnDefinitions = [
+        {
+          id: 'namePlant',
+          name: NAME,
+          field: 'namePlant',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'oblastName',
+          name: OBLAST,
+          field: 'oblastName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'regionName',
+          name: REGION,
+          field: 'regionName',
+          filterable: true,
+          sortable: true,
+        },
+
+        {
+          id: 'address',
+          name: ADDRESS,
+          field: 'address',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'inactive',
+          name: INACTIVE,
+          field: 'inactive',
+          minWidth: 100,
+          maxWidth: 100,
+          type: FieldType.boolean,
+          sortable: true,
+          exportCustomFormatter: Formatters.complexObject,
+          formatter: Formatters.multiple,
+          params: {
+            formatters: [Formatters.checkmark],
+          },
+        },
+        {
+          id: 'view',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          minWidth: 30,
+          maxWidth: 30,
+          formatter: () => `<span class="mdi mdi-loupe"></span>`,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openPlantDialog()
+            this.modalRef.componentInstance.editForm(this.plantId)
+            this.modalRef.componentInstance.form.disable()
+            this.modalRef.componentInstance.viewMode = true
+          },
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openPlantDialog()
+            this.modalRef.componentInstance.editForm(this.plantId)
+          },
+        },
+        {
+          id: 'delete',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.deleteIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            const id = args.dataContext.id
+            if (confirm('Уверены ли вы?')) {
+              this.plantService.deletePlant(id).subscribe(() => {
+                this.refreshList()
+              })
+            }
+          },
+        },
+      ]
+    })
     this.gridOptions = {
       autoResize: {
         container: '#demo-container',

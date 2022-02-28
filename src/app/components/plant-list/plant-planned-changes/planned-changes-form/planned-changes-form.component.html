@@ -1,9 +1,11 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>
-    {{ 'PLANT.PLANNED_CHANGES.TITLE' | translate }}
-  </h2>
+  <div class="dialog__title">
+    <h2 mat-dialog-title>
+      {{ 'PLANT.PLANNED_CHANGES.TITLE' | translate }}
+    </h2>
+    <span mat-dialog-close class="mdi mdi-close-outline"></span>
+  </div>
   <mat-dialog-content>
-
     <div class="source">
       <ng-select
         placeholder="{{ 'PLANT.PLANNED_CHANGES.SOURCE_NAME' | translate }}"
@@ -51,9 +53,8 @@
       <input matInput formControlName="changeYear" type="number" />
       <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
     </mat-form-field>
-
   </mat-dialog-content>
-  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end">
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end" *ngIf="!viewMode">
     <button
       mat-raised-button
       mat-dialog-close
