@@ -18,6 +18,7 @@ import { CadasterReportCheckComponent } from './components/cadaster-report-check
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
 import { PlantActivityListComponent } from './components/plant-list/plant-activity-list/plant-activity-list.component'
+import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component'
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -84,6 +85,11 @@ const routes: Routes = [
       {
         path: 'parameter-koef',
         component: ReportParameterKoefComponent,
+        resolve: { dicUnit: DicUnitResolver },
+      },
+      {
+        path: 'report-activity',
+        component: ReportActivityComponent,
         resolve: { dicUnit: DicUnitResolver },
       },
     ],

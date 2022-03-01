@@ -10,9 +10,7 @@ import {
   OnEventArgs,
 } from 'angular-slickgrid'
 import { PlantActivityModel } from 'src/app/models/plant-activity.model'
-import { PlantSourceModel } from 'src/app/models/plant-source.model'
 import { PlantActivityService } from 'src/app/services/plant-activity.service'
-import { PlantSourceService } from 'src/app/services/plant-source.service'
 import { PlantService } from 'src/app/services/plant.service'
 import { ActivityFormComponent } from './activity-form/activity-form.component'
 @Component({
@@ -31,7 +29,7 @@ export class PlantActivityListComponent implements OnInit {
   dataViewObj: any
   ref: any
   namePlant!: string
-  
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -61,6 +59,8 @@ export class PlantActivityListComponent implements OnInit {
 
   refreshList(id: number) {
     this.plantActivityService.getPlantActivityList(id).subscribe((data) => {
+      console.log(data);
+
       this.dataset = data
     })
   }
@@ -72,27 +72,30 @@ export class PlantActivityListComponent implements OnInit {
   }
 
   onActivityAdded() {
-    this.ref.componentInstance.onPlantSourceAdded.subscribe(
+    this.ref.componentInstance.onActivityAdded.subscribe(
       (data: PlantActivityModel) => {
         const newData = { id: 0, plantId: this.plantId, ...data }
-        this.plantActivityService
-          .addPlantActivity(newData)
-          .subscribe((res) => this.refreshList(this.plantId))
+
+        this.plantActivityService.addPlantActivity(newData).subscribe(() => {
+          this.ref.close()
+          this.refreshList(this.plantId)
+        })
       },
     )
   }
 
   onActivityUpdated() {
-    this.ref.componentInstance.onPlantSourceUpdated.subscribe(
+    this.ref.componentInstance.onActivityUpdated.subscribe(
       (data: PlantActivityModel) => {
         const newData = {
           id: this.activityId,
           plantId: this.plantId,
           ...data,
         }
-        this.plantActivityService
-          .updatePlantActivity(newData)
-          .subscribe((res) => this.refreshList(this.plantId))
+        this.plantActivityService.updatePlantActivity(newData).subscribe(() => {
+          this.ref.close()
+          this.refreshList(this.plantId)
+        })
       },
     )
   }

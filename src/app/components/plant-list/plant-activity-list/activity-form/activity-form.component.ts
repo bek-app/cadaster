@@ -24,8 +24,8 @@ export class ActivityFormComponent implements OnInit {
   dicRootActivityList: any[] = []
   dicActivityList: any[] = []
   dicUnitList: any[] = []
-  @Output() addActivity: EventEmitter<any> = new EventEmitter()
-  @Output() updateActivity: EventEmitter<any> = new EventEmitter()
+  @Output() onActivityAdded: EventEmitter<any> = new EventEmitter()
+  @Output() onActivityUpdated: EventEmitter<any> = new EventEmitter()
 
   constructor(
     private dicActivity: DicActivityService,
@@ -42,7 +42,7 @@ export class ActivityFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.dicActivity
-      .getDicActivity(0)
+      .getDicActivity()
       .subscribe((res) => (this.dicRootActivityList = res))
     this.dicUnitService
       .getDicUnit()
@@ -51,7 +51,7 @@ export class ActivityFormComponent implements OnInit {
 
   rootActivityChange(rootActivityId: number) {
     if (rootActivityId) {
-      this.dicActivity.getDicActivity(rootActivityId).subscribe((result) => {
+      this.dicActivity.getDicActivityByParentId(rootActivityId).subscribe((result) => {
         this.dicActivityList = result
       })
     }
@@ -64,9 +64,11 @@ export class ActivityFormComponent implements OnInit {
     }
 
     const data = { ...this.form.value }
+
+
     !this.isActive
-      ? this.addActivity.emit(data)
-      : this.updateActivity.emit(data)
+      ? this.onActivityAdded.emit(data)
+      : this.onActivityUpdated.emit(data)
     this.hideActivityModal()
   }
 
@@ -81,6 +83,7 @@ export class ActivityFormComponent implements OnInit {
       .getPlantActivityById(id)
       .subscribe((data: any) => this.form.patchValue(data))
   }
+
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls
   }

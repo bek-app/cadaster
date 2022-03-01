@@ -1,0 +1,15 @@
+<h2>{{ 'CDR_REPORTS.ACTIVITY.TITLE' | translate }}</h2>
+
+<angular-slickgrid
+  gridId="report-activity"
+  [columnDefinitions]="columnDefinitions"
+  [gridOptions]="gridOptions"
+  [datasetHierarchical]="dataset"
+  (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  (onCellChange)="
+    onCellChanged($any($event).detail.eventData, $any($event).detail.args)
+  "
+  (onClick)="
+    onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+  "
+></angular-slickgrid>

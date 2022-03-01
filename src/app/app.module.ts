@@ -67,7 +67,10 @@ import { PlantPlannedChangesComponent } from './components/plant-list/plant-plan
 import { PlannedChangesFormComponent } from './components/plant-list/plant-planned-changes/planned-changes-form/planned-changes-form.component'
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { PlantActivityListComponent } from './components/plant-list/plant-activity-list/plant-activity-list.component';
-import { ActivityFormComponent } from './components/plant-list/plant-activity-list/activity-form/activity-form.component'
+import { ActivityFormComponent } from './components/plant-list/plant-activity-list/activity-form/activity-form.component';
+ import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component';
+import { ReportActivityChangesComponent } from './components/cadaster-report-list/report-activity-changes/report-activity-changes.component';
+import { ActivityChangesFormComponent } from './components/cadaster-report-list/report-activity-changes/activity-changes-form/activity-changes-form.component'
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -141,6 +144,9 @@ export function appInitializerFactory(
     PlannedChangesFormComponent,
     PlantActivityListComponent,
     ActivityFormComponent,
+    ReportActivityComponent,
+    ReportActivityChangesComponent,
+    ActivityChangesFormComponent,
   ],
   imports: [
     BrowserModule,

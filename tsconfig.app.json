@@ -6,7 +6,11 @@
     "types": [],
     "paths": {
       "jszip": ["./node_modules/jszip/dist/jszip.min.js"],
-      "stream": [ "./node_modules/stream-browserify" ]
+      "stream": [ "./node_modules/stream-browserify" ],
+      "@models/*": ["src/app/models/*"],
+      "@models/": ["src/app/models/index"],
+      "@services/*": ["src/app/services/*"],
+      "@services/": ["src/app/services/index"],
 
     }
   },
