@@ -26,6 +26,7 @@ export class CadasterReportListComponent implements OnInit {
         PRODUCT,
         PARAMETER_KOEF,
         ACTIVITY,
+        ACTIVITY_CHANGE,
       } = translations
       this.cdrReportRoute = [
         {
@@ -52,6 +53,10 @@ export class CadasterReportListComponent implements OnInit {
         {
           src: 'report-activity',
           name: ACTIVITY,
+        },
+        {
+          src: 'report-activity-change',
+          name: ACTIVITY_CHANGE,
         },
       ]
     })

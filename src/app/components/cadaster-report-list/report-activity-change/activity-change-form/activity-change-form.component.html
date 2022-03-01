@@ -1,0 +1,59 @@
+<form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="dialog__title">
+    <h2 mat-dialog-title>
+      {{ 'CDR_REPORTS.ACTIVITY_CHANGE.TITLE' | translate }}
+    </h2>
+    <span mat-dialog-close class="mdi mdi-close-outline"></span>
+  </div>
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>
+        <mat-label>
+          {{ 'CDR_REPORTS.ACTIVITY_CHANGE.ROOT_ACTIVITY_NAME' | translate }}
+        </mat-label>
+      </mat-label>
+      <mat-select formControlName="rootActivityId">
+        <mat-option
+          *ngFor="let rootAct of dicRootActivityList"
+          [value]="rootAct.id"
+        >
+          {{ rootAct.nameRu }}
+        </mat-option>
+      </mat-select>
+      <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label>
+      {{ 'CDR_REPORTS.ACTIVITY_CHANGE.CHANGE_DATA' | translate }}
+    </mat-label>
+
+    <input matInput formControlName="changeData" type="text" />
+    <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>{{ 'CDR_REPORTS.ACTIVITY_CHANGE.NOTE' | translate }}</mat-label>
+    <textarea matInput formControlName="note"></textarea>
+    <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
+  </mat-form-field>
+
+  <mat-dialog-actions
+    fxLayout="row"
+    fxLayoutAlign="end center"
+    *ngIf="!viewMode"
+  >
+    <button
+      mat-raised-button
+      mat-dialog-close
+      color="warn"
+      (click)="hideActivityChangeDialog()"
+    >
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-raised-button color="primary" type="submit">
+      {{ 'SAVE' | translate }}
+    </button>
+  </mat-dialog-actions>
+</form>
