@@ -65,7 +65,9 @@ import { CadasterReportCheckComponent } from './components/cadaster-report-check
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
 import { PlannedChangesFormComponent } from './components/plant-list/plant-planned-changes/planned-changes-form/planned-changes-form.component'
-import { ExcelExportService } from '@slickgrid-universal/excel-export'
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PlantActivityListComponent } from './components/plant-list/plant-activity-list/plant-activity-list.component';
+import { ActivityFormComponent } from './components/plant-list/plant-activity-list/activity-form/activity-form.component'
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -137,6 +139,8 @@ export function appInitializerFactory(
     CdrReportCheckListsComponent,
     PlantPlannedChangesComponent,
     PlannedChangesFormComponent,
+    PlantActivityListComponent,
+    ActivityFormComponent,
   ],
   imports: [
     BrowserModule,

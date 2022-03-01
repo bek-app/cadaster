@@ -43,8 +43,7 @@ export class PlantListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.translate.get('PLANT').subscribe((translations: any) => {
-      const { MENU } = translations
+    this.translate.get('PLANT.MENU').subscribe((translations: any) => {
       const {
         SOURCE,
         PROCESS,
@@ -52,7 +51,9 @@ export class PlantListComponent implements OnInit {
         DEVICE,
         PRODUCT,
         PLANNED_CHANGES,
-      }: any = MENU
+        ACTIVITY,
+      } = translations
+
       this.plantRoute = [
         {
           src: 'source',
@@ -78,6 +79,10 @@ export class PlantListComponent implements OnInit {
         {
           src: 'product',
           name: PRODUCT,
+        },
+        {
+          src: 'activity',
+          name: ACTIVITY,
         },
       ]
     })
