@@ -20,7 +20,8 @@ export class CommonComponent implements OnInit {
   ngOnInit(): void { }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/full/login']);
+    this.authService.logout().subscribe(r => {
+      this.router.navigate(['/auth/login']);
+    });
   }
 }

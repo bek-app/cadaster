@@ -53,10 +53,14 @@ export class LoginComponent implements OnInit {
       .subscribe((data) => {
         this.loading = false;
         this.router.navigate(['/']);
+      }, (error) => {
+        this.loading = false;
+        const err = error;
+        this.notificationService.error(error.error)
       });
   }
 
-  resetPassword() {
-    this.router.navigate(['/auth/reset-password']);
+  register() {
+    this.router.navigate(['/auth/registration']);
   }
 }

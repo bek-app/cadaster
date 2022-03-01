@@ -1,8 +1,9 @@
 <div class="container login-container" fxLayout="row" fxLayoutAlign="center center">
     <form [formGroup]="loginForm" fxFlex="50%" fxFlex.sm="50%" fxFlex.xs="90%">
         <mat-card>
-            <mat-card-title>Кадастр</mat-card-title>
-            <mat-card-subtitle>Вход</mat-card-subtitle>
+            <h1 class="">КАДАСТР</h1>
+            <mat-card-title>Вход</mat-card-title>
+            <mat-card-subtitle>в систему Кадастр</mat-card-subtitle>
             <mat-card-content>
 
                 <mat-form-field class="full-width">
@@ -31,7 +32,9 @@
                 <button mat-raised-button id="login" color="primary" [disabled]="loginForm.invalid || loading"
                     (click)="login()">Войти</button>
 
-                <button mat-button id="resetPassword" (click)="resetPassword()" type="button">Восстановить пароль</button>
+                <button mat-button id="registration" (click)="register()" type="button">
+                    Зарегестрироваться
+                </button>
             </mat-card-actions>
 
         </mat-card>

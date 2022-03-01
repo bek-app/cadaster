@@ -27,7 +27,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'common/plant', pathMatch: 'full' },
 
   {
-    path: 'full',
+    path: 'auth',
     component: FullComponent,
     children: [
       { 

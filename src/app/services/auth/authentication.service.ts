@@ -23,10 +23,11 @@ export class AuthenticationService {
         }));
   }
 
-  logout(): void {
-    this.http.get(`${this.apiUrl}/logout`).subscribe(r => {
-      this.cleanUserData()
-    });
+  logout() {
+    return this.http.get(`${this.apiUrl}/logout`).pipe(map(v => {
+      this.cleanUserData();
+      return v;
+    }));
   }
 
   getUserData(): AccountModel | null {
