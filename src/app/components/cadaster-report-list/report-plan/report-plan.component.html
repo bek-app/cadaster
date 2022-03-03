@@ -1,0 +1,25 @@
+<div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+  <h2>{{ 'CDR_REPORTS.PLAN.TITLE' | translate }}</h2>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="openPlanFormDialog()"
+  >
+    <fa-icon [icon]="faPlus"></fa-icon>
+    {{ 'CREATE' | translate }}
+  </button>
+</div>
+
+<angular-slickgrid
+  gridId="plan"
+  [columnDefinitions]="columnDefinitions"
+  [gridOptions]="gridOptions"
+  [dataset]="dataset"
+  (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  (onCellChange)="
+    onCellChanged($any($event).detail.eventData, $any($event).detail.args)
+  "
+  (onClick)="
+    onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+  "
+></angular-slickgrid>

@@ -1,23 +1,21 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="dialog__title">
     <h2 mat-dialog-title>
-      {{ 'CDR_REPORTS.ACTIVITY_CHANGE.TITLE' | translate }}
+      {{ 'CDR_REPORTS.PLAN.TITLE' | translate }}
     </h2>
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
+
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>
         <mat-label>
-          {{ 'CDR_REPORTS.ACTIVITY_CHANGE.ROOT_ACTIVITY_NAME' | translate }}
+          {{ 'CDR_REPORTS.PLAN.PROCESS_NAME' | translate }}
         </mat-label>
       </mat-label>
-      <mat-select formControlName="rootActivityId">
-        <mat-option
-          *ngFor="let rootAct of dicRootActivityList"
-          [value]="rootAct.id"
-        >
-          {{ rootAct.nameRu }}
+      <mat-select formControlName="plantProcessId">
+        <mat-option *ngFor="let process of plantProcesses" [value]="process.id">
+          {{ process.name }}
         </mat-option>
       </mat-select>
       <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
@@ -26,15 +24,33 @@
 
   <mat-form-field>
     <mat-label>
-      {{ 'CDR_REPORTS.ACTIVITY_CHANGE.CHANGE_DATA' | translate }}
+      {{ 'CDR_REPORTS.PLAN.PERIODICITY' | translate }}
     </mat-label>
 
-    <textarea matInput formControlName="changeData" type="text"></textarea>
+    <input matInput formControlName="periodicity" type="text" />
     <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>{{ 'CDR_REPORTS.ACTIVITY_CHANGE.NOTE' | translate }}</mat-label>
+    <mat-label>
+      {{ 'CDR_REPORTS.PLAN.DEVIATIONS' | translate }}
+    </mat-label>
+
+    <input matInput formControlName="deviations" type="text" />
+    <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>
+      {{ 'CDR_REPORTS.PLAN.REASONS' | translate }}
+    </mat-label>
+
+    <input matInput formControlName="reasons" type="text" />
+    <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>{{ 'CDR_REPORTS.PLAN.NOTE' | translate }}</mat-label>
     <textarea matInput formControlName="note"></textarea>
     <mat-error>{{ 'ERROR_MESSAGE' | translate }}</mat-error>
   </mat-form-field>
@@ -48,7 +64,7 @@
       mat-raised-button
       mat-dialog-close
       color="warn"
-      (click)="hideActivityChangeDialog()"
+      (click)="hidePlanDialog()"
     >
       {{ 'CANCEL' | translate }}
     </button>

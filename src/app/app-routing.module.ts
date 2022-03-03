@@ -21,6 +21,7 @@ import { PlantActivityListComponent } from './components/plant-list/plant-activi
 import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component'
 import { ReportActivityChangeComponent } from './components/cadaster-report-list/report-activity-change/report-activity-change.component'
 import { ReportCarbonUnitComponent } from './components/cadaster-report-list/report-carbon-unit/report-carbon-unit.component'
+import { ReportPlanComponent } from './components/cadaster-report-list/report-plan/report-plan.component'
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -100,6 +101,9 @@ const routes: Routes = [
       {
         path: 'report-carbon-unit',
         component: ReportCarbonUnitComponent,
+      },  {
+        path: 'report-plan',
+        component: ReportPlanComponent,
       },
     ],
   },

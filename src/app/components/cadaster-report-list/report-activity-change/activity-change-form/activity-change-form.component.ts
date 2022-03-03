@@ -7,8 +7,6 @@ import {
   Validators,
 } from '@angular/forms'
 import { DicActivityService } from 'src/app/services/dic-activity.service'
-import { DicKatoService } from 'src/app/services/dic-kato.service'
-import { PlantService } from 'src/app/services/plant.service'
 import { ReportActivityChangeService } from 'src/app/services/report-activity-change.service'
 @Component({
   selector: 'app-activity-change-form',

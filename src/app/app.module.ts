@@ -71,7 +71,9 @@ import { ActivityFormComponent } from './components/plant-list/plant-activity-li
 import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component'
 import { ReportActivityChangeComponent } from './components/cadaster-report-list/report-activity-change/report-activity-change.component'
 import { ActivityChangeFormComponent } from './components/cadaster-report-list/report-activity-change/activity-change-form/activity-change-form.component'
-import { ReportCarbonUnitComponent } from './components/cadaster-report-list/report-carbon-unit/report-carbon-unit.component'
+import { ReportCarbonUnitComponent } from './components/cadaster-report-list/report-carbon-unit/report-carbon-unit.component';
+import { ReportPlanComponent } from './components/cadaster-report-list/report-plan/report-plan.component';
+import { PlanFormComponent } from './components/cadaster-report-list/report-plan/plan-form/plan-form.component'
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -149,6 +151,8 @@ export function appInitializerFactory(
     ReportActivityChangeComponent,
     ActivityChangeFormComponent,
     ReportCarbonUnitComponent,
+    ReportPlanComponent,
+    PlanFormComponent,
   ],
   imports: [
     BrowserModule,

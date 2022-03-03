@@ -128,7 +128,7 @@ export class ReportActivityChangeComponent implements OnInit {
           ...data,
         }
         this.reportActivityChangeService
-          .addReportActivityChange(newData)
+          .updateReportActivityChange(newData)
           .subscribe(() => {
             this.activityChangeDialogRef.close()
             this.refreshList(this.cdrReportId)
