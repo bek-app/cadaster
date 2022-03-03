@@ -65,12 +65,13 @@ import { CadasterReportCheckComponent } from './components/cadaster-report-check
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
 import { PlannedChangesFormComponent } from './components/plant-list/plant-planned-changes/planned-changes-form/planned-changes-form.component'
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { PlantActivityListComponent } from './components/plant-list/plant-activity-list/plant-activity-list.component';
-import { ActivityFormComponent } from './components/plant-list/plant-activity-list/activity-form/activity-form.component';
- import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component';
-import { ReportActivityChangeComponent } from './components/cadaster-report-list/report-activity-change/report-activity-change.component';
- import { ActivityChangeFormComponent } from './components/cadaster-report-list/report-activity-change/activity-change-form/activity-change-form.component';
+import { ExcelExportService } from '@slickgrid-universal/excel-export'
+import { PlantActivityListComponent } from './components/plant-list/plant-activity-list/plant-activity-list.component'
+import { ActivityFormComponent } from './components/plant-list/plant-activity-list/activity-form/activity-form.component'
+import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component'
+import { ReportActivityChangeComponent } from './components/cadaster-report-list/report-activity-change/report-activity-change.component'
+import { ActivityChangeFormComponent } from './components/cadaster-report-list/report-activity-change/activity-change-form/activity-change-form.component'
+import { ReportCarbonUnitComponent } from './components/cadaster-report-list/report-carbon-unit/report-carbon-unit.component'
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -144,9 +145,10 @@ export function appInitializerFactory(
     PlannedChangesFormComponent,
     PlantActivityListComponent,
     ActivityFormComponent,
-    ReportActivityComponent, 
+    ReportActivityComponent,
     ReportActivityChangeComponent,
-     ActivityChangeFormComponent,
+    ActivityChangeFormComponent,
+    ReportCarbonUnitComponent,
   ],
   imports: [
     BrowserModule,
@@ -154,7 +156,7 @@ export function appInitializerFactory(
     HttpClientModule,
     AngularSlickgridModule.forRoot({
       alwaysShowVerticalScroll: true,
-      autoEdit: false,
+      autoEdit: true,
       asyncEditorLoading: false,
       autoFitColumnsOnFirstLoad: true,
       autoResize: {
@@ -164,7 +166,16 @@ export function appInitializerFactory(
         minHeight: 180,
         minWidth: 300,
         rightPadding: 0,
+        container: '#demo-container',
       },
+
+      autoCommitEdit: true,
+
+      enableFiltering: true,
+      enableGrouping: true,
+      createPreHeaderPanel: true,
+      showPreHeaderPanel: true,
+      gridWidth: '100%',
       cellHighlightCssClass: 'slick-cell-modified',
       checkboxSelector: {
         cssClass: 'slick-cell-checkboxsel',
@@ -196,10 +207,13 @@ export function appInitializerFactory(
         hideExportTextDelimitedCommand: true,
         hideMenuOnScroll: true,
         hideOptionSection: false,
-        iconCopyCellValueCommand: 'fa fa-clone',
-        iconExportCsvCommand: 'fa fa-download',
-        iconExportExcelCommand: 'fa fa-file-excel-o text-success',
-        iconExportTextDelimitedCommand: 'fa fa-download',
+        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
+        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
+        iconClearGroupingCommand: 'mdi mdi-close',
+        iconCopyCellValueCommand: 'mdi mdi-content-copy',
+        iconExportCsvCommand: 'mdi mdi-download',
+        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
+        iconExportTextDelimitedCommand: 'mdi mdi-download',
       },
       customFooterOptions: {
         dateFormat: 'YYYY-MM-DD, hh:mm a',
@@ -219,6 +233,7 @@ export function appInitializerFactory(
           ofKey: 'OF',
         },
       },
+
       dataView: {
         syncGridSelection: true, // when enabled, this will preserve the row selection even after filtering/sorting/grouping
         syncGridSelectionWithBackendService: false, // but disable it when using backend services
@@ -229,10 +244,10 @@ export function appInitializerFactory(
       defaultColumnSortFieldId: 'id',
       defaultFilterPlaceholder: '🔎︎',
       defaultFilterRangeOperator: OperatorType.rangeInclusive,
-      editable: false,
+      editable: true,
       enableAutoResize: true,
       enableAutoSizeColumns: true,
-      enableCellNavigation: false,
+      enableCellNavigation: true,
       enableColumnPicker: true,
       enableColumnReorder: true,
       enableColumnResizeOnDoubleClick: true,
@@ -310,16 +325,15 @@ export function appInitializerFactory(
         hideSyncResizeButton: true,
         hideToggleFilterCommand: false,
         hideTogglePreHeaderCommand: false,
-        iconCssClass: 'fa fa-bars',
-        iconClearAllFiltersCommand: 'fa fa-filter text-danger',
-        iconClearAllSortingCommand: 'fa fa-unsorted text-danger',
-        iconClearFrozenColumnsCommand: 'fa fa-times',
-        iconExportCsvCommand: 'fa fa-download',
-        iconExportExcelCommand: 'fa fa-file-excel-o text-success',
-        iconExportTextDelimitedCommand: 'fa fa-download',
-        iconRefreshDatasetCommand: 'fa fa-refresh',
-        iconToggleFilterCommand: 'fa fa-random',
-        iconTogglePreHeaderCommand: 'fa fa-random',
+        iconCssClass: 'mdi mdi-menu',
+        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
+        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
+        iconExportCsvCommand: 'mdi mdi-download',
+        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
+        iconExportTextDelimitedCommand: 'mdi mdi-download',
+        iconRefreshDatasetCommand: 'mdi mdi-sync',
+        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
+        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
         menuWidth: 16,
         resizeOnShowHeaderRow: true,
         headerColumnValueExtractor: pickerHeaderColumnValueExtractor,
@@ -328,13 +342,12 @@ export function appInitializerFactory(
         autoAlign: true,
         autoAlignOffset: 12,
         minWidth: 140,
-        iconClearFilterCommand: 'fa fa-filter text-danger',
-        iconClearSortCommand: 'fa fa-unsorted',
-        iconFreezeColumns: 'fa fa-thumb-tack',
-        iconSortAscCommand: 'fa fa-sort-amount-asc',
-        iconSortDescCommand: 'fa fa-sort-amount-desc',
-        iconColumnHideCommand: 'fa fa-times',
         iconColumnResizeByContentCommand: 'fa fa-arrows-h',
+        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
+        iconClearSortCommand: 'mdi mdi-swap-vertical',
+        iconSortAscCommand: 'mdi mdi-sort-ascending',
+        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
+        iconColumnHideCommand: 'mdi mdi-close',
         hideColumnResizeByContentCommand: false,
         hideColumnHideCommand: false,
         hideClearFilterCommand: false,

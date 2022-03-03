@@ -1,0 +1,14 @@
+<h2>{{ 'CDR_REPORTS.CARBON_UNIT.TITLE' | translate }}</h2>
+<angular-slickgrid
+  gridId="carbon-unit"
+  [columnDefinitions]="columnDefinitions"
+  [gridOptions]="gridOptions"
+  [dataset]="dataset"
+  (onAngularGridCreated)="angularGridReady($any($event).detail)"
+  (onCellChange)="
+    onCellChanged($any($event).detail.eventData, $any($event).detail.args)
+  "
+  (onClick)="
+    onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+  "
+></angular-slickgrid>

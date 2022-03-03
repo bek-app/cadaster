@@ -19,7 +19,8 @@ import { CdrReportCheckListsComponent } from './components/cdr-report-check-list
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
 import { PlantActivityListComponent } from './components/plant-list/plant-activity-list/plant-activity-list.component'
 import { ReportActivityComponent } from './components/cadaster-report-list/report-activity/report-activity.component'
- import { ReportActivityChangeComponent } from './components/cadaster-report-list/report-activity-change/report-activity-change.component'
+import { ReportActivityChangeComponent } from './components/cadaster-report-list/report-activity-change/report-activity-change.component'
+import { ReportCarbonUnitComponent } from './components/cadaster-report-list/report-carbon-unit/report-carbon-unit.component'
 
 const routes: Routes = [
   { path: '', redirectTo: 'plant', pathMatch: 'full' },
@@ -95,6 +96,10 @@ const routes: Routes = [
       {
         path: 'report-activity-change',
         component: ReportActivityChangeComponent,
+      },
+      {
+        path: 'report-carbon-unit',
+        component: ReportCarbonUnitComponent,
       },
     ],
   },
