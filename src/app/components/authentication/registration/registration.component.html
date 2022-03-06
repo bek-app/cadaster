@@ -1,0 +1,87 @@
+<div class="container login-container" fxLayout="row" fxLayoutAlign="center center">
+    <form [formGroup]="registrationForm" fxFlex="50%" fxFlex.sm="50%" fxFlex.xs="90%">
+        <mat-card>
+            <mat-card-title>Регистрация</mat-card-title>
+            <mat-card-subtitle>в систему КАДАСТР</mat-card-subtitle>
+            <mat-card-content>
+                
+                    <button mat-flat-button id="btnEcp" class="mb-1" color="primary" (click)="chooseEcp()">
+                        Выбрать ЭЦП
+                    </button>
+
+                <mat-form-field class="full-width">
+                    <mat-label>БИН</mat-label>
+                    <input id="organizationBinInput" matInput formControlName="organizationBin" autocomplete="organizationBin"
+                        type="text" readonly="true">
+                    <mat-error id="requiredIinError" *ngIf="registrationForm.controls['organizationBin'].hasError('required')">
+                        Пожалуйста, введите значения
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>Организация</mat-label>
+                    <input id="organizationNameInput" matInput formControlName="organizationName" autocomplete="organizationName"
+                        type="text" readonly="true">
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <mat-label>ИИН</mat-label>
+                    <input id="iinInput" matInput formControlName="iin" autocomplete="iin"
+                        type="text" readonly="true">
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <mat-label>Фамилия</mat-label>
+                    <input id="lastNameInput" matInput formControlName="lastName" autocomplete="lastName"
+                        type="text" readonly="true">
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>Имя</mat-label>
+                    <input id="firstNameInput" matInput formControlName="firstName" autocomplete="firstName"
+                        type="text" readonly="true">
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <mat-label>E-mail</mat-label>
+                    <input id="emailInput" matInput formControlName="email" autocomplete="email"
+                        type="text">
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <mat-label>Телефон</mat-label>
+                    <input id="phoneInput" matInput formControlName="phone" autocomplete="phone"
+                        type="text">
+                </mat-form-field>
+                
+                <mat-form-field class="full-width">
+                    <mat-label>Пароль</mat-label>
+                    <input id="passwordInput" matInput formControlName="password" type="password"
+                        autocomplete="current-password">
+                    <mat-error id="requiredPasswordError" *ngIf="registrationForm.controls['password'].hasError('required')">
+                        Пожалуйста, введите значения
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>Повторите пароль</mat-label>
+                    <input id="passwordConfirmInput" matInput formControlName="passwordConfirm" type="password"
+                        autocomplete="current-password">
+                    <mat-error id="requiredPasswordError" *ngIf="registrationForm.controls['passwordConfirm'].hasError('required')">
+                        Пожалуйста, введите значения
+                    </mat-error>
+                </mat-form-field>
+
+                <input id="Certificate" formControlName="certificate" type="hidden">
+            </mat-card-content>
+
+            <mat-card-actions class="login-actions">
+                <button mat-raised-button id="login" color="primary" 
+                    [disabled]="registrationForm.invalid || loading" (click)="register()">
+                    Зарегистрироваться
+                </button>
+
+                <button mat-button id="resetPassword" (click)="toLogin()" type="button">Вход</button>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+    </form>
+</div>

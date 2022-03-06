@@ -17,8 +17,11 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTabsModule } from '@angular/material/tabs'; import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs'; 
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule } from '@angular/material/menu';
+
 import {
   MatDialogModule,
 } from '@angular/material/dialog';
@@ -46,7 +49,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatTabsModule,
     MatSnackBarModule,
     MatCardModule,
-    MatDialogModule, MatCheckboxModule
+    MatDialogModule, 
+    MatCheckboxModule,
+    MatMenuModule
   ],
   exports: [
     MatButtonModule,
@@ -68,7 +73,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatTabsModule,
     MatSnackBarModule,
     MatCardModule,
-    MatDialogModule, MatCheckboxModule
+    MatDialogModule, 
+    MatCheckboxModule,
+    MatMenuModule
   ],
   providers: [
     MatDatepickerModule,

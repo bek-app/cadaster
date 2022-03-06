@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http'
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -74,6 +74,14 @@ import { ActivityChangeFormComponent } from './components/cadaster-report-list/r
 import { ReportCarbonUnitComponent } from './components/cadaster-report-list/report-carbon-unit/report-carbon-unit.component';
 import { ReportPlanComponent } from './components/cadaster-report-list/report-plan/report-plan.component';
 import { PlanFormComponent } from './components/cadaster-report-list/report-plan/plan-form/plan-form.component'
+ 
+
+import { LoginComponent } from './components/authentication/login/login.component';
+import { RegistrationComponent } from './components/authentication/registration/registration.component';
+import { FullComponent } from './layouts/full/full.component';
+import { CommonComponent } from './layouts/common/common.component';
+import { AuthInterceptor } from './interceptor/authentication.inteceptor';
+import { AuthGuard } from './guards/auth.guard';
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -153,6 +161,11 @@ export function appInitializerFactory(
     ReportCarbonUnitComponent,
     ReportPlanComponent,
     PlanFormComponent,
+    
+    LoginComponent,
+    RegistrationComponent,
+    FullComponent,
+    CommonComponent,
   ],
   imports: [
     BrowserModule,
@@ -413,9 +426,10 @@ export function appInitializerFactory(
     FontAwesomeModule,
     BrowserAnimationsModule,
     AngularMaterialModule,
-    FlexLayoutModule,
+    FlexLayoutModule
   ],
   providers: [
+    AuthGuard,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
@@ -425,6 +439,11 @@ export function appInitializerFactory(
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: appearance,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
     },
   ],
   bootstrap: [AppComponent],
