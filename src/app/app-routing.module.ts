@@ -28,6 +28,8 @@ import { RegistrationComponent } from './components/authentication/registration/
 import { FullComponent } from './layouts/full/full.component'
 import { CommonComponent } from './layouts/common/common.component'
 import { AuthGuard } from './guards/auth.guard'
+import { UserListComponent } from './components/administration/user-list/user-list.component'
+import { UserFormComponent } from './components/administration/user-form/user-form.component'
 
 const routes: Routes = [
   { path: '', redirectTo: 'common/plant', pathMatch: 'full' },
@@ -51,6 +53,19 @@ const routes: Routes = [
     component: CommonComponent,
     canActivate: [AuthGuard],
     children: [
+      {
+        path: 'administration',
+        children: [
+          {
+            path: 'users',
+            component: UserListComponent
+          },
+          {
+            path: 'user',
+            component: UserFormComponent
+          }
+        ]
+      },
       {
         path: 'plant',
         component: PlantListComponent,

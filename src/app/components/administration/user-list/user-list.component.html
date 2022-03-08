@@ -1,0 +1,15 @@
+<div class="cdr__report">
+    <button mat-raised-button color="primary" (click)="createUser()">
+      {{ 'CREATE' | translate }}
+    </button>
+  
+    <div class="angular-slickgrid" id="user-grid-container">
+      <angular-slickgrid
+        gridId="user-grid"
+        [columnDefinitions]="columnDefinitions"
+        [gridOptions]="gridOptions"
+        [dataset]="dataset"
+        (onAngularGridCreated)="angularGridReady($any($event).detail)"
+      ></angular-slickgrid>
+    </div>
+</div>

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { AccountModel } from 'src/app/models/auth/account.model';
 import { LoginModel } from 'src/app/models/auth/login.model';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,31 @@ export class AuthenticationService {
     return userData;
   }
 
+  isAuthorized(): Boolean {
+    const userData = this.getUserData();
+    if (!userData) {
+      console.log("there is no user data");
+      this.cleanUserData();
+      return false;
+    }
+
+    const token = userData.token;
+    if (!token) {
+      console.log("there is no token");
+      this.cleanUserData();
+      return false;
+    }
+
+    const userDataStr = atob(token.substring(token.indexOf('.') + 1, token.lastIndexOf('.')));
+    const tokenData = JSON.parse(userDataStr);
+
+    const isExpired = moment() < moment(tokenData.exp);
+    if (isExpired) {
+      console.log("your token expired");
+      this.cleanUserData();
+    }
+    return userData !== null && !isExpired;
+  }
 
   private setUserData(responseObject: AccountModel) {
     localStorage.setItem(this.TOKEN, responseObject.token!);

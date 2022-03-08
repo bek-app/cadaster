@@ -49,15 +49,16 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
-    this.authenticationService.login(loginModel)
-      .subscribe((data) => {
+    this.authenticationService.login(loginModel).subscribe({
+      next: (data) => {
         this.loading = false;
         this.router.navigate(['/']);
-      }, (error) => {
+      }, 
+      error: (error) => {
         this.loading = false;
-        const err = error;
         this.notificationService.error(error.error)
-      });
+      }
+    });
   }
 
   register() {

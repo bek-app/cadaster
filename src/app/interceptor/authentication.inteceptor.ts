@@ -13,13 +13,11 @@ export class AuthInterceptor implements HttpInterceptor {
         private dialog: MatDialog) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
         const user = this.authService.getUserData();
 
         if (user && user.token) {
             const cloned = req.clone({
-                headers: req.headers.set('Authorization',
-                    'Bearer ' + user.token)
+                headers: req.headers.set('Authorization', 'Bearer ' + user.token)
             });
 
             return next.handle(cloned).pipe(tap(() => { }, (err: any) => {
@@ -27,6 +25,8 @@ export class AuthInterceptor implements HttpInterceptor {
                     if (err.status === 401) {
                         this.dialog.closeAll();
                         this.router.navigate(['/auth/login']);
+                    } else if (err.status === 403) {
+                        
                     }
                 }
             }));

@@ -82,6 +82,8 @@ import { FullComponent } from './layouts/full/full.component';
 import { CommonComponent } from './layouts/common/common.component';
 import { AuthInterceptor } from './interceptor/authentication.inteceptor';
 import { AuthGuard } from './guards/auth.guard';
+import { UserListComponent } from './components/administration/user-list/user-list.component';
+import { UserFormComponent } from './components/administration/user-form/user-form.component';
 
 const appearance: MatFormFieldDefaultOptions = {
   appearance: 'outline',
@@ -166,6 +168,8 @@ export function appInitializerFactory(
     RegistrationComponent,
     FullComponent,
     CommonComponent,
+    UserListComponent,
+    UserFormComponent
   ],
   imports: [
     BrowserModule,

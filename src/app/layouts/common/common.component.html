@@ -2,6 +2,23 @@
     <mat-toolbar color="primary" class="toolbar">
       <mat-toolbar-row>
         <h1>Кадастр</h1>
+        <a 
+          mat-button          
+          [matMenuTriggerFor]="menuAdministration">
+          Администрирование
+        </a>
+        <mat-menu #menuAdministration="matMenu">
+          <a
+          mat-button
+          routerLink="/common/administration/users"
+          class="nav-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active">
+            Пользователи
+          </a>
+        </mat-menu>
+
+
         <a
           mat-button
           routerLink="/common/plant"

@@ -1,0 +1,134 @@
+<form class="form" [formGroup]="userForm" (ngSubmit)="save()">
+    <div class="dialog__title">
+      <h2 mat-dialog-title>
+        {{ 'ADMINISTRATION.USER.TITLE' | translate }}
+      </h2>
+      <span mat-dialog-close class="mdi mdi-close-outline"></span>
+    </div>
+  
+    <mat-dialog-content>
+      
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.USER_NANE' | translate }}" formControlName="userName" type="text">    
+            <mat-error *ngIf="userForm.controls['userName'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.ORGANIZATION' | translate }}" formControlName="organizationName" type="text">    
+            <mat-error *ngIf="userForm.controls['organizationName'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.LAST_NAME' | translate }}" formControlName="lastName" type="text">    
+            <mat-error *ngIf="userForm.controls['lastName'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.FIRST_NAME' | translate }}" formControlName="firstName" type="text">    
+            <mat-error *ngIf="userForm.controls['firstName'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.SECOND_NAME' | translate }}" formControlName="secondName" type="text">    
+            <mat-error *ngIf="userForm.controls['secondName'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.EMAIL' | translate }}" formControlName="email" type="text">    
+            <mat-error *ngIf="userForm.controls['email'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.PHONE_NUMBER' | translate }}" formControlName="phoneNumber" type="text">    
+            <mat-error *ngIf="userForm.controls['phoneNumber'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-select placeholder="{{ 'ADMINISTRATION.USER.ROLES' | translate }}" formControlName="roleIds" multiple>
+                <mat-option *ngFor="let role of roles" [value]="role.id">
+                  {{ role.name }} - {{ role.description }}
+                </mat-option>
+              </mat-select>
+            <mat-error *ngIf="userForm.controls['statusId'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field class="full-width">
+            <mat-select placeholder="{{ 'ADMINISTRATION.USER.STATUS' | translate }}" formControlName="statusId">
+                <mat-option *ngFor="let status of dicStatuses" [value]="status.id">
+                  {{ status.nameRu }}
+                </mat-option>
+              </mat-select>
+            <mat-error *ngIf="userForm.controls['statusId'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.CURRENT_PASSWORD' | translate }}" formControlName="currentPassword" [type]="hideCurrentPassword ? 'password' : 'text'" autocomplete="current-password">
+            <mat-icon matSuffix (click)="hideCurrentPassword = !hideCurrentPassword">
+            {{hideCurrentPassword ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+    
+            <mat-error *ngIf="userForm.controls['currentPassword'].hasError('required')">
+            {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.NEW_PASSWORD' | translate }}" formControlName="password" 
+                [type]="hideNewPassword ? 'password' : 'text'" autocomplete="new-password">
+            <mat-icon matSuffix (click)="hideNewPassword = !hideNewPassword">
+                {{hideNewPassword ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+    
+            <mat-error *ngIf="userForm.controls['password'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="{{ 'ADMINISTRATION.USER.CONFIRM_PASSWORD' | translate }}" formControlName="newPasswordConfirm" [type]="hideNewPassword ? 'password' : 'text'"
+                autocomplete="new-password">
+            <mat-icon matSuffix (click)="hideNewPassword = !hideNewPassword">
+                {{hideNewPassword ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+    
+            <mat-error *ngIf="userForm.controls['newPasswordConfirm'].hasError('required')">
+                {{ 'MESSAGES.FIELD_REQUIRED' | translate }}
+            </mat-error>
+        </mat-form-field>
+        
+    </mat-dialog-content>
+  
+    <mat-dialog-actions
+      fxLayout="row"
+      fxLayoutAlign="end center">
+      <button
+        mat-raised-button
+        mat-dialog-close
+        color="warn"
+        (click)="close()">
+        {{ 'CANCEL' | translate }}
+      </button>
+      <button mat-raised-button color="primary" type="submit">
+        {{ 'SAVE' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </form>

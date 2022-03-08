@@ -347,5 +347,29 @@
       "REASONS": "Причины отклонения",
       "NOTE": "Примечание"
     }
+  },
+  "ADMINISTRATION": {
+    "TITLE": "Администрирование",
+    "USER" : {
+      "TITLE": "Пользователь",
+      "TITLE_PLURAL": "Пользователи",
+
+      "PROFILE": "Профайл",
+      "USER_NANE": "Пользователь",
+      "LAST_NAME": "Фамилия",
+      "FIRST_NAME": "Имя",
+      "SECOND_NAME": "Отчество",
+      "PHONE_NUMBER": "Номер телефона",
+      "EMAIL": "Эл.почта",
+      "STATUS": "Статус",
+      "ORGANIZATION": "Организация",
+      "CURRENT_PASSWORD": "Текущий пароль",
+      "NEW_PASSWORD": "Новый пароль",
+      "CONFIRM_PASSWORD": "Повторите пароль",
+      "ROLES": "Роли"
+    }
+  },
+  "MESSAGES": {
+    "FIELD_REQUIRED": "Поле обязательно для заполнения"
   }
 }
