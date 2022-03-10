@@ -27,17 +27,20 @@ export class CustomSelectEditorComponent implements OnInit {
     private dicUnitService: DicUnitService,
     public dialog: MatDialog
   ) { }
+
   ngOnInit(): void {
     if (this.selectedId) {
       this.clearStatus = !this.clearStatus;
     }
   }
+
   onChange(item: any) {
     if (item !== undefined) {
       this.selectedItem = item;
       this.onItemChanged.next(item);
     }
   }
+
   openCommentDialog() {
     this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
       minWidth: '400px',
@@ -48,9 +51,11 @@ export class CustomSelectEditorComponent implements OnInit {
       console.log(result);
     });
   }
+
   clearValue() {
     this.onChange({ id: null, name: '' });
   }
+
   openDicDialog(name: string) {
     this.ref = this.dialog.open(DicFormComponent, {
       width: '600px',
@@ -61,11 +66,13 @@ export class CustomSelectEditorComponent implements OnInit {
       this.dicUnitAdded();
     }
   }
+
   dicUnitAdded() {
     this.ref.componentInstance.dicAdded.subscribe((data: Dictionary) => {
       this.dicUnitService.addDicUnit(data).subscribe((res) => {
         this.collection.push(res);
         this.onChange(res);
+        this.ref.close()
       });
     });
   }

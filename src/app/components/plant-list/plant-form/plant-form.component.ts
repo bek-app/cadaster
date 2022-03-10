@@ -18,12 +18,10 @@ export class PlantFormComponent implements OnInit {
   isActive = false
   form: FormGroup
   submitted?: boolean
-
   oblast: any[] = []
   region: any[] = []
   subRegion: any[] = []
   village: any[] = []
-
   oblastName!: string
   regionName!: string
   subRegionName!: string
@@ -159,14 +157,8 @@ export class PlantFormComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
-
     const data = { userId: 1, ...this.form.value }
     !this.isActive ? this.addPlant.emit(data) : this.updatePlant.emit(data)
-    this.hidePlantModal()
-  }
-  hidePlantModal() {
-    this.submitted = this.isActive = false
-    this.form.reset()
   }
 
   editForm(id: number) {
@@ -175,6 +167,7 @@ export class PlantFormComponent implements OnInit {
       .getPlantById(id)
       .subscribe((data: any) => this.form.patchValue(data))
   }
+
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls
   }

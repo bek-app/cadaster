@@ -14,6 +14,7 @@ export class DeviceFormComponent implements OnInit {
   viewMode = false
   @Output() addDevice: EventEmitter<any> = new EventEmitter()
   @Output() updateDevice: EventEmitter<any> = new EventEmitter()
+
   constructor(
     private fb: FormBuilder,
     private plantDeviceService: PlantDeviceService,
@@ -29,17 +30,14 @@ export class DeviceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {}
-  
+
   onSubmit() {
     this.submitted = true
     if (this.form.invalid) {
       return
     }
     const data = { ...this.form.value }
-
     !this.isActive ? this.addDevice.emit(data) : this.updateDevice.emit(data)
-
-    this.hidePlantDeviceModal()
   }
 
   editForm(id: number) {
@@ -47,11 +45,5 @@ export class DeviceFormComponent implements OnInit {
     this.plantDeviceService.getPlantDeviceById(id).subscribe((data) => {
       this.form.patchValue(data)
     })
-  }
-
-  hidePlantDeviceModal() {
-    this.form.reset()
-    this.submitted = false
-    this.isActive = false
   }
 }

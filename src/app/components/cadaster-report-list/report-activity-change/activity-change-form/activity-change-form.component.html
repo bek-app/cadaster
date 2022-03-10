@@ -44,12 +44,7 @@
     fxLayoutAlign="end center"
     *ngIf="!viewMode"
   >
-    <button
-      mat-raised-button
-      mat-dialog-close
-      color="warn"
-      (click)="hideActivityChangeDialog()"
-    >
+    <button mat-raised-button mat-dialog-close color="warn">
       {{ 'CANCEL' | translate }}
     </button>
     <button mat-raised-button color="primary" type="submit">

@@ -1,10 +1,4 @@
-import {
-  Component, 
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import {
   AbstractControl,
   FormBuilder,
@@ -31,10 +25,11 @@ export class ProcessFormComponent implements OnInit {
   dicProcessList: Dictionary[] = []
   dicMaterialsList: Dictionary[] = []
   subProccessesList: Dictionary[] = []
-  dicDialogRef: any;
+  dicDialogRef: any
   viewMode = false
   @Output() addProcess: EventEmitter<any> = new EventEmitter()
   @Output() updateProcess: EventEmitter<any> = new EventEmitter()
+
   constructor(
     private dicFormDialog: MatDialog,
     private plantProcessService: PlantProcessService,
@@ -80,33 +75,39 @@ export class ProcessFormComponent implements OnInit {
   }
 
   dicMaterialAdded() {
-    this.dicDialogRef.componentInstance.dicAdded.subscribe((data: Dictionary) => {
-      this.dicMaterialService.addDicMaterial(data).subscribe((res) => {
-        this.getDicMaterial()
-        this.form.controls['materials'].setValue([res.id])
-        this.dicDialogRef.close()
-      })
-    })
+    this.dicDialogRef.componentInstance.dicAdded.subscribe(
+      (data: Dictionary) => {
+        this.dicMaterialService.addDicMaterial(data).subscribe((res) => {
+          this.getDicMaterial()
+          this.form.controls['materials'].setValue([res.id])
+          this.dicDialogRef.close()
+        })
+      },
+    )
   }
 
   dicProccessAdded() {
-    this.dicDialogRef.componentInstance.dicAdded.subscribe((data: Dictionary) => {
-      this.dicProcessService.addDicProcess(data).subscribe((res) => {
-        this.getDicProcess()
-        this.form.controls['dicProcessId'].setValue(res.id)
-        this.dicDialogRef.close()
-      })
-    })
+    this.dicDialogRef.componentInstance.dicAdded.subscribe(
+      (data: Dictionary) => {
+        this.dicProcessService.addDicProcess(data).subscribe((res) => {
+          this.getDicProcess()
+          this.form.controls['dicProcessId'].setValue(res.id)
+          this.dicDialogRef.close()
+        })
+      },
+    )
   }
 
   subProccessAdded() {
-    this.dicDialogRef.componentInstance.dicAdded.subscribe((data: Dictionary) => {
-      this.dicProcessService.addDicProcess(data).subscribe((res) => {
-        this.getDicProcess()
-        this.form.controls['subProccesses'].setValue([res.id])
-        this.dicDialogRef.close()
-      })
-    })
+    this.dicDialogRef.componentInstance.dicAdded.subscribe(
+      (data: Dictionary) => {
+        this.dicProcessService.addDicProcess(data).subscribe((res) => {
+          this.getDicProcess()
+          this.form.controls['subProccesses'].setValue([res.id])
+          this.dicDialogRef.close()
+        })
+      },
+    )
   }
 
   getDicProcess() {
@@ -129,18 +130,12 @@ export class ProcessFormComponent implements OnInit {
     }
     const data = { ...this.form.value }
     !this.isActive ? this.addProcess.emit(data) : this.updateProcess.emit(data)
-    this.hideProcessModal()
   }
 
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls
   }
 
-  hideProcessModal() {
-    this.form.reset()
-    this.isActive = false
-    this.submitted = false
-  }
   editForm(id: number) {
     this.isActive = true
     this.plantProcessService.getPlantProcessById(id).subscribe((data) => {

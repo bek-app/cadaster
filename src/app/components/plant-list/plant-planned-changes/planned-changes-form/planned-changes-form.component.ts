@@ -12,6 +12,7 @@ import { DicProcessService } from 'src/app/services/dic-process.service'
 import { PlannedChangesService } from 'src/app/services/planned-changes.service'
 import { PlantProcessService } from 'src/app/services/plant-process.service'
 import { PlantSourceService } from 'src/app/services/plant-source.service'
+
 @Component({
   selector: 'app-planned-changes-form',
   templateUrl: './planned-changes-form.component.html',
@@ -27,10 +28,10 @@ export class PlannedChangesFormComponent implements OnInit {
   @Output() onPlannedChangesAdded: EventEmitter<
     PlannedChangesModel
   > = new EventEmitter()
-
   @Output() onPlannedChangesUpdated: EventEmitter<
     PlannedChangesModel
   > = new EventEmitter()
+
   constructor(
     private fb: FormBuilder,
     private plannedChangesService: PlannedChangesService,
@@ -48,14 +49,13 @@ export class PlannedChangesFormComponent implements OnInit {
 
   ngOnInit(): void {
     const { plantId } = this.data
-    this.plantSourceService.getPlantSourceList(plantId).subscribe((source) => {
-      this.sourceList = source
-    })
-    this.processService.getPlantProcessList(plantId).subscribe((process) => {
-      console.log(process)
+    this.plantSourceService
+      .getPlantSourceList(plantId)
+      .subscribe((sources) => (this.sourceList = sources))
 
-      this.processList = process
-    })
+    this.processService
+      .getPlantProcessList(plantId)
+      .subscribe((processes) => (this.processList = processes))
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -78,12 +78,5 @@ export class PlannedChangesFormComponent implements OnInit {
     !this.isActive
       ? this.onPlannedChangesAdded.emit(data)
       : this.onPlannedChangesUpdated.emit(data)
-    this.hidePlannedChangesModal()
-  }
-
-  hidePlannedChangesModal() {
-    this.isActive = false
-    this.form.reset()
-    this.submitted = false
   }
 }

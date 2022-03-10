@@ -8,17 +8,18 @@ import {
 } from '@angular/forms'
 import { DicActivityService } from 'src/app/services/dic-activity.service'
 import { ReportActivityChangeService } from 'src/app/services/report-activity-change.service'
+
 @Component({
   selector: 'app-activity-change-form',
   templateUrl: './activity-change-form.component.html',
   styleUrls: ['./activity-change-form.component.css'],
 })
+
 export class ActivityChangeFormComponent implements OnInit {
   isActive = false
   form: FormGroup
   submitted?: boolean
   dicRootActivityList: any[] = []
-
   viewMode = false
   @Output() onActivityChangeAdded: EventEmitter<any> = new EventEmitter()
   @Output() onActivityChangeUpdated: EventEmitter<any> = new EventEmitter()
@@ -46,30 +47,17 @@ export class ActivityChangeFormComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
-
     const data = { ...this.form.value }
-
     !this.isActive
       ? this.onActivityChangeAdded.emit(data)
       : this.onActivityChangeUpdated.emit(data)
-
-    this.hideActivityChangeDialog()
-  }
-
-  hideActivityChangeDialog() {
-    this.submitted = this.isActive = false
-    this.form.reset()
   }
 
   editForm(id: number) {
     this.isActive = true
     this.activityChangeService
       .getReportActivityChangeById(id)
-      .subscribe((data: any) => {
-        console.log(data)
-
-        this.form.patchValue(data)
-      })
+      .subscribe((data: any) => this.form.patchValue(data))
   }
 
   get f(): { [key: string]: AbstractControl } {

@@ -30,11 +30,12 @@ export class SamplingFormComponent implements OnInit {
   @Output() onSamplingUpdated: EventEmitter<
     PlantSamplingModel
   > = new EventEmitter()
+
   constructor(
     private fb: FormBuilder,
     private samplingService: PlantSamplingService,
     private dicMaterialService: DicMaterialService,
-    private dicFormDialog: MatDialog,
+    private dialog: MatDialog,
   ) {
     this.form = this.fb.group({
       nameSampling: new FormControl('', Validators.required),
@@ -62,7 +63,7 @@ export class SamplingFormComponent implements OnInit {
   }
 
   openDicFormModal(name: string) {
-    this.ref = this.dicFormDialog.open(DicFormComponent, {
+    this.ref = this.dialog.open(DicFormComponent, {
       width: '600px',
     })
     if (name === 'dicMaterial') {
@@ -97,12 +98,5 @@ export class SamplingFormComponent implements OnInit {
     !this.isActive
       ? this.onSamplingAdded.emit(data)
       : this.onSamplingUpdated.emit(data)
-    this.hideSamplingModal()
-  }
-
-  hideSamplingModal() {
-    this.isActive = false
-    this.form.reset()
-    this.submitted = false
   }
 }

@@ -7,10 +7,9 @@ import {
   Validators,
 } from '@angular/forms'
 import { DicActivityService } from 'src/app/services/dic-activity.service'
-import { DicKatoService } from 'src/app/services/dic-kato.service'
 import { DicUnitService } from 'src/app/services/dic-unit.service'
 import { PlantActivityService } from 'src/app/services/plant-activity.service'
-import { PlantService } from 'src/app/services/plant.service'
+
 @Component({
   selector: 'app-activity-form',
   templateUrl: './activity-form.component.html',
@@ -51,9 +50,9 @@ export class ActivityFormComponent implements OnInit {
 
   rootActivityChange(rootActivityId: number) {
     if (rootActivityId) {
-      this.dicActivity.getDicActivityByParentId(rootActivityId).subscribe((result) => {
-        this.dicActivityList = result
-      })
+      this.dicActivity
+        .getDicActivityByParentId(rootActivityId)
+        .subscribe((result) => (this.dicActivityList = result))
     }
   }
 
@@ -62,19 +61,10 @@ export class ActivityFormComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
-
     const data = { ...this.form.value }
-
-
     !this.isActive
       ? this.onActivityAdded.emit(data)
       : this.onActivityUpdated.emit(data)
-    this.hideActivityModal()
-  }
-
-  hideActivityModal() {
-    this.submitted = this.isActive = false
-    this.form.reset()
   }
 
   editForm(id: number) {

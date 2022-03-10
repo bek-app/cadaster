@@ -86,12 +86,9 @@ export class CdrReportCheckListsComponent implements OnInit {
       id: this.reportCadasterId,
       ...this.form.value,
     }
-    console.log(data)
 
     this.cadasterService.changeReportStatus(data).subscribe((result: any) => {
-      console.log(result)
-
-      this.router.navigate(['/cadaster-report-check'])
+      this.router.navigate(['common/cadaster-report-check'])
     })
   }
 

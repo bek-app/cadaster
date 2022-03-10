@@ -6,10 +6,10 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms'
+import { ReportPlanModel } from '@models/report-plan.model'
 import { CadasterReportService } from '@services/cadaster-report.service'
 import { ReportPlanService } from '@services/report-plan.service'
-import { DicActivityService } from 'src/app/services/dic-activity.service'
-import { ReportActivityChangeService } from 'src/app/services/report-activity-change.service'
+
 @Component({
   selector: 'app-plan-form',
   templateUrl: './plan-form.component.html',
@@ -22,8 +22,8 @@ export class PlanFormComponent implements OnInit {
   plantProcesses: any[] = []
   viewMode = false
   cdrReportId!: number
-  @Output() onPlanAdded: EventEmitter<any> = new EventEmitter()
-  @Output() onPlanUpdated: EventEmitter<any> = new EventEmitter()
+  @Output() onPlanAdded: EventEmitter<ReportPlanModel> = new EventEmitter()
+  @Output() onPlanUpdated: EventEmitter<ReportPlanModel> = new EventEmitter()
 
   constructor(
     private fb: FormBuilder,
@@ -45,9 +45,7 @@ export class PlanFormComponent implements OnInit {
 
       this.planService
         .getReportPlanProcessesByReportId(this.cdrReportId)
-        .subscribe((result) => {
-          this.plantProcesses = result
-        })
+        .subscribe((result) => (this.plantProcesses = result))
     })
   }
 
@@ -56,24 +54,15 @@ export class PlanFormComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
-
     const data = { ...this.form.value }
     !this.isActive ? this.onPlanAdded.emit(data) : this.onPlanUpdated.emit(data)
-
-    this.hidePlanDialog()
-  }
-
-  hidePlanDialog() {
-    this.submitted = this.isActive = false
-    this.form.reset()
   }
 
   editForm(id: number) {
     this.isActive = true
-    this.planService.getReportPlanById(id).subscribe((data: any) => {
-      console.log(data)
-      this.form.patchValue(data)
-    })
+    this.planService
+      .getReportPlanById(id)
+      .subscribe((plan: any) => this.form.patchValue(plan))
   }
 
   get f(): { [key: string]: AbstractControl } {

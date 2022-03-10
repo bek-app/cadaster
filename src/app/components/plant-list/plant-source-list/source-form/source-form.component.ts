@@ -7,11 +7,13 @@ import {
   Validators,
 } from '@angular/forms'
 import { PlantSourceService } from 'src/app/services/plant-source.service'
+
 @Component({
   selector: 'app-source-form',
   templateUrl: './source-form.component.html',
   styleUrls: ['./source-form.component.css'],
 })
+
 export class SourceFormComponent implements OnInit {
   form: FormGroup
   isActive = false
@@ -19,6 +21,7 @@ export class SourceFormComponent implements OnInit {
   viewMode = false
   @Output() onPlantSourceAdded: EventEmitter<any> = new EventEmitter()
   @Output() onPlantSourceUpdated: EventEmitter<any> = new EventEmitter()
+
   constructor(
     private fb: FormBuilder,
     private plantSourceService: PlantSourceService,
@@ -32,9 +35,11 @@ export class SourceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls
   }
+
   editForm(id: any) {
     this.isActive = true
     this.plantSourceService.getPlantSourceById(id).subscribe((data) => {
@@ -51,12 +56,5 @@ export class SourceFormComponent implements OnInit {
     !this.isActive
       ? this.onPlantSourceAdded.emit(data)
       : this.onPlantSourceUpdated.emit(data)
-    this.hideSourceModal()
-  }
-
-  hideSourceModal() {
-    this.isActive = false
-    this.form.reset()
-    this.submitted = false
   }
 }

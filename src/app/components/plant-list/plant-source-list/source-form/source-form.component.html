@@ -41,12 +41,7 @@
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions fxLayout="row" fxLayoutAlign="end end" *ngIf="!viewMode">
-    <button
-      mat-raised-button
-      mat-dialog-close
-      color="warn"
-      (click)="hideSourceModal()"
-    >
+    <button mat-raised-button mat-dialog-close color="warn">
       {{ 'CANCEL' | translate }}
     </button>
     <button mat-raised-button color="primary" type="submit">

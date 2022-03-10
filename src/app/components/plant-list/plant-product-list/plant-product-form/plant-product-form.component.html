@@ -3,7 +3,7 @@
     <h2 mat-dialog-title>{{ 'PLANT.PRODUCT.TITLE' | translate }}</h2>
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
-  
+
   <mat-dialog-content
     fxLayout="column"
     fxLayoutAlign="space-between none"
@@ -86,13 +86,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-    <button
-      mat-raised-button
-      color="warn"
-      type="button"
-      mat-dialog-close
-      (click)="hideProductModal()"
-    >
+    <button mat-raised-button color="warn" type="button" mat-dialog-close>
       {{ 'CANCEL' | translate }}
     </button>
     <button mat-raised-button color="primary" type="submit">
