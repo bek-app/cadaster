@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
+import { ActivatedRoute, Params } from '@angular/router'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { ReportPlanModel } from '@models/report-plan.model'
 import { TranslateService } from '@ngx-translate/core'
-import { DicProcessService } from '@services/dic-process.service'
-import { ReportCarbonUnitService } from '@services/report-corbon-unit.service'
 import { ReportPlanService } from '@services/report-plan.service'
 import {
   AngularGridInstance,
-  AngularUtilService,
   Column,
   Formatter,
   Formatters,
@@ -18,8 +16,10 @@ import {
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
 import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
-import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
-import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+} from '../../confirm-dialog/confirm-dialog.component'
 import { PlanFormComponent } from './plan-form/plan-form.component'
 @Component({
   selector: 'app-report-plan',
@@ -33,7 +33,7 @@ export class ReportPlanComponent implements OnInit {
   dataset: any
   gridObj: any
   dataViewObj: any
-  cdrReportId: number = 2
+  cdrReportId!: number
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
   editMode = false
@@ -52,17 +52,21 @@ export class ReportPlanComponent implements OnInit {
     private translate: TranslateService,
     private commentService: ReportCommentService,
     private planService: ReportPlanService,
-    private matDialog: MatDialog,
+    private dialog: MatDialog,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList(this.cdrReportId)
     this.prepareGrid()
-    this.refreshList(2)
+    this.activatedRoute.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
 
   openPlanFormDialog() {
-    this.planFormRef = this.matDialog.open(PlanFormComponent, {
+    this.planFormRef = this.dialog.open(PlanFormComponent, {
       width: '800px',
     })
     this.onPlanAdded()
@@ -105,11 +109,6 @@ export class ReportPlanComponent implements OnInit {
     this.commentService
       .getReportCommentList(cdrReportId, 'plan')
       .subscribe((data: any) => (this.commentList = data))
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
   }
 
   refreshList(reportId: number) {
@@ -266,11 +265,23 @@ export class ReportPlanComponent implements OnInit {
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.planService.deleteReportPlan(id).subscribe(() => {
-                this.refreshList(this.cdrReportId)
-              })
-            }
+            const dialogData = new ConfirmDialogModel(
+              'Подтвердить действие',
+              'Вы уверены, что хотите удалить это?',
+            )
+
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              maxWidth: '400px',
+              data: dialogData,
+            })
+
+            dialogRef.afterClosed().subscribe((dialogResult) => {
+              if (dialogResult) {
+                this.planService.deleteReportPlan(id).subscribe(() => {
+                  this.refreshList(this.cdrReportId)
+                })
+              }
+            })
           },
         },
       ]

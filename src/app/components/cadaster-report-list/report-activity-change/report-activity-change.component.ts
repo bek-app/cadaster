@@ -1,25 +1,25 @@
 import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Params } from '@angular/router'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
-  AngularUtilService,
   Column,
-  Editors,
-  FieldType,
   Formatter,
   Formatters,
   GridOption,
   OnEventArgs,
 } from 'angular-slickgrid'
 import { ReportActivityChangeModel } from 'src/app/models/report-activity-change.model'
-import { ReportActivityModel } from 'src/app/models/report-activity.model'
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
 import { ReportActivityChangeService } from 'src/app/services/report-activity-change.service'
 import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+} from '../../confirm-dialog/confirm-dialog.component'
 import { ActivityChangeFormComponent } from './activity-change-form/activity-change-form.component'
 @Component({
   selector: 'app-report-activity-change',
@@ -33,14 +33,14 @@ export class ReportActivityChangeComponent implements OnInit {
   dataset: ReportActivityChangeModel[] = []
   gridObj: any
   dataViewObj: any
-  cdrReportId: number = 2
+  cdrReportId!: number
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
-  editMode = false
   commentList: ReportCommentModel[] = []
   faPlus = faPlus
   activityChangeDialogRef: any
   activityChangeId!: number
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -81,17 +81,21 @@ export class ReportActivityChangeComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
     private commentService: ReportCommentService,
-    private matDialog: MatDialog,
+    private dialog: MatDialog,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList(this.cdrReportId)
     this.prepareGrid()
-    this.refreshList(2)
+    this.activatedRoute.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
 
   openActivityChangeDialog() {
-    this.activityChangeDialogRef = this.matDialog.open(
+    this.activityChangeDialogRef = this.dialog.open(
       ActivityChangeFormComponent,
       {
         width: '800px',
@@ -137,65 +141,52 @@ export class ReportActivityChangeComponent implements OnInit {
     )
   }
 
-  getCommentList(cdrReportId: number = 2): void {
+  getCommentList(cdrReportId: number): void {
     this.commentService
-      .getReportCommentList(cdrReportId, 'actual')
-      .subscribe((data: any) => {
-        this.commentList = data
-      })
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
+      .getReportCommentList(cdrReportId, 'activity-change')
+      .subscribe((data: any) => (this.commentList = data))
   }
 
   refreshList(reportId: number) {
     this.reportActivityChangeService
       .getReportActivityChangeList(reportId)
-      .subscribe((data) => {
-        console.log(data)
-
-        this.dataset = data
-      })
+      .subscribe((data) => (this.dataset = data))
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
     const item = this.gridObj.getDataItem(args.row)
     this.activityChangeId = item.id
 
-    if (!this.editMode) {
-      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-        args,
-      )
-      const { id } = metadata.dataContext
-      const { field } = metadata.columnDef
-      if (field !== 'processName') {
-        for (const item in metadata.dataContext) {
-          if (field === item) {
-            let controlValue = metadata.dataContext[item]
-            let newControlValue
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
+    if (field !== 'processName') {
+      for (const item in metadata.dataContext) {
+        if (field === item) {
+          let controlValue = metadata.dataContext[item]
+          let newControlValue
 
-            if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name
-            } else if (controlValue === null) {
-              newControlValue = controlValue
-            } else newControlValue = controlValue.toString()
+          if (typeof controlValue === 'object' && controlValue !== null) {
+            newControlValue = controlValue.name
+          } else if (controlValue === null) {
+            newControlValue = controlValue
+          } else newControlValue = controlValue.toString()
 
-            const comment: ReportCommentModel = {
-              id: 0,
-              note: '',
-              recordId: id.toString(),
-              controlId: field,
-              controlValue: newControlValue,
-              discriminator: 'activity-change',
-              isMark: true,
-              isActive: true,
-              reportId: this.cdrReportId,
-            }
-
-            this.sharedDataService.sendComment(comment)
+          const comment: ReportCommentModel = {
+            id: 0,
+            note: '',
+            recordId: id.toString(),
+            controlId: field,
+            controlValue: newControlValue,
+            discriminator: 'activity-change',
+            isMark: true,
+            isActive: true,
+            reportId: this.cdrReportId,
           }
+
+          this.sharedDataService.sendComment(comment)
         }
       }
     }
@@ -298,76 +289,29 @@ export class ReportActivityChangeComponent implements OnInit {
             maxWidth: 30,
             onCellClick: (e: Event, args: OnEventArgs) => {
               const id = args.dataContext.id
-              if (confirm('Уверены ли вы?')) {
-                this.reportActivityChangeService
-                  .deleteReportActivityChange(id)
-                  .subscribe(() => {
-                    this.refreshList(this.cdrReportId)
-                  })
-              }
+              const dialogData = new ConfirmDialogModel(
+                'Подтвердить действие',
+                'Вы уверены, что хотите удалить это?',
+              )
+
+              const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                maxWidth: '400px',
+                data: dialogData,
+              })
+              dialogRef.afterClosed().subscribe((dialogResult) => {
+                if (dialogResult) {
+                  this.reportActivityChangeService
+                    .deleteReportActivityChange(id)
+                    .subscribe(() => {
+                      this.refreshList(this.cdrReportId)
+                    })
+                }
+              })
             },
           },
         ]
       })
 
-    this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      gridWidth: '100%',
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      autoEdit: true,
-      autoCommitEdit: true,
-      enableCellNavigation: true,
-      editable: true,
-      enableFiltering: true,
-      enableGrouping: true,
-      createPreHeaderPanel: false,
-      showPreHeaderPanel: true,
-      enableTreeData: false, // you must enable this flag for the filtering & sorting to work as expected
-      multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
-      headerRowHeight: 40,
-      rowHeight: 30,
-      preHeaderPanelHeight: 30,
-      showCustomFooter: true,
-      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
-      presets: {
-        treeData: { toggledItems: [{ itemId: 1, isCollapsed: true }] },
-      },
-      // use Material Design SVG icons
-      contextMenu: {
-        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
-        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
-        iconClearGroupingCommand: 'mdi mdi-close',
-        iconCopyCellValueCommand: 'mdi mdi-content-copy',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-      },
-      gridMenu: {
-        iconCssClass: 'mdi mdi-menu',
-        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
-        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-        iconRefreshDatasetCommand: 'mdi mdi-sync',
-        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
-        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
-      },
-      headerMenu: {
-        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
-        iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
-        iconColumnHideCommand: 'mdi mdi-close',
-      },
-    }
+    this.gridOptions = {}
   }
 }

@@ -12,6 +12,10 @@ import {
 import { PlantSamplingModel } from 'src/app/models/plant-sampling.model'
 import { PlantService } from 'src/app/services/plant.service'
 import { PlantSamplingService } from '../../../services/plant-sampling.service'
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+} from '../../confirm-dialog/confirm-dialog.component'
 import { SamplingFormComponent } from './sampling-form/sampling-form.component'
 @Component({
   selector: 'app-plant-sampling-list',
@@ -35,7 +39,7 @@ export class PlantSamplingListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView
   }
   constructor(
-    private samplingDialog: MatDialog,
+    private dialog: MatDialog,
     private plantService: PlantService,
     private samplingService: PlantSamplingService,
     private translate: TranslateService,
@@ -62,7 +66,7 @@ export class PlantSamplingListComponent implements OnInit {
   }
 
   openSamplingDialog() {
-    this.ref = this.samplingDialog.open(SamplingFormComponent, {
+    this.ref = this.dialog.open(SamplingFormComponent, {
       width: '800px',
     })
     this.onSamplingAdded()
@@ -189,56 +193,25 @@ export class PlantSamplingListComponent implements OnInit {
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.samplingService.deletePlantSampling(id).subscribe((data) => {
-                this.refreshList(this.plantId)
-              })
-            }
+            const dialogData = new ConfirmDialogModel(
+              'Подтвердить действие',
+              'Вы уверены, что хотите удалить это?',
+            )
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              maxWidth: '400px',
+              data: dialogData,
+            })
+            dialogRef.afterClosed().subscribe((dialogResult) => {
+              if (dialogResult) {
+                this.samplingService.deletePlantSampling(id).subscribe(() => {
+                  this.refreshList(this.plantId)
+                })
+              }
+            })
           },
         },
       ]
     })
-    this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      gridWidth: '100%',
-      enableFiltering: true,
-      enableSorting: true,
-      enableCellNavigation: true,
-      editable: true,
-      autoEdit: true,
-      autoCommitEdit: true,
-      createPreHeaderPanel: true,
-      showPreHeaderPanel: false,
-      preHeaderPanelHeight: 23,
-      explicitInitialization: true,
-      enableTranslate: true,
-      enableColumnReorder: false,
-      enableColumnPicker: false,
-      enableRowSelection: true,
-      columnPicker: {
-        hideForceFitButton: true,
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
-      exportOptions: {
-        // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      gridMenu: {
-        hideExportTextDelimitedCommand: false, // true by default, so if you want it, you will need to disable the flag
-      },
-      enableExcelExport: true,
-      checkboxSelector: {
-        // you can toggle these 2 properties to show the "select all" checkbox in different location
-        hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true,
-      },
-    }
+    this.gridOptions = {}
   }
 }

@@ -12,6 +12,10 @@ import { Dictionary } from 'src/app/models/dictionary.model'
 import { PlantProcessModel } from 'src/app/models/plant-process.model '
 import { PlantService } from 'src/app/services/plant.service'
 import { PlantProcessService } from '../../../services/plant-process.service'
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+} from '../../confirm-dialog/confirm-dialog.component'
 import { ProcessFormComponent } from './process-form/process-form.component'
 @Component({
   selector: 'app-plant-process-list',
@@ -31,7 +35,6 @@ export class PlantProcessListComponent implements OnInit {
   submitted = false
   namePlant!: string
   dicProcessList: Dictionary[] = []
-  @ViewChild('content') content: any
   ref: any
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
@@ -40,7 +43,7 @@ export class PlantProcessListComponent implements OnInit {
   }
 
   constructor(
-    private plantProcessDialog: MatDialog,
+    private dialog: MatDialog,
     private plantProcessService: PlantProcessService,
     private plantService: PlantService,
     private translate: TranslateService,
@@ -68,7 +71,7 @@ export class PlantProcessListComponent implements OnInit {
   }
 
   openProcessFormDialog() {
-    this.ref = this.plantProcessDialog.open(ProcessFormComponent, {
+    this.ref = this.dialog.open(ProcessFormComponent, {
       width: '800px',
     })
     this.addProcess()
@@ -222,55 +225,27 @@ export class PlantProcessListComponent implements OnInit {
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantProcessService
-                .deletePlantProcess(id)
-                .subscribe(() => this.refreshList(this.plantId))
-            }
+            const dialogData = new ConfirmDialogModel(
+              'Подтвердить действие',
+              'Вы уверены, что хотите удалить это?',
+            )
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              maxWidth: '400px',
+              data: dialogData,
+            })
+            dialogRef.afterClosed().subscribe((dialogResult) => {
+              if (dialogResult) {
+                this.plantProcessService
+                  .deletePlantProcess(id)
+                  .subscribe(() => this.refreshList(this.plantId))
+              }
+            })
           },
         },
       ]
     })
     this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      enableCellNavigation: true,
-      createPreHeaderPanel: true,
       showPreHeaderPanel: true,
-      preHeaderPanelHeight: 25,
-      explicitInitialization: true,
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      gridWidth: '100%',
-      enableFiltering: true,
-      enableSorting: true,
-      editable: true,
-      autoEdit: true,
-      autoCommitEdit: true,
-      enableTranslate: true,
-      enableColumnReorder: false,
-      enableColumnPicker: false,
-      columnPicker: {
-        hideForceFitButton: true,
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
-      exportOptions: {
-        // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      gridMenu: {
-        hideExportTextDelimitedCommand: false, // true by default, so if you want it, you will need to disable the flag
-      },
-      enableExcelExport: true,
-      checkboxSelector: {
-        // you can toggle these 2 properties to show the "select all" checkbox in different location
-        hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true,
-      },
     }
   }
 }

@@ -11,6 +11,10 @@ import {
 import { PlantDeviceModel } from 'src/app/models/plant-device.model'
 import { PlantDeviceService } from 'src/app/services/plant-device.service'
 import { PlantService } from 'src/app/services/plant.service'
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+} from '../../confirm-dialog/confirm-dialog.component'
 import { DeviceFormComponent } from './device-form/device-form.component'
 @Component({
   selector: 'app-plant-device-list',
@@ -36,7 +40,7 @@ export class PlantDeviceListComponent implements OnInit {
     this.dataViewObj = angularGrid.dataView
   }
   constructor(
-    private deviceDialog: MatDialog,
+    private dialog: MatDialog,
     private plantDeviceService: PlantDeviceService,
     private plantService: PlantService,
     private translate: TranslateService,
@@ -63,7 +67,7 @@ export class PlantDeviceListComponent implements OnInit {
   }
 
   openDeviceDialog() {
-    this.ref = this.deviceDialog.open(DeviceFormComponent, { width: '600px' })
+    this.ref = this.dialog.open(DeviceFormComponent, { width: '600px' })
     this.addPlantDevice()
     this.updatePlantDevice()
   }
@@ -105,7 +109,6 @@ export class PlantDeviceListComponent implements OnInit {
 
   prepareGrid() {
     this.translate.get('PLANT.DEVICE.FORM').subscribe((translations: any) => {
-
       const {
         NAME_DEVICE,
         IDENTIFICATION_NUMBER,
@@ -203,57 +206,29 @@ export class PlantDeviceListComponent implements OnInit {
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantDeviceService
-                .deletePlantDevice(id)
-                .subscribe(() => this.refreshList(this.plantId))
-            }
+            const dialogData = new ConfirmDialogModel(
+              'Подтвердить действие',
+              'Вы уверены, что хотите удалить это?',
+            )
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              maxWidth: '400px',
+              data: dialogData,
+            })
+
+            dialogRef.afterClosed().subscribe((dialogResult) => {
+              if (dialogResult) {
+                this.plantDeviceService
+                  .deletePlantDevice(id)
+                  .subscribe(() => this.refreshList(this.plantId))
+              }
+            })
           },
         },
       ]
     })
 
     this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      gridWidth: '100%',
-      enableFiltering: true,
-      enableSorting: true,
-      enableCellNavigation: true,
-      editable: true,
-      autoEdit: true,
-      autoCommitEdit: true,
-      createPreHeaderPanel: true,
-      showPreHeaderPanel: true,
       preHeaderPanelHeight: 50,
-      explicitInitialization: true,
-      enableTranslate: true,
-      enableColumnReorder: false,
-      enableColumnPicker: false,
-      enableRowSelection: true,
-      columnPicker: {
-        hideForceFitButton: true,
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
-      exportOptions: {
-        // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      gridMenu: {
-        hideExportTextDelimitedCommand: false, // true by default, so if you want it, you will need to disable the flag
-      },
-      enableExcelExport: true,
-      checkboxSelector: {
-        // you can toggle these 2 properties to show the "select all" checkbox in different location
-        hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true,
-      },
     }
   }
 }

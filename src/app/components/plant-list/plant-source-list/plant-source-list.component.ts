@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { TranslateService } from '@ngx-translate/core'
 import {
   AngularGridInstance,
@@ -12,6 +13,10 @@ import {
 import { PlantSourceModel } from 'src/app/models/plant-source.model'
 import { PlantSourceService } from 'src/app/services/plant-source.service'
 import { PlantService } from 'src/app/services/plant.service'
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+} from '../../confirm-dialog/confirm-dialog.component'
 import { SourceFormComponent } from './source-form/source-form.component'
 @Component({
   selector: 'app-plant-source-list',
@@ -29,13 +34,14 @@ export class PlantSourceListComponent implements OnInit {
   dataViewObj: any
   ref: any
   namePlant!: string
+  faPlus = faPlus
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
     this.dataViewObj = angularGrid.dataView
   }
   constructor(
-    private plantSourceDialog: MatDialog,
+    private dialog: MatDialog,
     private plantSourceService: PlantSourceService,
     private plantService: PlantService,
     private translate: TranslateService,
@@ -59,18 +65,21 @@ export class PlantSourceListComponent implements OnInit {
       this.dataset = data
     })
   }
+
   openPlantSourceDialog() {
-    this.ref = this.plantSourceDialog.open(SourceFormComponent, {})
+    this.ref = this.dialog.open(SourceFormComponent, {})
     this.onPlantSourceAdded()
     this.onPlantSourceUpdated()
   }
+
   onPlantSourceAdded() {
     this.ref.componentInstance.onPlantSourceAdded.subscribe(
       (data: PlantSourceModel) => {
         const newData = { id: 0, plantId: this.plantId, ...data }
-        this.plantSourceService
-          .addPlantSource(newData)
-          .subscribe((res) => this.refreshList(this.plantId))
+        this.plantSourceService.addPlantSource(newData).subscribe((res) => {
+          this.ref.close()
+          this.refreshList(this.plantId)
+        })
       },
     )
   }
@@ -83,9 +92,10 @@ export class PlantSourceListComponent implements OnInit {
           plantId: this.plantId,
           ...data,
         }
-        this.plantSourceService
-          .updatePlantSource(newData)
-          .subscribe((res) => this.refreshList(this.plantId))
+        this.plantSourceService.updatePlantSource(newData).subscribe((res) => {
+          this.refreshList(this.plantId)
+          this.ref.close()
+        })
       },
     )
   }
@@ -168,58 +178,29 @@ export class PlantSourceListComponent implements OnInit {
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
-            if (confirm('Уверены ли вы?')) {
-              this.plantSourceService
-                .deletePlantSource(id)
-                .subscribe((data) => {
-                  this.refreshList(this.plantId)
-                })
-            }
+            const dialogData = new ConfirmDialogModel(
+              'Подтвердить действие',
+              'Вы уверены, что хотите удалить это?',
+            )
+
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              maxWidth: '400px',
+              data: dialogData,
+            })
+            dialogRef.afterClosed().subscribe((dialogResult) => {
+              if (dialogResult) {
+                this.plantSourceService
+                  .deletePlantSource(id)
+                  .subscribe((data) => {
+                    this.refreshList(this.plantId)
+                  })
+              }
+            })
           },
         },
       ]
     })
-    this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      gridWidth: '100%',
-      enableFiltering: true,
-      enableSorting: true,
-      enableCellNavigation: true,
-      editable: true,
-      autoEdit: true,
-      autoCommitEdit: true,
-      createPreHeaderPanel: true,
-      showPreHeaderPanel: false,
-      preHeaderPanelHeight: 23,
-      explicitInitialization: true,
-      enableTranslate: true,
-      enableColumnReorder: false,
-      enableColumnPicker: false,
-      enableRowSelection: true,
-      columnPicker: {
-        hideForceFitButton: true,
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
-      exportOptions: {
-        // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      gridMenu: {
-        hideExportTextDelimitedCommand: false, // true by default, so if you want it, you will need to disable the flag
-      },
-      enableExcelExport: true,
-      checkboxSelector: {
-        // you can toggle these 2 properties to show the "select all" checkbox in different location
-        hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true,
-      },
-    }
+
+    this.gridOptions = {}
   }
 }
