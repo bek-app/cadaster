@@ -1,15 +1,14 @@
-<div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+<div
+  class="reprot__item-title"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+>
   <h2>{{ 'CDR_REPORTS.PLAN.TITLE' | translate }}</h2>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="openPlanFormDialog()"
-  >
+  <button mat-raised-button color="primary" (click)="openPlanFormDialog()">
     <fa-icon [icon]="faPlus"></fa-icon>
     {{ 'CREATE' | translate }}
   </button>
 </div>
-
 <angular-slickgrid
   gridId="plan"
   [columnDefinitions]="columnDefinitions"

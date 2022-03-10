@@ -1,4 +1,8 @@
-<div  class="header" fxLayout="row" fxLayoutAlign="space-between center">
+<div
+  class="reprot__item-title"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+>
   <h2>{{ 'CDR_REPORTS.ACTIVITY_CHANGE.TITLE' | translate }}</h2>
   <button
     mat-raised-button
@@ -9,6 +13,7 @@
     {{ 'CREATE' | translate }}
   </button>
 </div>
+
 <angular-slickgrid
   gridId="report-activity-change"
   [columnDefinitions]="columnDefinitions"

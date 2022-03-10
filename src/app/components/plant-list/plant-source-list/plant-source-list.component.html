@@ -1,10 +1,12 @@
-<h3>{{ 'PLANT.SOURCE.TITLE' | translate }}</h3>
+<h3 class="plant__item-title">{{ 'PLANT.SOURCE.TITLE' | translate }}</h3>
 <button
   mat-raised-button
   color="primary"
   (click)="openPlantSourceDialog()"
   *ngIf="plantId"
 >
+  <fa-icon [icon]="faPlus"></fa-icon>
+
   {{ 'CREATE' | translate }}
 </button>
 
@@ -15,8 +17,8 @@
     [gridOptions]="gridOptions"
     [dataset]="dataset"
     (onClick)="
-    onCellClicked($any($event).detail.eventData, $any($event).detail.args)
-  "
+      onCellClicked($any($event).detail.eventData, $any($event).detail.args)
+    "
     (onAngularGridCreated)="angularGridReady($any($event).detail)"
   ></angular-slickgrid>
 </div>
