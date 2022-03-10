@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Params } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
- import { ReportCarbonUnitService } from '@services/report-corbon-unit.service'
+import { ReportCarbonUnitService } from '@services/report-corbon-unit.service'
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -27,10 +28,9 @@ export class ReportCarbonUnitComponent implements OnInit {
   dataset: any
   gridObj: any
   dataViewObj: any
-  cdrReportId: number = 2
+  cdrReportId!: number
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
-  editMode = false
   commentList: ReportCommentModel[] = []
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -45,27 +45,29 @@ export class ReportCarbonUnitComponent implements OnInit {
     })
   }
 
-
   constructor(
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
     private commentService: ReportCommentService,
     private carbonUnitService: ReportCarbonUnitService,
     private angularUtilService: AngularUtilService,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.getCommentList(this.cdrReportId)
     this.prepareGrid()
-    this.refreshList(2)
+    this.activatedRoute.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
 
-  getCommentList(cdrReportId: number = 2): void {
+  getCommentList(cdrReportId: number): void {
     this.commentService
-      .getReportCommentList(cdrReportId, 'actual')
-      .subscribe((data: any) => {
-        this.commentList = data
-      })
+      .getReportCommentList(cdrReportId, 'carbon-unit')
+      .subscribe((data: any) => (this.commentList = data))
   }
 
   goToCadasterReports(id: number) {
@@ -76,11 +78,7 @@ export class ReportCarbonUnitComponent implements OnInit {
   refreshList(reportId: number) {
     this.carbonUnitService
       .getReportCarbonUnitById(reportId)
-      .subscribe((data: any) => {
-        console.log(data)
-
-        this.dataset = data
-      })
+      .subscribe((data: any) => (this.dataset = data))
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
@@ -107,7 +105,7 @@ export class ReportCarbonUnitComponent implements OnInit {
             recordId: id.toString(),
             controlId: field,
             controlValue: newControlValue,
-            discriminator: 'actual',
+            discriminator: 'carbon-unit',
             isMark: true,
             isActive: true,
             reportId: this.cdrReportId,
@@ -142,7 +140,6 @@ export class ReportCarbonUnitComponent implements OnInit {
           valueField: valueField.toString(),
           discriminator,
         }
-        console.log(data)
 
         this.carbonUnitService.addReportCarbonUnit(data).subscribe((res) => {
           this.refreshList(this.cdrReportId)
@@ -401,10 +398,7 @@ export class ReportCarbonUnitComponent implements OnInit {
     })
 
     this.gridOptions = {
-      headerRowHeight: 45,
-      rowHeight: 50,
-      preHeaderPanelHeight: 50,
-      showCustomFooter: true,
+      showPreHeaderPanel: true,
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },

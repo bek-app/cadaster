@@ -9,7 +9,7 @@ import {
   GridOption,
   OnEventArgs,
 } from 'angular-slickgrid'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Params } from '@angular/router'
 import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select'
 import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component'
 import { ParameterKoefModel } from 'src/app/models/parameter-koef.model'
@@ -32,15 +32,14 @@ export class ReportParameterKoefComponent implements OnInit {
   columnDefinitions: Column[] = []
   gridOptions: GridOption = {}
   dataset: ParameterKoefModel[] = []
-  cadasterId!: number
   gridObj: any
   dataViewObj: any
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
   dicUnitList: any[] = []
-  cdrReportId: number = 2
-  editMode = false
+  cdrReportId!: number
   commentList: any[] = []
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -84,25 +83,21 @@ export class ReportParameterKoefComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList()
-    this.activatedRoute.data.subscribe((response: any) => {
-      this.dicUnitList = response.dicUnit
-    })
-    this.refreshList(2)
+    this.activatedRoute.data.subscribe(
+      (response: any) => (this.dicUnitList = response.dicUnit),
+    )
     this.prepareGrid()
+    this.activatedRoute.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
 
-  getCommentList(): void {
+  getCommentList(reportId: number): void {
     this.commentService
-      .getReportCommentList((this.cdrReportId = 2), 'coeff')
-      .subscribe((data: any) => {
-        this.commentList = data
-      })
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
+      .getReportCommentList(reportId, 'coeff')
+      .subscribe((data: any) => (this.commentList = data))
   }
 
   refreshList(reportId: number) {
@@ -181,38 +176,36 @@ export class ReportParameterKoefComponent implements OnInit {
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
-    if (!this.editMode) {
-      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-        args,
-      )
-      const { id } = metadata.dataContext
-      const { field } = metadata.columnDef
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
 
-      if (field !== 'processName') {
-        for (const item in metadata.dataContext) {
-          if (field === item) {
-            let controlValue = metadata.dataContext[item]
-            let newControlValue
+    if (field !== 'processName') {
+      for (const item in metadata.dataContext) {
+        if (field === item) {
+          let controlValue = metadata.dataContext[item]
+          let newControlValue
 
-            if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name
-            } else if (controlValue === null) {
-              newControlValue = controlValue
-            } else newControlValue = controlValue.toString()
+          if (typeof controlValue === 'object' && controlValue !== null) {
+            newControlValue = controlValue.name
+          } else if (controlValue === null) {
+            newControlValue = controlValue
+          } else newControlValue = controlValue.toString()
 
-            const comment: ReportCommentModel = {
-              id: 0,
-              note: '',
-              recordId: id.toString(),
-              controlId: field,
-              controlValue: newControlValue,
-              discriminator: 'coeff',
-              isMark: true,
-              isActive: true,
-              reportId: this.cdrReportId,
-            }
-            this.sharedDataService.sendComment(comment)
+          const comment: ReportCommentModel = {
+            id: 0,
+            note: '',
+            recordId: id.toString(),
+            controlId: field,
+            controlValue: newControlValue,
+            discriminator: 'coeff',
+            isMark: true,
+            isActive: true,
+            reportId: this.cdrReportId,
           }
+          this.sharedDataService.sendComment(comment)
         }
       }
     }
@@ -771,24 +764,6 @@ export class ReportParameterKoefComponent implements OnInit {
       })
 
     this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      gridWidth: '100%',
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      autoEdit: true,
-      autoCommitEdit: true,
-      enableCellNavigation: true,
-      editable: true,
-      enableFiltering: true,
-      enableGrouping: true,
-      createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
@@ -799,54 +774,17 @@ export class ReportParameterKoefComponent implements OnInit {
 
         autoApproveParentItemWhenTreeColumnIsValid: this
           .isAutoApproveParentItemWhenTreeColumnIsValid,
-        initialSort: {
-          columnId: 'processName',
-          direction: 'DESC',
-        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
-      // change header/cell row height for salesforce theme
-      headerRowHeight: 45,
-      rowHeight: 50,
-      preHeaderPanelHeight: 50,
-      showCustomFooter: true,
 
-      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
       presets: {
         treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
       },
-      // use Material Design SVG icons
-      contextMenu: {
-        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
-        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
-        iconClearGroupingCommand: 'mdi mdi-close',
-        iconCopyCellValueCommand: 'mdi mdi-content-copy',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-      },
-      gridMenu: {
-        iconCssClass: 'mdi mdi-menu',
-        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
-        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-        iconRefreshDatasetCommand: 'mdi mdi-sync',
-        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
-        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
-      },
-      headerMenu: {
-        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
-        iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
-        iconColumnHideCommand: 'mdi mdi-close',
-      },
     }
   }
+
   koefCommentFormatter: Formatter = (
     row: number,
     cell: number,

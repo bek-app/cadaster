@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ViewEncapsulation } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -13,12 +13,11 @@ import {
 } from 'angular-slickgrid'
 import { ParameterCalc } from 'src/app/models/parameter-calc.model'
 import { ParameterCalcService } from 'src/app/services/parameter-calc.service'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Params } from '@angular/router'
 import { CustomSelectEditor } from '../../editors/custom-select-editor/custom-select'
 import { CustomSelectEditorComponent } from '../../editors/custom-select-editor/custom-select-editor.component'
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
 import { MatDialog } from '@angular/material/dialog'
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin'
 import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportCommentModel } from 'src/app/models/report-comment.model'
 import { NotificationService } from 'src/app/services/notification.service'
@@ -42,10 +41,9 @@ export class ReportParameterCalcComponent implements OnInit {
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
   dicUnitList: any[] = []
-  cdrReportId: number = 2
+  cdrReportId!: number
   dialogRef: any
   commentList: ReportCommentModel[] = []
-  editMode: boolean = false
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
@@ -75,7 +73,7 @@ export class ReportParameterCalcComponent implements OnInit {
     }
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (!args.item.__hasChildren && !this.editMode) {
+      if (!args.item.__hasChildren) {
         return true
       }
       return false
@@ -94,20 +92,21 @@ export class ReportParameterCalcComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList(this.cdrReportId)
     this.activatedRoute.data.subscribe(
       (res: any) => (this.dicUnitList = res.dicUnit),
     )
-    this.refreshList(2)
     this.prepareGrid()
+    this.activatedRoute.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
 
-  getCommentList(cdrReportId: number = 2): void {
+  getCommentList(cdrReportId: number): void {
     this.commentService
       .getReportCommentList(cdrReportId, 'calc')
-      .subscribe((data: any) => {
-        this.commentList = data
-      })
+      .subscribe((data: any) => (this.commentList = data))
   }
 
   parameterCalcFormatter: Formatter = (
@@ -129,12 +128,6 @@ export class ReportParameterCalcComponent implements OnInit {
       addClasses: res ? 'border' : '',
       text: value ? value : '',
     }
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.getCommentList()
-    this.refreshList(id)
   }
 
   refreshList(reportId: number) {
@@ -178,38 +171,36 @@ export class ReportParameterCalcComponent implements OnInit {
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
-    if (!this.editMode) {
-      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-        args,
-      )
-      const { id } = metadata.dataContext
-      const { field } = metadata.columnDef
-      if (field !== 'processName') {
-        for (const item in metadata.dataContext) {
-          if (field === item) {
-            let controlValue = metadata.dataContext[item]
-            let newControlValue
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
+    if (field !== 'processName') {
+      for (const item in metadata.dataContext) {
+        if (field === item) {
+          let controlValue = metadata.dataContext[item]
+          let newControlValue
 
-            if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name
-            } else if (controlValue === null) {
-              newControlValue = controlValue
-            } else newControlValue = controlValue.toString()
+          if (typeof controlValue === 'object' && controlValue !== null) {
+            newControlValue = controlValue.name
+          } else if (controlValue === null) {
+            newControlValue = controlValue
+          } else newControlValue = controlValue.toString()
 
-            const comment: ReportCommentModel = {
-              id: 0,
-              note: '',
-              recordId: id.toString(),
-              controlId: field,
-              controlValue: newControlValue,
-              discriminator: 'calc',
-              isMark: true,
-              isActive: true,
-              reportId: this.cdrReportId,
-            }
-
-            this.sharedDataService.sendComment(comment)
+          const comment: ReportCommentModel = {
+            id: 0,
+            note: '',
+            recordId: id.toString(),
+            controlId: field,
+            controlValue: newControlValue,
+            discriminator: 'calc',
+            isMark: true,
+            isActive: true,
+            reportId: this.cdrReportId,
           }
+
+          this.sharedDataService.sendComment(comment)
         }
       }
     }
@@ -514,24 +505,6 @@ export class ReportParameterCalcComponent implements OnInit {
         ]
       })
     this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      gridWidth: '100%',
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      autoEdit: true,
-      autoCommitEdit: true,
-      enableCellNavigation: true,
-      editable: true,
-      enableFiltering: true,
-      enableGrouping: true,
-      createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
@@ -541,53 +514,12 @@ export class ReportParameterCalcComponent implements OnInit {
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
         autoApproveParentItemWhenTreeColumnIsValid: this
           .isAutoApproveParentItemWhenTreeColumnIsValid,
-        initialSort: {
-          columnId: 'processName',
-          direction: 'DESC',
-        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
-      // change header/cell row height for salesforce theme
-      headerRowHeight: 45,
-      rowHeight: 50,
-      preHeaderPanelHeight: 50,
-      showCustomFooter: true,
-
-      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
       presets: {
         treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
-      },
-      // use Material Design SVG icons
-      contextMenu: {
-        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
-        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
-        iconClearGroupingCommand: 'mdi mdi-close',
-        iconCopyCellValueCommand: 'mdi mdi-content-copy',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-      },
-      registerExternalResources: [new SlickCustomTooltip()],
-
-      gridMenu: {
-        iconCssClass: 'mdi mdi-menu',
-        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
-        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-        iconRefreshDatasetCommand: 'mdi mdi-sync',
-        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
-        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
-      },
-      headerMenu: {
-        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
-        iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
-        iconColumnHideCommand: 'mdi mdi-close',
       },
     }
   }

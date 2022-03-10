@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Params } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
+import { CadasterReportService } from '@services/cadaster-report.service'
 import {
   AngularGridInstance,
   AngularUtilService,
   Column,
-  Editors,
   FieldType,
   Formatter,
   Formatters,
@@ -30,10 +31,9 @@ export class ReportActualEmissionComponent implements OnInit {
   dataset: any[] = []
   gridObj: any
   dataViewObj: any
-  cdrReportId: number = 2
+  cdrReportId!: number
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
-  editMode = false
   commentList: ReportCommentModel[] = []
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -77,25 +77,25 @@ export class ReportActualEmissionComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
     private commentService: ReportCommentService,
+    private cadasterService: CadasterReportService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList(this.cdrReportId)
-
     this.prepareGrid()
-    this.refreshList(2)
+    this.route.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
-  getCommentList(cdrReportId: number = 2): void {
+
+  getCommentList(cdrReportId: number): void {
     this.commentService
       .getReportCommentList(cdrReportId, 'actual')
       .subscribe((data: any) => {
         this.commentList = data
       })
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
   }
 
   refreshList(reportId: number) {
@@ -136,38 +136,36 @@ export class ReportActualEmissionComponent implements OnInit {
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
-    if (!this.editMode) {
-      const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-        args,
-      )
-      const { id } = metadata.dataContext
-      const { field } = metadata.columnDef
-      if (field !== 'processName') {
-        for (const item in metadata.dataContext) {
-          if (field === item) {
-            let controlValue = metadata.dataContext[item]
-            let newControlValue
+    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
+      args,
+    )
+    const { id } = metadata.dataContext
+    const { field } = metadata.columnDef
+    if (field !== 'processName') {
+      for (const item in metadata.dataContext) {
+        if (field === item) {
+          let controlValue = metadata.dataContext[item]
+          let newControlValue
 
-            if (typeof controlValue === 'object' && controlValue !== null) {
-              newControlValue = controlValue.name
-            } else if (controlValue === null) {
-              newControlValue = controlValue
-            } else newControlValue = controlValue.toString()
+          if (typeof controlValue === 'object' && controlValue !== null) {
+            newControlValue = controlValue.name
+          } else if (controlValue === null) {
+            newControlValue = controlValue
+          } else newControlValue = controlValue.toString()
 
-            const comment: ReportCommentModel = {
-              id: 0,
-              note: '',
-              recordId: id.toString(),
-              controlId: field,
-              controlValue: newControlValue,
-              discriminator: 'actual',
-              isMark: true,
-              isActive: true,
-              reportId: this.cdrReportId,
-            }
-
-            this.sharedDataService.sendComment(comment)
+          const comment: ReportCommentModel = {
+            id: 0,
+            note: '',
+            recordId: id.toString(),
+            controlId: field,
+            controlValue: newControlValue,
+            discriminator: 'actual',
+            isMark: true,
+            isActive: true,
+            reportId: this.cdrReportId,
           }
+
+          this.sharedDataService.sendComment(comment)
         }
       }
     }
@@ -196,7 +194,6 @@ export class ReportActualEmissionComponent implements OnInit {
           valueField: valueField.toString(),
           discriminator,
         }
-        console.log(metadata.dataContext)
 
         this.actualEmissionService.addActualEmission(data).subscribe((res) => {
           this.refreshList(this.cdrReportId)
@@ -414,24 +411,6 @@ export class ReportActualEmissionComponent implements OnInit {
       })
 
     this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      gridWidth: '100%',
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      autoEdit: true,
-      autoCommitEdit: true,
-      enableCellNavigation: true,
-      editable: true,
-      enableFiltering: true,
-      enableGrouping: true,
-      createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
@@ -441,52 +420,13 @@ export class ReportActualEmissionComponent implements OnInit {
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering,
         autoApproveParentItemWhenTreeColumnIsValid: this
           .isAutoApproveParentItemWhenTreeColumnIsValid,
-        initialSort: {
-          columnId: 'processName',
-          direction: 'DESC',
-        },
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
 
-      // change header/cell row height for salesforce theme
-      headerRowHeight: 45,
-      rowHeight: 50,
-      preHeaderPanelHeight: 50,
-      topPanelHeight: 35,
-      showCustomFooter: true,
-      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
       presets: {
         treeData: { toggledItems: [{ itemId: 1, isCollapsed: true }] },
-      },
-      // use Material Design SVG icons
-      contextMenu: {
-        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
-        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
-        iconClearGroupingCommand: 'mdi mdi-close',
-        iconCopyCellValueCommand: 'mdi mdi-content-copy',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-      },
-      gridMenu: {
-        iconCssClass: 'mdi mdi-menu',
-        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
-        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-        iconRefreshDatasetCommand: 'mdi mdi-sync',
-        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
-        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
-      },
-      headerMenu: {
-        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
-        iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
-        iconColumnHideCommand: 'mdi mdi-close',
       },
     }
   }

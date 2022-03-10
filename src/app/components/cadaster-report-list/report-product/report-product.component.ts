@@ -17,6 +17,7 @@ import { ReportCommentService } from 'src/app/services/report-comment.service'
 import { ReportSharedService } from 'src/app/services/report-shared.service'
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
 import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+import { ActivatedRoute, Params } from '@angular/router'
 @Component({
   selector: 'app-report-product',
   templateUrl: './report-product.component.html',
@@ -27,15 +28,14 @@ export class ReportProductComponent implements OnInit {
   columnDefinitions: Column[] = []
   gridOptions: GridOption = {}
   dataset: ReportProductModel[] = []
-  cadasterId!: number
   gridObj: any
   dataViewObj: any
   isExcludingChildWhenFiltering = false
   isAutoApproveParentItemWhenTreeColumnIsValid = true
   dicUnitList: any[] = []
-  cdrReportId: number = 2
-  editMode = false
+  cdrReportId!: number
   commentList: any[] = []
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -58,30 +58,31 @@ export class ReportProductComponent implements OnInit {
       return true
     })
   }
+
   constructor(
     private reportProductService: ReportProductService,
     private translateService: TranslateService,
     private commentService: ReportCommentService,
     private sharedDataService: ReportSharedService,
     private angularUtilService: AngularUtilService,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.prepareGrid()
-    this.refreshList(2)
+    this.activatedRoute.params.subscribe((param: Params) => {
+      this.cdrReportId = +param['id']
+      this.refreshList(this.cdrReportId)
+      this.getCommentList(this.cdrReportId)
+    })
   }
 
-  getCommentList(): void {
+  getCommentList(cdrReportId: number): void {
     this.commentService
-      .getReportCommentList((this.cdrReportId = 2), 'product')
+      .getReportCommentList(this.cdrReportId, 'product')
       .subscribe((data: any) => {
         this.commentList = data
       })
-  }
-
-  goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
   }
 
   refreshList(reportId: number) {
@@ -284,68 +285,8 @@ export class ReportProductComponent implements OnInit {
       })
 
     this.gridOptions = {
-      autoResize: {
-        container: '#demo-container',
-      },
-      gridWidth: '100%',
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-      },
-      autoEdit: true,
-      autoCommitEdit: true,
-      enableCellNavigation: true,
-      editable: true,
-      enableFiltering: true,
-      enableGrouping: true,
-      createPreHeaderPanel: true,
-      showPreHeaderPanel: true,
-      enableTreeData: false, // you must enable this flag for the filtering & sorting to work as expected
-      multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
-
       params: {
-        angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
-      },
-      // change header/cell row height for salesforce theme
-      headerRowHeight: 45,
-      rowHeight: 50,
-      preHeaderPanelHeight: 50,
-      showCustomFooter: true,
-
-      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
-      presets: {
-        treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
-      },
-      // use Material Design SVG icons
-      contextMenu: {
-        iconCollapseAllGroupsCommand: 'mdi mdi-arrow-collapse',
-        iconExpandAllGroupsCommand: 'mdi mdi-arrow-expand',
-        iconClearGroupingCommand: 'mdi mdi-close',
-        iconCopyCellValueCommand: 'mdi mdi-content-copy',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-      },
-      gridMenu: {
-        iconCssClass: 'mdi mdi-menu',
-        iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
-        iconClearAllSortingCommand: 'mdi mdi-swap-vertical',
-        iconExportCsvCommand: 'mdi mdi-download',
-        iconExportExcelCommand: 'mdi mdi-file-excel-outline',
-        iconExportTextDelimitedCommand: 'mdi mdi-download',
-        iconRefreshDatasetCommand: 'mdi mdi-sync',
-        iconToggleFilterCommand: 'mdi mdi-flip-vertical',
-        iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
-      },
-      headerMenu: {
-        iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
-        iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
-        iconColumnHideCommand: 'mdi mdi-close',
+        angularUtilService: this.angularUtilService,
       },
     }
   }
