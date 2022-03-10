@@ -38,15 +38,15 @@ const routes: Routes = [
     path: 'auth',
     component: FullComponent,
     children: [
-      { 
+      {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
       },
-      { 
+      {
         path: 'registration',
-        component: RegistrationComponent
-      }
-    ]
+        component: RegistrationComponent,
+      },
+    ],
   },
   {
     path: 'common',
@@ -58,19 +58,19 @@ const routes: Routes = [
         children: [
           {
             path: 'users',
-            component: UserListComponent
+            component: UserListComponent,
           },
           {
             path: 'user',
-            component: UserFormComponent
-          }
-        ]
+            component: UserFormComponent,
+          },
+        ],
       },
       {
         path: 'plant',
         component: PlantListComponent,
         children: [
-          // { path: '', redirectTo: 'source', pathMatch: 'full' },
+          { path: '', redirectTo: 'source', pathMatch: 'full' },
           {
             path: 'source',
             component: PlantSourceListComponent,
@@ -94,6 +94,10 @@ const routes: Routes = [
           {
             path: 'product',
             component: PlantProductListComponent,
+          },
+          {
+            path: 'activity',
+            component: PlantActivityListComponent,
           },
         ],
       },
@@ -137,7 +141,8 @@ const routes: Routes = [
           {
             path: 'report-carbon-unit',
             component: ReportCarbonUnitComponent,
-          },  {
+          },
+          {
             path: 'report-plan',
             component: ReportPlanComponent,
           },
@@ -173,9 +178,9 @@ const routes: Routes = [
             resolve: { dicUnit: DicUnitResolver },
           },
         ],
-      }
-    ]
-  }
+      },
+    ],
+  },
 ]
 
 @NgModule({
