@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core'
 import {
   AbstractControl,
   FormBuilder,
@@ -6,8 +6,8 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms'
+import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ReportPlanModel } from '@models/report-plan.model'
-import { CadasterReportService } from '@services/cadaster-report.service'
 import { ReportPlanService } from '@services/report-plan.service'
 
 @Component({
@@ -21,14 +21,13 @@ export class PlanFormComponent implements OnInit {
   submitted?: boolean
   plantProcesses: any[] = []
   viewMode = false
-  cdrReportId!: number
   @Output() onPlanAdded: EventEmitter<ReportPlanModel> = new EventEmitter()
   @Output() onPlanUpdated: EventEmitter<ReportPlanModel> = new EventEmitter()
 
   constructor(
     private fb: FormBuilder,
     private planService: ReportPlanService,
-    private cadasterService: CadasterReportService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.form = this.fb.group({
       plantProcessId: new FormControl('', Validators.required),
@@ -40,13 +39,10 @@ export class PlanFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cadasterService.currentReportData.subscribe((result: any) => {
-      this.cdrReportId = result.id
-
-      this.planService
-        .getReportPlanProcessesByReportId(this.cdrReportId)
-        .subscribe((result) => (this.plantProcesses = result))
-    })
+    const { reportId } = this.data
+    this.planService
+      .getReportPlanProcessesByReportId(reportId)
+      .subscribe((result) => (this.plantProcesses = result))
   }
 
   onSubmit() {

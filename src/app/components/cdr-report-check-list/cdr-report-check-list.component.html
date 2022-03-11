@@ -23,20 +23,21 @@
     </div>
   </div>
   <hr />
-  <nav mat-tab-nav-bar style="background-color: #8f8cb8;">
+  <nav mat-tab-nav-bar backgroundColor="primary">
     <a
-      class="tab-link"
       mat-tab-link
       *ngFor="let report of cdrReportRoute"
       [routerLinkActiveOptions]="{ exact: true }"
-      routerLinkActive="active"
       [routerLink]="[report.src]"
+      routerLinkActive
+      [active]="rlal.isActive"
+      #rlal="routerLinkActive"
     >
       {{ report.name }}
     </a>
   </nav>
 
-  <router-outlet (activate)="onActivate($event)"></router-outlet>
+  <router-outlet></router-outlet>
 </div>
 
 <div class="container">

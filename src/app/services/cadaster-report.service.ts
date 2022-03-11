@@ -1,8 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-
-import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs'
-import { catchError, map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
 import { CadasterReportModel } from '../models/cadaster-report.model'
 
 @Injectable({
@@ -14,15 +13,7 @@ export class CadasterReportService {
       'Content-Type': 'application/json; charset=utf-8 ',
     }),
   }
-  public editDataDetails: any = []
-  public subject = new Subject<any>()
 
-  private reportDataSource = new BehaviorSubject(this.editDataDetails)
-  currentReportData = this.reportDataSource.asObservable()
-
-  sendReportData(data: any) {
-    this.reportDataSource.next(data)
-  }
   constructor(private http: HttpClient) {}
 
   getCadasterReportById(id: number): Observable<CadasterReportModel[]> {
@@ -47,7 +38,7 @@ export class CadasterReportService {
       .get<CadasterReportModel[]>('api/KdrReport/list?userId=' + id)
       .pipe(map((response) => response))
   }
-  
+
   changeReportStatus(data: any): Observable<any> {
     return this.http.put<any>(
       'api/KdrReport/changeStatus',

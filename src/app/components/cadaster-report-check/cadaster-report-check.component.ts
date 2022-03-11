@@ -170,7 +170,6 @@ export class CadasterReportCheckComponent implements OnInit {
             this.router.navigate(['../cdr-report-check-list/', id], {
               relativeTo: this.route,
             })
-            this.cadasterService.sendReportData(args.dataContext)
           },
         },
       ]

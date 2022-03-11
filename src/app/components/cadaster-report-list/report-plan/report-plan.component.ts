@@ -68,6 +68,7 @@ export class ReportPlanComponent implements OnInit {
   openPlanFormDialog() {
     this.planFormRef = this.dialog.open(PlanFormComponent, {
       width: '800px',
+      data: { reportId: this.cdrReportId },
     })
     this.onPlanAdded()
     this.onPlanUpdated()

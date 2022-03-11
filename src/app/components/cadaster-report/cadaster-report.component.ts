@@ -142,7 +142,6 @@ export class CadasterReportComponent implements OnInit {
             this.router.navigate(['../cadaster-report-list', id], {
               relativeTo: this.route,
             })
-            this.cadasterService.sendReportData(args.dataContext)
           },
         },
 

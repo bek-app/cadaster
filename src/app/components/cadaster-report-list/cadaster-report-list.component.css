@@ -1,15 +1,5 @@
-.plant__tabs-header {
-  margin-bottom: 10px;
-}
+ 
 
-.tab-link {
-  color: #fff;
-}
-
-.active {
-  color: #ffffff;
-  border-bottom: 1px solid #ffffff;
-}
 .report__header {
   padding: 15px;
   display: grid;

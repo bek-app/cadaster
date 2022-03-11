@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
-import { Router, RouterLinkActive } from '@angular/router'
+import { ActivatedRoute, Router, RouterLinkActive } from '@angular/router'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { TranslateService } from '@ngx-translate/core'
 import {
@@ -35,7 +35,6 @@ export class PlantListComponent implements OnInit {
   modalRef: any
   plantRoute: any[] = []
   faPlus = faPlus
-  activeLink = this.plantRoute[0]
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid
     this.gridObj = angularGrid.slickGrid
@@ -92,7 +91,6 @@ export class PlantListComponent implements OnInit {
         },
       ]
     })
-
     this.prepareGrid()
     this.refreshList()
   }

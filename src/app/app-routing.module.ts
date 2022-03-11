@@ -177,6 +177,22 @@ const routes: Routes = [
             component: ReportParameterKoefComponent,
             resolve: { dicUnit: DicUnitResolver },
           },
+          {
+            path: 'report-activity',
+            component: ReportActivityComponent,
+          },
+          {
+            path: 'report-activity-change',
+            component: ReportActivityChangeComponent,
+          },
+          {
+            path: 'report-carbon-unit',
+            component: ReportCarbonUnitComponent,
+          },
+          {
+            path: 'report-plan',
+            component: ReportPlanComponent,
+          },
         ],
       },
     ],

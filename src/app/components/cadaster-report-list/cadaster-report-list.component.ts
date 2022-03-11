@@ -11,11 +11,21 @@ export class CadasterReportListComponent implements OnInit {
   cdrReportId!: number
   cdrReportRoute: any
   cdrReportItem: any
+
   constructor(
     private route: ActivatedRoute,
     private translate: TranslateService,
     private cadasterService: CadasterReportService,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.route.params.subscribe(
+      (param: Params) => (this.cdrReportId = +param['id']),
+    )
+
+    this.cadasterService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((result) => (this.cdrReportItem = result))
     this.translate.get('CDR_REPORTS.MENU').subscribe((translations: any) => {
       const {
         ACTUAL_EMISSION,
@@ -68,14 +78,5 @@ export class CadasterReportListComponent implements OnInit {
         },
       ]
     })
-  }
-
-  ngOnInit(): void {
-    this.route.params.subscribe(
-      (param: Params) => (this.cdrReportId = +param['id']),
-    )
-    this.cadasterService
-      .getCadasterReportById(this.cdrReportId)
-      .subscribe((result) => (this.cdrReportItem = result))
   }
 }

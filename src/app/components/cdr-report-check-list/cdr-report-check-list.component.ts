@@ -18,12 +18,12 @@ export class CdrReportCheckListsComponent implements OnInit {
   dicReportStatusList: Dictionary[] = []
   form: FormGroup
   submitted = false
+  cdrReportId!: number
   constructor(
     private route: ActivatedRoute,
     private translate: TranslateService,
     private cadasterService: CadasterReportService,
     private router: Router,
-    private dicReportStatusService: DicReportStatusService,
     private fb: FormBuilder,
   ) {
     this.form = this.fb.group({
@@ -66,14 +66,64 @@ export class CdrReportCheckListsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(
-      (param: Params) => (this.reportCadasterId = +param['id']),
+      (param: Params) => (this.cdrReportId = +param['id']),
     )
-    this.dicReportStatusService.getDicReportStatus().subscribe((list) => {
-      this.dicReportStatusList = list
-    })
 
-    this.cadasterService.currentReportData.subscribe((result: any) => {
-      this.cdrReportItem = result
+    this.cadasterService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((result) => (this.cdrReportItem = result))
+
+    this.translate.get('CDR_REPORTS.MENU').subscribe((translations: any) => {
+      const {
+        ACTUAL_EMISSION,
+        PARAMETER_CALC,
+        PARAMETER_GAS,
+        PRODUCT,
+        PARAMETER_KOEF,
+        ACTIVITY,
+        ACTIVITY_CHANGE,
+        CARBON_UNIT,
+        PLAN,
+      } = translations
+      this.cdrReportRoute = [
+        {
+          src: 'actual-emission',
+          name: ACTUAL_EMISSION,
+        },
+        {
+          src: 'parameter-koef',
+          name: PARAMETER_KOEF,
+        },
+        {
+          src: 'parameter-calc',
+          name: PARAMETER_CALC,
+        },
+
+        {
+          src: 'parameter-gas',
+          name: PARAMETER_GAS,
+        },
+        {
+          src: 'report-product',
+          name: PRODUCT,
+        },
+        {
+          src: 'report-activity',
+          name: ACTIVITY,
+        },
+        {
+          src: 'report-activity-change',
+          name: ACTIVITY_CHANGE,
+        },
+        {
+          src: 'report-carbon-unit',
+          name: CARBON_UNIT,
+        },
+        {
+          src: 'report-plan',
+          name: PLAN,
+        },
+      ]
     })
   }
 
@@ -90,11 +140,5 @@ export class CdrReportCheckListsComponent implements OnInit {
     this.cadasterService.changeReportStatus(data).subscribe((result: any) => {
       this.router.navigate(['common/cadaster-report-check'])
     })
-  }
-
-  onActivate(componentReference: any) {
-    if (this.reportCadasterId !== undefined) {
-      componentReference.goToCadasterReports(this.reportCadasterId)
-    }
   }
 }

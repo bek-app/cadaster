@@ -24,8 +24,8 @@
       [routerLinkActiveOptions]="{ exact: true }"
       [routerLink]="[plant.src]"
       routerLinkActive
-      (click)="activeLink = plant.src"
-      [active]="activeLink == plant.src"
+      [active]="rlal.isActive"
+      #rlal="routerLinkActive"
     >
       {{ plant.name }}
     </a>

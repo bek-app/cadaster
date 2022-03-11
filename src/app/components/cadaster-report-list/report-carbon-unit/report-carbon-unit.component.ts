@@ -55,7 +55,6 @@ export class ReportCarbonUnitComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCommentList(this.cdrReportId)
     this.prepareGrid()
     this.activatedRoute.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id']
