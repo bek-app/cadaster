@@ -6,9 +6,11 @@
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
   <mat-dialog-content>
-    <div class="source">
-      <ng-select
-        placeholder="{{ 'PLANT.PLANNED_CHANGES.SOURCE_NAME' | translate }}"
+    <mat-form-field>
+      <mat-label>
+        {{ 'PLANT.PLANNED_CHANGES.SOURCE_NAME' | translate }}
+      </mat-label>
+      <mtx-select
         appearance="outline"
         [items]="sourceList"
         bindValue="id"
@@ -16,25 +18,26 @@
         [hideSelected]="true"
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более
-        символов"
+      символов"
         formControlName="plantSourceId"
-      ></ng-select>
-    </div>
+      ></mtx-select>
+    </mat-form-field>
 
-    <div class="process">
-      <ng-select
-        placeholder="{{ 'PLANT.PLANNED_CHANGES.PROCESS_NAME' | translate }}"
-        appearance="outline"
+    <mat-form-field>
+      <mat-label>
+        {{ 'PLANT.PLANNED_CHANGES.PROCESS_NAME' | translate }}
+      </mat-label>
+      <mtx-select
         [items]="processList"
         bindValue="id"
         bindLabel="processName"
         [hideSelected]="true"
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более
-        символов"
+      символов"
         formControlName="plantProcessId"
-      ></ng-select>
-    </div>
+      ></mtx-select>
+    </mat-form-field>
 
     <mat-form-field>
       <mat-label>

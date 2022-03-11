@@ -2,15 +2,14 @@
   padding: 0;
 }
 .row {
-  position: relative;
+  position: absolute;
+  left: 50%;
   min-width: 150px;
   width: 100%;
-  background-color: #fff;
 }
 .col {
-  position: absolute;
+  position: relative;
+  left: -50%;
   top: -10px;
   width: 100%;
 }
-
-/* .ng-select .ng-select-container.ng-appearance-outline */

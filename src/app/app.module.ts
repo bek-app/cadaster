@@ -55,9 +55,10 @@ import { UserListComponent } from './components/administration/user-list/user-li
 import { UserFormComponent } from './components/administration/user-form/user-form.component'
 import { AngularMaterialModule } from './modules/material/material.module'
 import { CustomTranslateModule } from './modules/translate/translate.module'
-import { SlickGridModule } from './modules/slickgrid/slickgrid.module';
+import { SlickGridModule } from './modules/slickgrid/slickgrid.module'
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component'
-
+import { MtxGridModule } from '@ng-matero/extensions/grid'
+import { MtxSelectModule } from '@ng-matero/extensions/select'
 @NgModule({
   declarations: [
     AppComponent,
@@ -119,6 +120,8 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     FlexLayoutModule,
     CustomTranslateModule,
     SlickGridModule,
+    MtxGridModule,
+    MtxSelectModule,
   ],
   providers: [
     AuthGuard,

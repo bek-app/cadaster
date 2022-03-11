@@ -4,21 +4,17 @@
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
   <mat-dialog-content>
-    <div class="row">
-      <ng-select
-        placeholder="{{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}"
-        appearance="outline"
-        [items]="subProccessesList"
+    <mat-form-field>
+      <mat-label>{{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}</mat-label>
+      <mtx-select
+        formControlName="dicProcessId"
+        [items]="dicProcessList"
         bindValue="id"
         bindLabel="name"
+        [hideSelected]="true"
         [minTermLength]="2"
+        [multiple]="false"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
-        formControlName="dicProcessId"
-        [ngClass]="{
-          'is-invalid':
-            (f.dicProcessId.touched || submitted) &&
-            f.dicProcessId.errors?.required
-        }"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -30,21 +26,15 @@
             {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
-      </ng-select>
-      <mat-error
-        *ngIf="
-          (f.dicProcessId.touched || submitted) &&
-          f.dicProcessId.errors?.required
-        "
-      >
-        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
-      </mat-error>
-    </div>
+      </mtx-select>
+      <mat-error>{{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}</mat-error>
+    </mat-form-field>
 
-    <div class="row">
-      <ng-select
-        placeholder="{{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}"
-        appearance="outline"
+    <mat-form-field>
+      <mat-label>
+        {{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}
+      </mat-label>
+      <mtx-select
         [items]="subProccessesList"
         bindValue="id"
         bindLabel="name"
@@ -54,37 +44,27 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="subProccesses"
         [closeOnSelect]="false"
-        [ngClass]="{
-          'is-invalid':
-            (f.subProccesses.touched || submitted) &&
-            f.subProccesses.errors?.required
-        }"
       >
         <ng-template ng-footer-tmp>
           <button
             type="button"
             mat-raised-button
             color="primary"
-            (click)="openDicFormDialog('subProccesses')"
+            (click)="openDicFormDialog('dicSubProcess')"
           >
             {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
-      </ng-select>
-      <mat-error
-        *ngIf="
-          (f.subProccesses.touched || submitted) &&
-          f.subProccesses.errors?.required
-        "
-      >
-        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
-      </mat-error>
-    </div>
+      </mtx-select>
 
-    <div class="row">
-      <ng-select
-        placeholder="{{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}"
-        appearance="outline"
+      <mat-error>{{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>
+        {{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}
+      </mat-label>
+      <mtx-select
         [items]="dicMaterialsList"
         bindValue="id"
         bindLabel="name"
@@ -94,10 +74,6 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="materials"
         [closeOnSelect]="false"
-        [ngClass]="{
-          'is-invalid':
-            (f.materials.touched || submitted) && f.materials.errors?.required
-        }"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -109,16 +85,11 @@
             {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
-      </ng-select>
-
-      <mat-error
-        *ngIf="
-          (f.materials.touched || submitted) && f.materials.errors?.required
-        "
-      >
-        {{ 'ERROR_MESSAGE' | translate }}
+      </mtx-select>
+      <mat-error>
+        {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
       </mat-error>
-    </div>
+    </mat-form-field>
 
     <mat-form-field>
       <mat-label>

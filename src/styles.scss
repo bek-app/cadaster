@@ -1,10 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@ng-select/ng-select/themes/material.theme.css';
+/* @import '~@ng-select/ng-select/themes/material.theme.css'; */
 @import '~@mdi/font/css/materialdesignicons.css';
 /* .slickgrid-container .grid-canvas .slick-cell {
   border: 1px solid rgb(231, 228, 228) !important;
 
 } */
+@import '~@angular/material/theming';
+@import '~@ng-matero/extensions/theming';
+@include mat-core();
+$primary: mat-palette($mat-indigo);
+$accent:  mat-palette($mat-pink, A200, A100, A400);
+$warn:    mat-palette($mat-red);
+$theme: mat-light-theme($primary, $accent, $warn);
+@include material-extensions-theme($theme);
+@include material-extensions-experimental-theme($theme);
+
 .slickgrid-container
   .slick-preheader-panel.ui-state-default
   .slick-header-columns

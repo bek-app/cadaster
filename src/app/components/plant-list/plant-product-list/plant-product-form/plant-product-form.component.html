@@ -4,15 +4,10 @@
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
 
-  <mat-dialog-content
-    fxLayout="column"
-    fxLayoutAlign="space-between none"
-    fxLayoutGap="10px"
-    style="overflow: visible;"
-  >
-    <div class="row">
-      <ng-select
-        appearance="outline"
+  <mat-dialog-content style="overflow: visible;">
+    <mat-form-field>
+      <mat-label>{{ 'PLANT.PRODUCT.FORM.PRODUCT_NAME' | translate }}</mat-label>
+      <mtx-select
         placeholder="{{ 'PLANT.PRODUCT.FORM.PRODUCT_NAME' | translate }}"
         [items]="dicProductList"
         bindValue="id"
@@ -21,11 +16,6 @@
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicProductId"
-        [ngClass]="{
-          'is-invalid':
-            (f.dicProductId.touched || submitted) &&
-            f.dicProductId.errors?.required
-        }"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -37,21 +27,15 @@
             <small>{{ 'DIC_FORM.ADD_DIC' | translate }}</small>
           </button>
         </ng-template>
-      </ng-select>
-      <mat-error
-        *ngIf="
-          (f.dicProductId.touched || submitted) &&
-          f.dicProductId.errors?.required
-        "
-      >
+      </mtx-select>
+      <mat-error>
         <small>{{ 'ERROR_MESSAGE' | translate }}</small>
       </mat-error>
-    </div>
+    </mat-form-field>
 
-    <div class="row">
-      <ng-select
-        appearance="outline"
-        placeholder="{{ 'PLANT.PRODUCT.FORM.DIC_UNIT' | translate }}"
+    <mat-form-field>
+      <mat-label>{{ 'PLANT.PRODUCT.FORM.DIC_UNIT' | translate }}</mat-label>
+      <mtx-select
         [items]="dicUnitList"
         bindValue="id"
         bindLabel="name"
@@ -59,10 +43,6 @@
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicUnitId"
-        [ngClass]="{
-          'is-invalid':
-            (f.dicUnitId.touched || submitted) && f.dicUnitId.errors?.required
-        }"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -74,15 +54,11 @@
             <small>{{ 'DIC_FORM.ADD_DIC' | translate }}</small>
           </button>
         </ng-template>
-      </ng-select>
-      <mat-error
-        *ngIf="
-          (f.dicUnitId.touched || submitted) && f.dicUnitId.errors?.required
-        "
-      >
-        <small>{{ 'ERROR_MESSAGE' | translate }}</small>
+      </mtx-select>
+      <mat-error>
+        {{ 'ERROR_MESSAGE' | translate }}
       </mat-error>
-    </div>
+    </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
