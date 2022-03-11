@@ -84,15 +84,20 @@ export class ReportParameterGasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid()
+
     this.activatedRoute.data.subscribe(
-      (res: any) => (this.dicUnitList = res.dicUnit),
+      (res: any) => {
+        this.dicUnitList = res.dicUnit
+        console.log(res.dicUnit);
+
+      },
     )
     this.activatedRoute.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id']
       this.refreshList(this.cdrReportId)
       this.getCommentList(this.cdrReportId)
     })
+    this.prepareGrid()
   }
 
   refreshList(cdrReportId: number) {

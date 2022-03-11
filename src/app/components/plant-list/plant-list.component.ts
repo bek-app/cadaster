@@ -258,6 +258,10 @@ export class PlantListComponent implements OnInit {
       gridHeight: 250,
       enableCheckboxSelector: true,
       enableRowSelection: true,
+      checkboxSelector: {
+        hideInFilterHeaderRow: true,
+        hideInColumnTitleRow: true,
+      },
     }
   }
 }

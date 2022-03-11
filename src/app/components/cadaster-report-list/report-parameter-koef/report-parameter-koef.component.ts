@@ -323,7 +323,6 @@ export class ReportParameterKoefComponent implements OnInit {
               const id = args.dataContext.id
               const dicUnit = args.dataContext.dicUnit
               const discriminator = args.dataContext.discriminator
-              console.log(discriminator)
               const data = {
                 id,
                 nameField: 'DicUnitId',
