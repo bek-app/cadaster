@@ -157,7 +157,7 @@ export class PlantFormComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
-    const data = { userId: 1, ...this.form.value }
+    const data = {  ...this.form.value }
     !this.isActive ? this.addPlant.emit(data) : this.updatePlant.emit(data)
   }
 

@@ -43,7 +43,7 @@ export class CadasterReportFormComponent implements OnInit {
       return
     }
 
-    const data = { userId: 1, id: 0, ...this.form.value }
+    const data = {  id: 0, ...this.form.value }
     this.addCdrReport.emit(data)
     this.hideCdrReportFormDialog()
   }

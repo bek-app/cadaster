@@ -7,7 +7,7 @@ export interface PlantModel {
   regionId: number;
   subRegionId: number;
   villageId: number;
-  userId: number;
+ 
   oblastName: string;
   regionName: string;
   subRegionName: string;
