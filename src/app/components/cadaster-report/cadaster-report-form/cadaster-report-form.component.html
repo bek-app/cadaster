@@ -4,7 +4,7 @@
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ 'CDR_REPORT.FORM.REPORT_YEAR' | translate }}</mat-label>
-      <input matInput formControlName="reportYear" type="number" (change)="yearChange($event)" />
+      <input matInput readonly formControlName="reportYear" type="number" (change)="yearChange($event)" />
       <mat-error>
         {{ 'ERROR_MESSAGE' | translate }}
       </mat-error>

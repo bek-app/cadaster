@@ -763,6 +763,7 @@ export class ReportParameterKoefComponent implements OnInit {
       })
 
     this.gridOptions = {
+      enableFiltering: true,
       showPreHeaderPanel: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it

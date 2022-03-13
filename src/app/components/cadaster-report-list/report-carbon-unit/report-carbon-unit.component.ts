@@ -397,6 +397,7 @@ export class ReportCarbonUnitComponent implements OnInit {
     })
 
     this.gridOptions = {
+      enableFiltering: true,
       showPreHeaderPanel: true,
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)

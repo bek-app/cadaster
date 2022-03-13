@@ -287,6 +287,6 @@ export class ReportPlanComponent implements OnInit {
         },
       ]
     })
-    this.gridOptions = {}
+    this.gridOptions = { enableFiltering: true }
   }
 }

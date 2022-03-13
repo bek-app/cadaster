@@ -255,7 +255,8 @@ export class PlantListComponent implements OnInit {
       ]
     })
     this.gridOptions = {
-      gridHeight: 250,
+      gridHeight: 150,
+      rowHeight: 30,
       enableCheckboxSelector: true,
       enableRowSelection: true,
       checkboxSelector: {

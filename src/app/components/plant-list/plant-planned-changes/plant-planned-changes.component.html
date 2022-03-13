@@ -1,12 +1,21 @@
-<h3 class="plant__item-title">{{ 'PLANT.PLANNED_CHANGES.TITLE' | translate }}</h3>
-<button
-  mat-raised-button
-  color="primary"
-  (click)="openPlannedChangesDialog()"
-  *ngIf="plantId"
->
-  {{ 'CREATE' | translate }}
-</button>
+<div class="plant-item-header">
+  <div fxFlex="8">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openPlannedChangesDialog()"
+      *ngIf="plantId"
+    >
+      {{ 'CREATE' | translate }}
+    </button>
+  </div>
+
+  <div>
+    <h3>
+      {{ 'PLANT.PLANNED_CHANGES.TITLE' | translate }}
+    </h3>
+  </div>
+</div>
 
 <div class="angular-slickgrid" id="demo-container">
   <angular-slickgrid

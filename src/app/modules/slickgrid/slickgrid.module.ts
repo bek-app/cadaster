@@ -34,7 +34,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export'
 
       autoCommitEdit: true,
 
-      enableFiltering: true,
+      enableFiltering: false,
       enableGrouping: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: false,

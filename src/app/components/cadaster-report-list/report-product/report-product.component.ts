@@ -285,6 +285,7 @@ export class ReportProductComponent implements OnInit {
       })
 
     this.gridOptions = {
+      enableFiltering: true,
       params: {
         angularUtilService: this.angularUtilService,
       },

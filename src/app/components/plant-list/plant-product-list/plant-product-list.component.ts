@@ -67,6 +67,9 @@ export class PlantProductListComponent implements OnInit {
   openProductDialog() {
     this.ref = this.dialog.open(PlantProductFormComponent, {
       width: '800px',
+      position: {
+        top: '100px',
+      },
     })
     this.onProductAdded()
     this.onProductUpdated()

@@ -312,6 +312,6 @@ export class ReportActivityChangeComponent implements OnInit {
         ]
       })
 
-    this.gridOptions = {}
+    this.gridOptions = { enableFiltering: true }
   }
 }

@@ -1,5 +1,5 @@
 <div class="cdr__report-list">
-  <div class="report__header">
+  <div class="report__header" *ngIf="false">
     <div class="item">
       <label>Номер регистрации:</label>
       <span>{{ cdrReportItem.regNumber }}</span>
@@ -22,7 +22,7 @@
       <span>{{ cdrReportItem.namePlant }}</span>
     </div>
   </div>
-  <hr />
+ 
   <nav mat-tab-nav-bar backgroundColor="primary">
     <a
       mat-tab-link

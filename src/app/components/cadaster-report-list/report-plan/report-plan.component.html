@@ -3,11 +3,11 @@
   fxLayout="row"
   fxLayoutAlign="space-between center"
 >
-  <h2>{{ 'CDR_REPORTS.PLAN.TITLE' | translate }}</h2>
   <button mat-raised-button color="primary" (click)="openPlanFormDialog()">
     <fa-icon [icon]="faPlus"></fa-icon>
     {{ 'CREATE' | translate }}
   </button>
+  <h3>{{ 'CDR_REPORTS.PLAN.TITLE' | translate }}</h3>
 </div>
 <angular-slickgrid
   gridId="plan"

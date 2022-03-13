@@ -84,13 +84,8 @@ export class ReportParameterGasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.activatedRoute.data.subscribe(
-      (res: any) => {
-        this.dicUnitList = res.dicUnit
-        console.log(res.dicUnit);
-
-      },
+      (res: any) => (this.dicUnitList = res.dicUnit),
     )
     this.activatedRoute.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id']
@@ -486,6 +481,7 @@ export class ReportParameterGasComponent implements OnInit {
       })
 
     this.gridOptions = {
+      enableFiltering: true,
       showPreHeaderPanel: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it

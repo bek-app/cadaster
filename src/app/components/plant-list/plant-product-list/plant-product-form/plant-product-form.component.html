@@ -4,7 +4,7 @@
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
 
-  <mat-dialog-content style="overflow: visible;">
+  <mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ 'PLANT.PRODUCT.FORM.PRODUCT_NAME' | translate }}</mat-label>
       <mtx-select
@@ -16,6 +16,7 @@
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicProductId"
+        appendTo="body"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -43,6 +44,7 @@
         [minTermLength]="2"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="dicUnitId"
+        appendTo="body"
       >
         <ng-template ng-footer-tmp>
           <button

@@ -9,26 +9,26 @@
 @import '~@ng-matero/extensions/theming';
 @include mat-core();
 $primary: mat-palette($mat-indigo);
-$accent:  mat-palette($mat-pink, A200, A100, A400);
-$warn:    mat-palette($mat-red);
+$accent: mat-palette($mat-pink, A200, A100, A400);
+$warn: mat-palette($mat-red);
 $theme: mat-light-theme($primary, $accent, $warn);
 @include material-extensions-theme($theme);
 @include material-extensions-experimental-theme($theme);
 
-.slickgrid-container
-  .slick-preheader-panel.ui-state-default
-  .slick-header-columns
-  .slick-header-column {
+.slickgrid-container .slick-preheader-panel.ui-state-default .slick-header-columns .slick-header-column {
   display: flex !important;
   justify-content: center !important;
 }
+
 .is-invalid {
   border: 2px solid red;
   border-radius: 5px;
 }
+
 .ng-select {
   padding: 0;
 }
+
 .materials {
   margin-bottom: 1em;
 }
@@ -83,9 +83,7 @@ body {
   margin-top: 10px;
 }
 
-.slickgrid-container
-  .slick-header-columns
-  .slick-header-column.ui-state-default {
+.slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
   font-size: 12px;
   border: 1px solid rgb(231, 228, 228) !important;
 }
@@ -110,17 +108,18 @@ snack-bar-container.notification {
   font-weight: bold;
 }
 
-.mat-button-wrapper {
-}
+.mat-button-wrapper {}
 
 /* mat-dialog overlay false */
 .dialog-bg-trans {
   background-color: transparent;
 }
+
 .dialog__title {
   display: flex;
   justify-content: space-between;
 }
+
 .dialog__title span {
   font-size: 20px;
   cursor: pointer;
@@ -134,14 +133,16 @@ snack-bar-container.notification {
   display: grid !important;
   margin-left: unset !important;
 }
-.plant__item-title {
+
+.plant-item-header {
   background-color: #e2e3e5;
-  padding: 5px;
+  padding: 8px;
   color: #41464b;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-.reprot__item-title{
+
+.reprot__item-title {
   background-color: #e2e3e5;
   padding: 5px;
   color: #41464b;
