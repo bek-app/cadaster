@@ -1,12 +1,12 @@
-<div class="row">
-  <div class="col">
+<div class="row scrollable-box">
+  <div class="col overflow-box">
     <mat-form-field appearance="standard">
       <mtx-select
         [items]="collection"
         autofocus
         bindValue="id"
         bindLabel="name"
-        appendTo="body"
+        appendTo=".scrollable-box"
         (change)="onChange($event)"
         [clearable]="false"
         [(ngModel)]="selectedId"
