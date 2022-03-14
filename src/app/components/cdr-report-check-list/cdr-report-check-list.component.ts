@@ -25,6 +25,7 @@ export class CdrReportCheckListsComponent implements OnInit {
     private cadasterService: CadasterReportService,
     private router: Router,
     private fb: FormBuilder,
+    private dicReportStatusService: DicReportStatusService,
   ) {
     this.form = this.fb.group({
       statusId: new FormControl('', Validators.required),
@@ -68,6 +69,9 @@ export class CdrReportCheckListsComponent implements OnInit {
     this.route.params.subscribe(
       (param: Params) => (this.cdrReportId = +param['id']),
     )
+    this.dicReportStatusService
+      .getDicReportStatus()
+      .subscribe((status) => (this.dicReportStatusList = status))
 
     this.cadasterService
       .getCadasterReportById(this.cdrReportId)

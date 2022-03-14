@@ -163,7 +163,7 @@ export class CadasterReportCheckComponent implements OnInit {
           excludeFromHeaderMenu: true,
           formatter: () =>
             `<div style='cursor: pointer; display:flex; justify-content:center; align-items:center; font-size:16px;'>
-          <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <i class="fa fa-cogs" aria-hidden="true"></i>
           </div>`,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id

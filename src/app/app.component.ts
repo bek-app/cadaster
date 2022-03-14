@@ -10,9 +10,5 @@ import { TranslateService } from '@ngx-translate/core'
 export class AppComponent {
   title = 'cadaster'
 
-  constructor(public translate: TranslateService) {
-    translate.setDefaultLang('ru')
-    translate.use('ru')
-    translate.addLangs(['ru', 'en', 'kz'])
-  }
+  
 }

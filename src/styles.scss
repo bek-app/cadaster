@@ -1,10 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@mdi/font/css/materialdesignicons.css';
-/* .slickgrid-container .grid-canvas .slick-cell {
-  border: 1px solid rgb(231, 228, 228) !important;
-
-} */
-@import '~@angular/material/theming';
+ @import '~@angular/material/theming';
 @import '~@ng-matero/extensions/theming';
 @include mat-core();
 $primary: mat-palette($mat-indigo);
@@ -24,7 +20,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
   border-radius: 5px;
 }
 
- 
+
 .materials {
   margin-bottom: 1em;
 }
@@ -132,16 +128,25 @@ snack-bar-container.notification {
 
 .plant-item-header {
   background-color: #e2e3e5;
-  padding: 8px;
+  padding: 5px 8px;
   color: #41464b;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
 
+.plant-item-header h3 {
+  margin: 0;
+}
 .reprot__item-title {
   background-color: #e2e3e5;
-  padding: 5px;
+  padding: 0 5px;
   color: #41464b;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+}
+.slickgrid-container .slick-cell.editable{
+  background: none !important;;
+}
+.slickgrid-container .slick-row .slick-cell.active{
+  box-shadow: none !important;
 }

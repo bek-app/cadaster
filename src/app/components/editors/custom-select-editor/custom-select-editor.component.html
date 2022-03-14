@@ -1,41 +1,44 @@
-<div class="row scrollable-box">
-  <div class="col overflow-box">
-    <mat-form-field appearance="standard">
-      <mtx-select
-        [items]="collection"
-        autofocus
-        bindValue="id"
-        bindLabel="name"
-        appendTo="body"
-        (change)="onChange($event)"
-        [clearable]="false"
-        [(ngModel)]="selectedId"
-        [clearable]="clearStatus"
-        (clear)="clearValue()"
+<form [formGroup]="form">
+  <div class="row">
+    <div class="col">
+      <mat-form-field appearance="fill">
+        <mtx-select
+          [items]="collection"
+          autofocus
+          bindValue="id"
+          bindLabel="name"
+          appendTo="body"
+          #select
+          formControlName="selectItem"
+          (change)="onChange($event)"
+          [clearable]="false"
+          [(ngModel)]="selectedId"
+          [clearable]="clearStatus"
+          (clear)="clearValue()"
+        >
+          <ng-template ng-footer-tmp>
+            <div fxLayoutAlign="center">
+              <button
+                type="button"
+                mat-raised-button
+                color="primary"
+                (click)="openDicDialog('dicUnit')"
+              >
+                Добавить
+              </button>
+            </div>
+          </ng-template>
+        </mtx-select>
+      </mat-form-field>
+      <button
+        *ngIf="role"
+        mat-mini-fab
+        color="warn"
+        type="button"
+        (click)="openCommentDialog()"
       >
-        <ng-template ng-footer-tmp>
-          <div fxLayoutAlign="center">
-            <button
-              type="button"
-              mat-raised-button
-              color="primary"
-              (click)="openDicDialog('dicUnit')"
-            >
-              Добавить
-            </button>
-          </div>
-        </ng-template>
-      </mtx-select>
-    </mat-form-field>
-
-    <button
-      *ngIf="false"
-      mat-mini-fab
-      color="warn"
-      type="button"
-      (click)="openCommentDialog()"
-    >
-      <fa-icon [icon]="faCommentDots"></fa-icon>
-    </button>
+        <fa-icon [icon]="faCommentDots"></fa-icon>
+      </button>
+    </div>
   </div>
-</div>
+</form>
