@@ -1,5 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-/* @import '~@ng-select/ng-select/themes/material.theme.css'; */
 @import '~@mdi/font/css/materialdesignicons.css';
 /* .slickgrid-container .grid-canvas .slick-cell {
   border: 1px solid rgb(231, 228, 228) !important;
@@ -25,10 +24,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
   border-radius: 5px;
 }
 
-.ng-select {
-  padding: 0;
-}
-
+ 
 .materials {
   margin-bottom: 1em;
 }

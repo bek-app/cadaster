@@ -1,4 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output 
+} from '@angular/core'
 import {
   AbstractControl,
   FormBuilder,
@@ -7,7 +12,7 @@ import {
   Validators,
 } from '@angular/forms'
 import { MatDialog } from '@angular/material/dialog'
-import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component'
+ import { DicFormComponent } from 'src/app/components/dic-form/dic-form.component'
 import { Dictionary } from 'src/app/models/dictionary.model'
 import { DicProductService } from 'src/app/services/dic-product.service'
 import { DicUnitService } from 'src/app/services/dic-unit.service'
@@ -27,7 +32,6 @@ export class PlantProductFormComponent implements OnInit {
   dicRef: any
   @Output() addProduct: EventEmitter<any> = new EventEmitter()
   @Output() updateProduct: EventEmitter<any> = new EventEmitter()
-
   constructor(
     private formBuilder: FormBuilder,
     private dicProductService: DicProductService,
@@ -67,10 +71,12 @@ export class PlantProductFormComponent implements OnInit {
     !this.isActive ? this.addProduct.next(data) : this.updateProduct.next(data)
   }
 
-  openDicModal(name: string) {
+  openDicModal(name: string, select: any) {
+    select.close()
     this.dicRef = this.dicFormDialog.open(DicFormComponent, {
       width: '600px',
     })
+
     if (name === 'dicProduct') {
       this.dicRef.componentInstance.dicTitle = 'Добавить продукты'
       this.dicRef.componentInstance.dicLabel = 'Продукт'
@@ -88,6 +94,7 @@ export class PlantProductFormComponent implements OnInit {
         this.dicProductService.addDicProduct(dicProduct).subscribe((result) => {
           this.getDicProduct()
           this.form.controls['dicProductId'].setValue(result.id)
+          this.dicRef.close()
         })
       },
     )
@@ -98,6 +105,7 @@ export class PlantProductFormComponent implements OnInit {
       this.dicUnitService.addDicUnit(dicUnit).subscribe((result) => {
         this.getDicUnit()
         this.form.controls['dicUnitId'].setValue(result.id)
+        this.dicRef.close()
       })
     })
   }
@@ -108,7 +116,7 @@ export class PlantProductFormComponent implements OnInit {
       this.form.patchValue(product)
     })
   }
-  
+
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls
   }

@@ -32,7 +32,6 @@ import { ReportCommentEditorComponent } from './components/cadaster-report-list/
 import { CommentHistoryComponent } from './components/cadaster-report-list/report-comment-editor/comment-history/comment-history.component'
 import { CustomInputEditorComponent } from './components/editors/custom-input-editor/custom-input-editor.component'
 import { FlexLayoutModule } from '@angular/flex-layout'
-import { NgSelectModule } from '@ng-select/ng-select'
 import { CadasterReportCheckComponent } from './components/cadaster-report-check/cadaster-report-check.component'
 import { CdrReportCheckListsComponent } from './components/cdr-report-check-list/cdr-report-check-list.component'
 import { PlantPlannedChangesComponent } from './components/plant-list/plant-planned-changes/plant-planned-changes.component'
@@ -111,7 +110,6 @@ import { MtxSelectModule } from '@ng-matero/extensions/select'
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    NgSelectModule,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,

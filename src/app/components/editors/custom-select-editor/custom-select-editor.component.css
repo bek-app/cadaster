@@ -1,11 +1,8 @@
-.ng-select {
-  padding: 0;
-}
 .row {
   position: absolute;
   left: 50%;
   min-width: 150px;
-  width: 100%;
+  width: 100%; 
 }
 .col {
   position: relative;
