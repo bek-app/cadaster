@@ -1,6 +1,6 @@
 export interface CadasterReportModel {
   id?: number;
-
+  kindId?: number;
   firstSendDate?: Date;
   reportYear: number;
   isSign: true;
