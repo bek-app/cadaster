@@ -41,11 +41,11 @@ export class ProcessFormComponent implements OnInit {
       dicProcessId: new FormControl('', Validators.required),
       subProccesses: new FormControl('', Validators.required),
       materials: new FormControl('', Validators.required),
-      oddsLevel: new FormControl('', Validators.required),
-      amountConsumed: new FormControl(),
-      calculatingCalorific: new FormControl(),
-      calculatingConversion: new FormControl(),
-      calculatingCarbon: new FormControl(),
+      // oddsLevel: new FormControl('', Validators.required),
+      // amountConsumed: new FormControl(),
+      // calculatingCalorific: new FormControl(),
+      // calculatingConversion: new FormControl(),
+      // calculatingCarbon: new FormControl(),
     })
   }
 

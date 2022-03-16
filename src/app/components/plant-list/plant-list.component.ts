@@ -61,30 +61,31 @@ export class PlantListComponent implements OnInit {
 
       this.plantRoute = [
         {
-          src: 'source',
-          name: SOURCE,
-        },
-
-        {
           src: 'process',
           name: PROCESS,
-        },
-        {
-          src: 'sampling',
-          name: SAMPLING,
-        },
-        {
-          src: 'device',
-          name: DEVICE,
-        },
-        {
-          src: 'planned-changes',
-          name: PLANNED_CHANGES,
         },
         {
           src: 'product',
           name: PRODUCT,
         },
+        // {
+        //   src: 'source',
+        //   name: SOURCE,
+        // },
+
+        // {
+        //   src: 'sampling',
+        //   name: SAMPLING,
+        // },
+        // {
+        //   src: 'device',
+        //   name: DEVICE,
+        // },
+        // {
+        //   src: 'planned-changes',
+        //   name: PLANNED_CHANGES,
+        // },
+
         {
           src: 'activity',
           name: ACTIVITY,
@@ -264,5 +265,6 @@ export class PlantListComponent implements OnInit {
         hideInColumnTitleRow: true,
       },
     }
+
   }
 }

@@ -15,6 +15,7 @@
         [minTermLength]="2"
         [multiple]="false"
         typeToSearchText="Пожалуйста, введите 2 или более символов"
+        appendTo="body"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -44,6 +45,7 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="subProccesses"
         [closeOnSelect]="false"
+        appendTo="body"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -74,6 +76,7 @@
         typeToSearchText="Пожалуйста, введите 2 или более символов"
         formControlName="materials"
         [closeOnSelect]="false"
+        appendTo="body"
       >
         <ng-template ng-footer-tmp>
           <button
@@ -91,7 +94,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-label>
         {{ 'PLANT.PROCESS.FORM.ODDS_LEVEL' | translate }}
       </mat-label>
@@ -127,7 +130,7 @@
         {{ 'PLANT.PROCESS.FORM.CALCULATION_CARBON' | translate }}
       </mat-label>
       <textarea matInput formControlName="calculatingCarbon"></textarea>
-    </mat-form-field>
+    </mat-form-field> -->
   </mat-dialog-content>
 
   <mat-dialog-actions

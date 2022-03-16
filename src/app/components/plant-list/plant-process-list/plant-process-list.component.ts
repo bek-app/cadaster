@@ -145,45 +145,45 @@ export class PlantProcessListComponent implements OnInit {
           filterable: true,
           sortable: true,
         },
-        {
-          id: 'oddsLevel',
-          name: ODDS_LEVEL,
-          field: 'oddsLevel',
-          filterable: true,
-          sortable: true,
-        },
+        // {
+        //   id: 'oddsLevel',
+        //   name: ODDS_LEVEL,
+        //   field: 'oddsLevel',
+        //   filterable: true,
+        //   sortable: true,
+        // },
 
-        {
-          id: 'amountConsumed',
-          name: AMOUNT_CONSUMED,
-          field: 'amountConsumed',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'calculatingCalorific',
-          name: CALCULATION_CALORIFIC,
-          columnGroup: COLUMN_GROUP,
-          field: 'calculatingCalorific',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'calculatingConversion',
-          name: CALCULATION_CONVERSION,
-          columnGroup: COLUMN_GROUP,
-          field: 'calculatingConversion',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'calculatingCarbon',
-          name: CALCULATION_CARBON,
-          columnGroup: COLUMN_GROUP,
-          field: 'calculatingCarbon',
-          filterable: true,
-          sortable: true,
-        },
+        // {
+        //   id: 'amountConsumed',
+        //   name: AMOUNT_CONSUMED,
+        //   field: 'amountConsumed',
+        //   filterable: true,
+        //   sortable: true,
+        // },
+        // {
+        //   id: 'calculatingCalorific',
+        //   name: CALCULATION_CALORIFIC,
+        //   columnGroup: COLUMN_GROUP,
+        //   field: 'calculatingCalorific',
+        //   filterable: true,
+        //   sortable: true,
+        // },
+        // {
+        //   id: 'calculatingConversion',
+        //   name: CALCULATION_CONVERSION,
+        //   columnGroup: COLUMN_GROUP,
+        //   field: 'calculatingConversion',
+        //   filterable: true,
+        //   sortable: true,
+        // },
+        // {
+        //   id: 'calculatingCarbon',
+        //   name: CALCULATION_CARBON,
+        //   columnGroup: COLUMN_GROUP,
+        //   field: 'calculatingCarbon',
+        //   filterable: true,
+        //   sortable: true,
+        // },
         {
           id: 'view',
           field: 'id',
@@ -245,7 +245,8 @@ export class PlantProcessListComponent implements OnInit {
       ]
     })
     this.gridOptions = {
-      showPreHeaderPanel: true,
+      showPreHeaderPanel: false,
+ 
     }
   }
 }

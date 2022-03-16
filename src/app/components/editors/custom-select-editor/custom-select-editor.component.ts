@@ -78,6 +78,7 @@ export class CustomSelectEditorComponent implements OnInit, AfterViewInit {
   }
 
   openDicDialog(name: string) {
+    this.select.close()
     this.ref = this.dialog.open(DicFormComponent, {
       width: '600px',
     })
