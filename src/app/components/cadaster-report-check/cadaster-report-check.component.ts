@@ -161,10 +161,7 @@ export class CadasterReportCheckComponent implements OnInit {
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
-          formatter: () =>
-            `<div style='cursor: pointer; display:flex; justify-content:center; align-items:center; font-size:16px;'>
-            <i class="fa fa-cogs" aria-hidden="true"></i>
-          </div>`,
+          formatter: () => `<i class="fa fa-cog" style="cursor:pointer;"></i>`,
           onCellClick: (e: Event, args: OnEventArgs) => {
             const id = args.dataContext.id
             this.router.navigate(['../cdr-report-check-list/', id], {

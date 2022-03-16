@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute, Params } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { CadasterReportService } from '@services/cadaster-report.service';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -10,15 +11,15 @@ import {
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid'
-import { ReportActivityModel } from 'src/app/models/report-activity.model'
-import { ReportCommentModel } from 'src/app/models/report-comment.model'
-import { ReportActivityService } from 'src/app/services/report-activity.service'
-import { ReportCommentService } from 'src/app/services/report-comment.service'
-import { ReportSharedService } from 'src/app/services/report-shared.service'
-import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
-import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
-import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
+} from 'angular-slickgrid';
+import { ReportActivityModel } from 'src/app/models/report-activity.model';
+import { ReportCommentModel } from 'src/app/models/report-comment.model';
+import { ReportActivityService } from 'src/app/services/report-activity.service';
+import { ReportCommentService } from 'src/app/services/report-comment.service';
+import { ReportSharedService } from 'src/app/services/report-shared.service';
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 
 @Component({
   selector: 'app-report-activity',
@@ -26,50 +27,51 @@ import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTree
   styleUrls: ['./report-activity.component.css'],
 })
 export class ReportActivityComponent implements OnInit {
-  angularGrid!: AngularGridInstance
-  columnDefinitions: Column[] = []
-  gridOptions: GridOption = {}
-  dataset: ReportActivityModel[] = []
-  gridObj: any
-  dataViewObj: any
-  cdrReportId!: number
-  isExcludingChildWhenFiltering = false
-  isAutoApproveParentItemWhenTreeColumnIsValid = true
-  commentList: ReportCommentModel[] = []
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: ReportActivityModel[] = [];
+  gridObj: any;
+  dataViewObj: any;
+  cdrReportId!: number;
+  isExcludingChildWhenFiltering = false;
+  isAutoApproveParentItemWhenTreeColumnIsValid = true;
+  commentList: ReportCommentModel[] = [];
+  kindId!: number;
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid
-    this.gridObj = angularGrid.slickGrid
-    this.dataViewObj = angularGrid.dataView
+    this.angularGrid = angularGrid;
+    this.gridObj = angularGrid.slickGrid;
+    this.dataViewObj = angularGrid.dataView;
 
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header'
-      const materialClass = 'sub__header-material'
-      const processClass = 'sub__header-process'
+      const newCssClass = 'inactive__header';
+      const materialClass = 'sub__header-material';
+      const processClass = 'sub__header-process';
 
-      const item = this.dataViewObj.getItem(row)
+      const item = this.dataViewObj.getItem(row);
 
       if (item.__hasChildren && item.__treeLevel === 0) {
         return {
           cssClasses: newCssClass,
-        }
+        };
       } else if (item.key == 'material') {
         return {
           cssClasses: materialClass,
-        }
+        };
       } else if (item.key == 'processes') {
         return {
           cssClasses: processClass,
-        }
-      } else return ''
-    }
+        };
+      } else return '';
+    };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
-        return false
+        return false;
       }
-      return true
-    })
+      return true;
+    });
   }
 
   constructor(
@@ -79,46 +81,50 @@ export class ReportActivityComponent implements OnInit {
     private translate: TranslateService,
     private commentService: ReportCommentService,
     private activatedRoute: ActivatedRoute,
+    private cadasterService: CadasterReportService
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid()
+    this.prepareGrid();
     this.activatedRoute.params.subscribe((param: Params) => {
-      this.cdrReportId = +param['id']
-      this.refreshList(this.cdrReportId)
-      this.getCommentList(this.cdrReportId)
-    })
+      this.cdrReportId = +param['id'];
+      this.refreshList(this.cdrReportId);
+      this.getCommentList(this.cdrReportId);
+    });
+
+    this.cadasterService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((result: any) => (this.kindId = result.kindId));
   }
 
   getCommentList(cdrReportId: number): void {
     this.commentService
       .getReportCommentList(cdrReportId, 'activity')
-      .subscribe((data: any) => (this.commentList = data))
+      .subscribe((data: any) => (this.commentList = data));
   }
 
   refreshList(reportId: number) {
     this.reportActivityService
       .getReportActivityById(reportId)
-      .subscribe((data) => (this.dataset = data))
+      .subscribe((data) => (this.dataset = data));
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
     if (field !== 'processName') {
       for (const item in metadata.dataContext) {
         if (field === item) {
-          let controlValue = metadata.dataContext[item]
-          let newControlValue
+          let controlValue = metadata.dataContext[item];
+          let newControlValue;
 
           if (typeof controlValue === 'object' && controlValue !== null) {
-            newControlValue = controlValue.name
+            newControlValue = controlValue.name;
           } else if (controlValue === null) {
-            newControlValue = controlValue
-          } else newControlValue = controlValue.toString()
+            newControlValue = controlValue;
+          } else newControlValue = controlValue.toString();
 
           const comment: ReportCommentModel = {
             id: 0,
@@ -130,29 +136,28 @@ export class ReportActivityComponent implements OnInit {
             isMark: true,
             isActive: true,
             reportId: this.cdrReportId,
-          }
+          };
 
-          this.sharedDataService.sendComment(comment)
+          this.sharedDataService.sendComment(comment);
         }
       }
     }
   }
 
   onCellChanged(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
 
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
 
     for (let item in metadata.dataContext) {
       if (field === item) {
-        let nameField = item[0].toUpperCase() + item.slice(1)
-        let valueField = metadata.dataContext[item]
-        let discriminator = metadata.dataContext.discriminator
+        let nameField = item[0].toUpperCase() + item.slice(1);
+        let valueField = metadata.dataContext[item];
+        let discriminator = metadata.dataContext.discriminator;
         if (typeof valueField === 'object') {
-          return
+          return;
         }
 
         const data = {
@@ -160,10 +165,10 @@ export class ReportActivityComponent implements OnInit {
           nameField,
           valueField: valueField.toString(),
           discriminator,
-        }
+        };
         this.reportActivityService
           .addReportActivity(data)
-          .subscribe((res) => this.refreshList(this.cdrReportId))
+          .subscribe((res) => this.refreshList(this.cdrReportId));
       }
     }
   }
@@ -174,23 +179,23 @@ export class ReportActivityComponent implements OnInit {
     value: any,
     columnDef: Column,
     dataContext: any,
-    grid?: any,
+    grid?: any
   ) => {
-    const { id } = dataContext
-    const { field } = columnDef
+    const { id } = dataContext;
+    const { field } = columnDef;
 
     const res = this.commentList.find((comment) => {
-      return comment.recordId === id.toString() && comment.controlId === field
-    })
+      return comment.recordId === id.toString() && comment.controlId === field;
+    });
     return {
       addClasses: res ? 'border' : '',
       text: value ? value : '',
-    }
-  }
+    };
+  };
 
   prepareGrid() {
     this.translate.get('CDR_REPORTS.ACTIVITY').subscribe((translations) => {
-      const { ACTIVITY_NAME, DIC_UNIT_NAME, COUNT_VOLUME } = translations
+      const { ACTIVITY_NAME, DIC_UNIT_NAME, COUNT_VOLUME } = translations;
 
       this.columnDefinitions = [
         {
@@ -230,8 +235,8 @@ export class ReportActivityComponent implements OnInit {
             },
           },
         },
-      ]
-    })
+      ];
+    });
 
     this.gridOptions = {
       enableFiltering: true,
@@ -241,16 +246,18 @@ export class ReportActivityComponent implements OnInit {
       treeDataOptions: {
         columnId: 'activityName',
         childrenPropName: 'children',
-        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering,
-        autoApproveParentItemWhenTreeColumnIsValid: this
-          .isAutoApproveParentItemWhenTreeColumnIsValid,
+        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
+
+        autoApproveParentItemWhenTreeColumnIsValid:
+          this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
+
       presets: {
-        treeData: { toggledItems: [{ itemId: 1, isCollapsed: true }] },
+        treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
       },
-    }
+    };
   }
 }

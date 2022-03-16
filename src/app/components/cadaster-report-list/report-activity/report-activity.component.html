@@ -1,5 +1,6 @@
-<div class="reprot__item-title">
-  <h3>{{ 'CDR_REPORTS.ACTIVITY.TITLE' | translate }}</h3>
+<div class="report-item-header">
+  <h4 *ngIf="kindId == 1">{{ "CDR_REPORTS.ACTIVITY.TITLE" | translate }}</h4>
+  <h4 *ngIf="kindId !== 1">{{ "CDR_REPORTS.SIMPLE.ACTIVITY" | translate }}</h4>
 </div>
 <angular-slickgrid
   gridId="report-activity"

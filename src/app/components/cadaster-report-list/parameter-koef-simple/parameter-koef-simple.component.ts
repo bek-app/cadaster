@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -23,14 +23,12 @@ import { CustomInputEditorComponent } from '../../editors/custom-input-editor/cu
 import { ReportCommentService } from 'src/app/services/report-comment.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CadasterReportService } from '@services/cadaster-report.service';
-import { CadasterReportModel } from '@models/cadaster-report.model';
-import { map } from 'rxjs';
 @Component({
-  selector: 'app-report-parameter-koef',
-  templateUrl: './report-parameter-koef.component.html',
-  styleUrls: ['./report-parameter-koef.component.css'],
+  selector: 'app-parameter-koef-simple',
+  templateUrl: './parameter-koef-simple.component.html',
+  styleUrls: ['./parameter-koef-simple.component.css'],
 })
-export class ReportParameterKoefComponent implements OnInit {
+export class ParameterKoefSimpleComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
@@ -387,66 +385,6 @@ export class ReportParameterKoefComponent implements OnInit {
                       )
                     : this.notificationService.error(`${result.message}`);
                 });
-            },
-          },
-
-          // Содержание углерода
-          {
-            id: 'koefOperatingWeight',
-            name: COEFF_OPERATING_WEIGTH,
-            field: 'koefOperatingWeight',
-            columnGroup: COEF_USED_CALC,
-            filterable: true,
-            sortable: true,
-            formatter: Formatters.multiple,
-            params: {
-              formatters: [this.koefCommentFormatter, Formatters.complexObject],
-              complexFieldLabel: 'koefOperatingWeight',
-            },
-            editor: {
-              model: CustomInputEditor,
-              params: {
-                component: CustomInputEditorComponent,
-              },
-            },
-          },
-          {
-            id: 'koefOperatingWeightUnit',
-            name: UNIT_NAME,
-            field: 'koefOperatingWeightUnit',
-            columnGroup: COEF_USED_CALC,
-            filterable: true,
-            sortable: true,
-            formatter: Formatters.complexObject,
-            params: {
-              complexFieldLabel: 'koefOperatingWeightUnit.name',
-            },
-            exportWithFormatter: true,
-            editor: {
-              model: CustomSelectEditor,
-              collection: this.dicUnitList,
-              params: {
-                component: CustomSelectEditorComponent,
-              },
-            },
-            onCellChange: (e: Event, args: OnEventArgs) => {
-              const id = args.dataContext.id;
-              const koefOperatingWeightUnit =
-                args.dataContext.koefOperatingWeightUnit;
-              const discriminator = args.dataContext.discriminator;
-              const data = {
-                id,
-                nameField: 'KoefOperatingWeightUnitId',
-                valueField:
-                  koefOperatingWeightUnit.id != null
-                    ? koefOperatingWeightUnit.id.toString()
-                    : koefOperatingWeightUnit.id,
-                discriminator,
-              };
-
-              this.parameterKoefService
-                .addParameterKoef(data)
-                .subscribe((res: any) => {});
             },
           },
 

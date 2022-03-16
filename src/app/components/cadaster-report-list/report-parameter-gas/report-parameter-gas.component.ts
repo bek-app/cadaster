@@ -117,6 +117,14 @@ export class ReportParameterGasComponent implements OnInit {
           items.processes.forEach((process: any) => {
             Object.assign(process, {
               processName: process.dicMaterialName,
+              gasCh4Unit: {
+                id: process.gasCh4UnitId,
+                name: process.gasCh4UnitName,
+              },
+              gasN2OUnit: {
+                id: process.gasN2OUnitId,
+                name: process.gasN2OUnitName,
+              },
             })
           })
 

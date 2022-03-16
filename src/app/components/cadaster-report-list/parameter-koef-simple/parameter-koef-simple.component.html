@@ -1,16 +1,13 @@
 <div class="report-item-header">
-  <h4 *ngIf="kindId == 1">
-    {{ "CDR_REPORTS.PRODUCT.TITLE" | translate }}
-  </h4>
-  <h4 *ngIf="kindId == 2">
-    {{ "CDR_REPORTS.SIMPLE.PRODUCT" | translate }}
+  <h4>
+    {{ "CDR_REPORTS.SIMPLE.PARAMETER_COEFF" | translate }}
   </h4>
 </div>
 <angular-slickgrid
-  gridId="report-product"
+  gridId="parameter-koef-simple"
   [columnDefinitions]="columnDefinitions"
   [gridOptions]="gridOptions"
-  [dataset]="dataset"
+  [datasetHierarchical]="dataset"
   (onCellChange)="
     onCellChanged($any($event).detail.eventData, $any($event).detail.args)
   "

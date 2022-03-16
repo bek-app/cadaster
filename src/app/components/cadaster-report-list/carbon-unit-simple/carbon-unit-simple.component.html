@@ -1,21 +1,16 @@
 <div class="report-item-header">
-  <h4 *ngIf="kindId == 1">
-    {{ "CDR_REPORTS.PRODUCT.TITLE" | translate }}
-  </h4>
-  <h4 *ngIf="kindId == 2">
-    {{ "CDR_REPORTS.SIMPLE.PRODUCT" | translate }}
-  </h4>
+  <h4>{{ "CDR_REPORTS.SIMPLE.CARBON_UNIT" | translate }}</h4>
 </div>
 <angular-slickgrid
-  gridId="report-product"
+  gridId="carbon-unit-simple"
   [columnDefinitions]="columnDefinitions"
   [gridOptions]="gridOptions"
   [dataset]="dataset"
+  (onAngularGridCreated)="angularGridReady($any($event).detail)"
   (onCellChange)="
     onCellChanged($any($event).detail.eventData, $any($event).detail.args)
   "
   (onClick)="
     onCellClicked($any($event).detail.eventData, $any($event).detail.args)
   "
-  (onAngularGridCreated)="angularGridReady($any($event).detail)"
 ></angular-slickgrid>
