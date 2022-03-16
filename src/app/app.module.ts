@@ -57,7 +57,9 @@ import { CustomTranslateModule } from './modules/translate/translate.module'
 import { SlickGridModule } from './modules/slickgrid/slickgrid.module'
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component'
 import { MtxGridModule } from '@ng-matero/extensions/grid'
-import { MtxSelectModule } from '@ng-matero/extensions/select'
+import { MtxSelectModule } from '@ng-matero/extensions/select';
+import { ParameterKoefSimpleComponent } from './components/cadaster-report-list/parameter-koef-simple/parameter-koef-simple.component';
+import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/carbon-unit-simple/carbon-unit-simple.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -105,6 +107,8 @@ import { MtxSelectModule } from '@ng-matero/extensions/select'
     UserListComponent,
     UserFormComponent,
     ConfirmDialogComponent,
+    ParameterKoefSimpleComponent,
+    CarbonUnitSimpleComponent,
   ],
   imports: [
     BrowserModule,

@@ -30,6 +30,8 @@ import { CommonComponent } from './layouts/common/common.component'
 import { AuthGuard } from './guards/auth.guard'
 import { UserListComponent } from './components/administration/user-list/user-list.component'
 import { UserFormComponent } from './components/administration/user-form/user-form.component'
+import { ParameterKoefSimpleComponent } from './components/cadaster-report-list/parameter-koef-simple/parameter-koef-simple.component'
+import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/carbon-unit-simple/carbon-unit-simple.component'
 
 const routes: Routes = [
   { path: '', redirectTo: 'common/plant', pathMatch: 'full' },
@@ -70,31 +72,34 @@ const routes: Routes = [
         path: 'plant',
         component: PlantListComponent,
         children: [
-          { path: '', redirectTo: 'source', pathMatch: 'full' },
-          {
-            path: 'source',
-            component: PlantSourceListComponent,
-          },
-          {
-            path: 'planned-changes',
-            component: PlantPlannedChangesComponent,
-          },
+          { path: '', redirectTo: 'process', pathMatch: 'full' },
           {
             path: 'process',
             component: PlantProcessListComponent,
           },
           {
-            path: 'device',
-            component: PlantDeviceListComponent,
-          },
-          {
-            path: 'sampling',
-            component: PlantSamplingListComponent,
-          },
-          {
             path: 'product',
             component: PlantProductListComponent,
           },
+
+          // {
+          //   path: 'source',
+          //   component: PlantSourceListComponent,
+          // },
+          // {
+          //   path: 'planned-changes',
+          //   component: PlantPlannedChangesComponent,
+          // },
+
+          // {
+          //   path: 'device',
+          //   component: PlantDeviceListComponent,
+          // },
+          // {
+          //   path: 'sampling',
+          //   component: PlantSamplingListComponent,
+          // },
+
           {
             path: 'activity',
             component: PlantActivityListComponent,
@@ -131,6 +136,11 @@ const routes: Routes = [
             resolve: { dicUnit: DicUnitResolver },
           },
           {
+            path: 'parameter-koef-simple',
+            component: ParameterKoefSimpleComponent,
+            resolve: { dicUnit: DicUnitResolver },
+          },
+          {
             path: 'report-activity',
             component: ReportActivityComponent,
           },
@@ -141,6 +151,10 @@ const routes: Routes = [
           {
             path: 'report-carbon-unit',
             component: ReportCarbonUnitComponent,
+          },
+          {
+            path: 'carbon-unit-simple',
+            component: CarbonUnitSimpleComponent,
           },
           {
             path: 'report-plan',

@@ -1,7 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@mdi/font/css/materialdesignicons.css';
- @import '~@angular/material/theming';
-@import '~@ng-matero/extensions/theming';
+
+@import "~@mdi/font/css/materialdesignicons.css";
+@import "~@angular/material/theming";
+@import "~@ng-matero/extensions/theming";
 @include mat-core();
 $primary: mat-palette($mat-indigo);
 $accent: mat-palette($mat-pink, A200, A100, A400);
@@ -9,24 +10,12 @@ $warn: mat-palette($mat-red);
 $theme: mat-light-theme($primary, $accent, $warn);
 @include material-extensions-theme($theme);
 @include material-extensions-experimental-theme($theme);
-
-.slickgrid-container .slick-preheader-panel.ui-state-default .slick-header-columns .slick-header-column {
+.slickgrid-container
+  .slick-preheader-panel.ui-state-default
+  .slick-header-columns
+  .slick-header-column {
   display: flex !important;
   justify-content: center !important;
-}
-
-.is-invalid {
-  border: 2px solid red;
-  border-radius: 5px;
-}
-
-
-.materials {
-  margin-bottom: 1em;
-}
-
-.header__color {
-  font-weight: bold;
 }
 
 .inactive__header {
@@ -48,36 +37,21 @@ $theme: mat-light-theme($primary, $accent, $warn);
 
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .mat-form-field {
   width: 100%;
 }
 
-.misc-bottom-padding {
-  margin: 8px 0 20px;
-}
-
-.misc-bottom-padding mat-label {
-  margin-right: 15px;
-}
-
-.mat-radio-label {
-  margin: 0 15px 0 0;
-}
-
-.title-center {
-  margin: 0 auto;
-}
-
-.button-wrapper {
-  margin-top: 10px;
-}
-
-.slickgrid-container .slick-header-columns .slick-header-column.ui-state-default {
-  font-size: 12px;
-  border: 1px solid rgb(231, 228, 228) !important;
+.slickgrid-container .slick-header-columns {
+  .slick-header-column.ui-state-default {
+    border: 1px solid rgb(231, 228, 228) !important;
+    .slick-sort-indicator,
+    .slick-sort-indicator-numbered {
+      top: 40px;
+    }
+  }
 }
 
 .angular-slickgrid {
@@ -100,13 +74,6 @@ snack-bar-container.notification {
   font-weight: bold;
 }
 
-.mat-button-wrapper {}
-
-/* mat-dialog overlay false */
-.dialog-bg-trans {
-  background-color: transparent;
-}
-
 .dialog__title {
   display: flex;
   justify-content: space-between;
@@ -127,26 +94,30 @@ snack-bar-container.notification {
 }
 
 .plant-item-header {
+  height: 50px;
   background-color: #e2e3e5;
   padding: 5px 8px;
   color: #41464b;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  h3 {
+    margin: 0;
+  }
 }
 
-.plant-item-header h3 {
-  margin: 0;
-}
-.reprot__item-title {
+.report-item-header {
   background-color: #e2e3e5;
-  padding: 0 5px;
+  padding: 5px;
   color: #41464b;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  h4 {
+    margin: 0;
+  }
 }
-.slickgrid-container .slick-cell.editable{
-  background: none !important;;
+
+.slickgrid-container .slick-cell.editable {
+  background: none !important;
 }
-.slickgrid-container .slick-row .slick-cell.active{
+
+.slickgrid-container .slick-row .slick-cell.active {
   box-shadow: none !important;
 }
