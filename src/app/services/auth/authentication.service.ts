@@ -24,6 +24,14 @@ export class AuthenticationService {
         }));
   }
 
+  loginByCert(loginModel: LoginModel): Observable<AccountModel> {
+    return this.http.post<AccountModel>(`${this.apiUrl}/loginByCert`, loginModel)
+        .pipe(map((responseObject: AccountModel) => {
+          this.setUserData(responseObject);
+          return responseObject;
+        }));
+  }
+
   logout() {
     return this.http.get(`${this.apiUrl}/logout`).pipe(map(v => {
       this.cleanUserData();

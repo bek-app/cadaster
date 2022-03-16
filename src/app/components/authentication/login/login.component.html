@@ -5,16 +5,25 @@
             <mat-card-title>Вход</mat-card-title>
             <mat-card-subtitle>в систему Кадастр</mat-card-subtitle>
             <mat-card-content>
+                
+                <button mat-flat-button id="btnEcp" class="mb-1" color="primary" (click)="chooseEcp()">
+                    Выбрать ЭЦП
+                </button>
 
                 <mat-form-field class="full-width">
                     <input id="loginInput" matInput placeholder="Логин" formControlName="login" autocomplete="login"
-                        type="text">
+                        type="text" readonly="true">
                     <mat-error id="requiredLoginError" *ngIf="loginForm.controls['login'].hasError('required')">
                         Пожалуйста, введите значения
                     </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="full-width">
+                    <input id="organizationNameInput" matInput placeholder="Организация" formControlName="organizationName" autocomplete="organizationName"
+                        type="text" readonly="true">
+                </mat-form-field>
+
+                <!--mat-form-field class="full-width">
                     <input id="passwordInput" matInput placeholder="Пароль" formControlName="password" type="password"
                         autocomplete="current-password">
                     <mat-error id="requiredPasswordError" *ngIf="loginForm.controls['password'].hasError('required')">
@@ -24,13 +33,13 @@
 
                 <div class="full-width">
                     <mat-slide-toggle formControlName="rememberMe" ngDefaultControl>Запомнить мой логин</mat-slide-toggle>
-                </div>
+                </div-->
 
             </mat-card-content>
 
             <mat-card-actions class="login-actions">
                 <button mat-raised-button id="login" color="primary" [disabled]="loginForm.invalid || loading"
-                    (click)="login()">Войти</button>
+                    (click)="loginByCert()">Войти</button>
 
                 <button mat-button id="registration" (click)="register()" type="button">
                     Зарегестрироваться
