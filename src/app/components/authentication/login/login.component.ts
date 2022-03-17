@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   loading: boolean = false;
-
+  selectedTabIndex = 0;
   constructor(private router: Router,
     private titleService: Title,
     private notificationService: NotificationService,
