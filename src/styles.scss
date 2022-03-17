@@ -10,12 +10,46 @@ $warn: mat-palette($mat-red);
 $theme: mat-light-theme($primary, $accent, $warn);
 @include material-extensions-theme($theme);
 @include material-extensions-experimental-theme($theme);
-.slickgrid-container
-  .slick-preheader-panel.ui-state-default
-  .slick-header-columns
-  .slick-header-column {
-  display: flex !important;
-  justify-content: center !important;
+
+.slickgrid-container {
+  .slick-preheader-panel {
+    .slick-header-columns {
+      .slick-header-column {
+        display: flex !important;
+        justify-content: center !important;
+        border-right: 2px solid rgb(231, 228, 228) !important;
+        border-bottom: 2px solid rgb(231, 228, 228) !important;
+      }
+    }
+  }
+
+  .slick-header {
+    .slick-header-columns-left {
+      .slick-header-column.ui-state-default {
+        border-right: 2px solid rgb(231, 228, 228) !important;
+        border-top: 2px solid rgb(231, 228, 228) !important;
+      }
+    }
+  }
+  
+  .grid-canvas {
+    .editable {
+      background: none !important;
+    }
+    .slick-row {
+      .slick-cell {
+        border-right: 2px solid rgb(231, 228, 228) !important;
+      }
+      .slick-cell.active {
+        box-shadow: none !important;
+      }
+      &:last-child {
+        .slick-cell {
+          border-bottom: 2px solid rgb(231, 228, 228) !important;
+        }
+      }
+    }
+  }
 }
 
 .inactive__header {
@@ -42,16 +76,6 @@ body {
 
 .mat-form-field {
   width: 100%;
-}
-
-.slickgrid-container .slick-header-columns {
-  .slick-header-column.ui-state-default {
-    border: 1px solid rgb(231, 228, 228) !important;
-    .slick-sort-indicator,
-    .slick-sort-indicator-numbered {
-      top: 40px;
-    }
-  }
 }
 
 .angular-slickgrid {
@@ -112,12 +136,4 @@ snack-bar-container.notification {
   h4 {
     margin: 0;
   }
-}
-
-.slickgrid-container .slick-cell.editable {
-  background: none !important;
-}
-
-.slickgrid-container .slick-row .slick-cell.active {
-  box-shadow: none !important;
 }
