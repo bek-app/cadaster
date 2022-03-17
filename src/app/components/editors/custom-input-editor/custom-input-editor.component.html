@@ -5,12 +5,12 @@
   fxLayoutAlign="space-between center"
 >
   <mat-form-field appearance="legacy">
-    <!-- <mat-label>Наименование</mat-label> -->
     <input
       matInput
       formControlName="name"
       (change)="onChange($event)"
       type="number"
+      #input
     />
   </mat-form-field>
   <button

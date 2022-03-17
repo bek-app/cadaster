@@ -94,9 +94,9 @@ export class CustomInputEditor implements Editor {
       );
     }
 
-    if (this.hasAutoCommitEdit) {
+    setTimeout(() => {
       this.focus();
-    }
+    }, 50);
   }
 
   save() {

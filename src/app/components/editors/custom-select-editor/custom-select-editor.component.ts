@@ -99,5 +99,8 @@ export class CustomSelectEditorComponent implements OnInit, AfterViewInit {
     })
   }
 
-  focus() {}
+  focus() {
+    this.select.focus()
+    this.select.open()
+  }
 }

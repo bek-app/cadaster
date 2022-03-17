@@ -12,6 +12,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
 @include material-extensions-experimental-theme($theme);
 
 .slickgrid-container {
+  box-sizing: border-box;
   .slick-preheader-panel {
     .slick-header-columns {
       .slick-header-column {
@@ -19,19 +20,24 @@ $theme: mat-light-theme($primary, $accent, $warn);
         justify-content: center !important;
         border-right: 2px solid rgb(231, 228, 228) !important;
         border-bottom: 2px solid rgb(231, 228, 228) !important;
+        .slick-column-name {
+        }
       }
     }
   }
 
   .slick-header {
     .slick-header-columns-left {
-      .slick-header-column.ui-state-default {
+      .slick-header-column {
         border-right: 2px solid rgb(231, 228, 228) !important;
         border-top: 2px solid rgb(231, 228, 228) !important;
+        .slick-column-name {
+          font-size: 12px;
+        }
       }
     }
   }
-  
+
   .grid-canvas {
     .editable {
       background: none !important;

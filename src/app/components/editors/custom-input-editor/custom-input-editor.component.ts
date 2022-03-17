@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -27,13 +27,14 @@ export class CustomInputEditorComponent implements OnInit {
   faCheckCircle = faCheckCircle;
   submitted = false;
   form: FormGroup;
+  @ViewChild('input') input!: ElementRef;
   constructor(
     public dialog: MatDialog,
     private fb: FormBuilder,
     private notificationService: NotificationService
   ) {
     this.form = this.fb.group({
-      name: new FormControl('', [Validators.required]),
+      name: new FormControl(),
     });
   }
 
@@ -42,7 +43,6 @@ export class CustomInputEditorComponent implements OnInit {
   }
 
   onChange(event: any) {
-
     let value = event.target.value;
 
     this.selectedItem = value;
@@ -62,5 +62,7 @@ export class CustomInputEditorComponent implements OnInit {
     });
   }
 
-  focus() { }
+  focus() {
+    this.input.nativeElement.focus();
+  }
 }

@@ -118,6 +118,9 @@ export class CustomSelectEditor implements Editor {
         )
       );
     }
+    setTimeout(() => {
+      this.focus();
+    }, 50);
   }
 
   save() {
