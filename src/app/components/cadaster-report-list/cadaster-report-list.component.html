@@ -22,11 +22,11 @@
       <span>{{ cdrReportItem.namePlant }}</span>
     </div>
   </div>
- 
+
   <nav mat-tab-nav-bar backgroundColor="primary">
     <a
       mat-tab-link
-      *ngFor="let report of cdrReportRoute"
+      *ngFor="let report of filteredRoute"
       [routerLinkActiveOptions]="{ exact: true }"
       [routerLink]="[report.src]"
       routerLinkActive

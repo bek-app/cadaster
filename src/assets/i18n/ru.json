@@ -226,7 +226,7 @@
       "REG_NUMBER": "Рег.Номер",
       "STATUS_NAME": "Статус",
       "KIND": "Вид отчета",
-      "ORGANIZATION": "Организация"
+      "VALIDATION": "Валидатор"
     }
   },
   "CDR_REPORTS": {

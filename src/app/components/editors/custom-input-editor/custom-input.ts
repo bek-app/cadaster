@@ -53,13 +53,6 @@ export class CustomInputEditor implements Editor {
     return angularUtilService;
   }
 
-  /** Get the Collection */
-  get collection(): any[] {
-    return (
-      (this.columnDef && this.columnDef.internalColumnEditor!.collection) || []
-    );
-  }
-
   /** Get Column Definition object */
   get columnDef(): Column {
     return (this.args && this.args.column) || {};
@@ -85,16 +78,6 @@ export class CustomInputEditor implements Editor {
   }
 
   init() {
-    if (
-      !this.columnEditor ||
-      !this.columnEditor.params.component ||
-      !(this.angularUtilService instanceof AngularUtilService)
-    ) {
-      throw new Error(`[Angular-Slickgrid] For Editor with Angular Component to work properly, you need to provide your component to the "component" property and make sure to add it to your "entryComponents" array.
-      You also need to provide the "AngularUtilService" via the Editor Params OR the Grid Options Params
-      Example: this.columnDefs = [{ id: 'title', field: 'title', editor: { model: CustomAngularComponentEditor, collection: [...], params: { component: MyComponent, angularUtilService: this.angularUtilService }}];
-      OR this.columnDefs = [{ id: 'title', field: 'title', editor: { model: CustomAngularComponentEditor, collection: [...] }]; this.gridOptions = { params: { angularUtilService: this.angularUtilService }}`);
-    }
     if (this.columnEditor && this.columnEditor.params.component) {
       const componentOutput =
         this.angularUtilService.createAngularComponentAppendToDom(
@@ -102,13 +85,6 @@ export class CustomInputEditor implements Editor {
           this.args.container
         );
       this.componentRef = componentOutput && componentOutput.componentRef;
-      // console.log(this.componentRef);
-
-      // here we override the collection object of the Angular Component
-      // but technically you can pass any values you wish to your Component
-      Object.assign(this.componentRef.instance, {
-        collection: this.collection,
-      });
 
       // when our model (item object) changes, we'll call a save of the slickgrid editor
       this._subscriptions.push(
@@ -116,6 +92,10 @@ export class CustomInputEditor implements Editor {
           this.save()
         )
       );
+    }
+
+    if (this.hasAutoCommitEdit) {
+      this.focus();
     }
   }
 
@@ -189,7 +169,6 @@ export class CustomInputEditor implements Editor {
   }
 
   loadValue(item: any) {
-
     const itemObject = item && item[this.columnDef.field];
     this.componentRef.instance.selectedItem = itemObject && itemObject;
   }
@@ -205,7 +184,6 @@ export class CustomInputEditor implements Editor {
         (this.defaultItem === null || this.defaultItem === undefined)
       ) && this.componentRef.instance.selectedItem !== this.defaultItem
     );
-
   }
 
   validate(): EditorValidationResult {
