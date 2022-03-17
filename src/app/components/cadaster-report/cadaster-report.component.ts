@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
-import { MatDialog } from '@angular/material/dialog'
-import { ActivatedRoute, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import {
   AngularGridInstance,
   Column,
@@ -9,63 +9,87 @@ import {
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid'
-import { CadasterReportModel } from 'src/app/models/cadaster-report.model'
-import { CadasterReportService } from 'src/app/services/cadaster-report.service'
+} from 'angular-slickgrid';
+import { CadasterReportModel } from 'src/app/models/cadaster-report.model';
+import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel,
-} from '../confirm-dialog/confirm-dialog.component'
-import { CadasterReportFormComponent } from './cadaster-report-form/cadaster-report-form.component'
+} from '../confirm-dialog/confirm-dialog.component';
+import { CadasterReportFormComponent } from './cadaster-report-form/cadaster-report-form.component';
 @Component({
   selector: 'app-cadaster-report',
   templateUrl: './cadaster-report.component.html',
   styleUrls: ['./cadaster-report.component.css'],
 })
 export class CadasterReportComponent implements OnInit {
-  angularGrid!: AngularGridInstance
-  columnDefinitions: Column[] = []
-  gridOptions: GridOption = {}
-  dataset: CadasterReportModel[] = []
-  cdrReportId!: number
-  gridObj: any
-  dataViewObj: any
-  modalRef: any
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: CadasterReportModel[] = [];
+  cdrReportId!: number;
+  gridObj: any;
+  dataViewObj: any;
+  modalRef: any;
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid
-    this.gridObj = angularGrid.slickGrid
-    this.dataViewObj = angularGrid.dataView
+    this.angularGrid = angularGrid;
+    this.gridObj = angularGrid.slickGrid;
+    this.dataViewObj = angularGrid.dataView;
   }
   constructor(
     private dialog: MatDialog,
     private cadasterService: CadasterReportService,
     private router: Router,
     private route: ActivatedRoute,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid()
-    this.refreshList()
+    this.prepareGrid();
+    this.refreshList();
   }
 
   refreshList() {
     this.cadasterService.getCadasterReportList(0).subscribe((data) => {
-      this.dataset = data
-    })
+      console.log(data);
+
+      this.dataset = data;
+    });
   }
 
   openCdrReportDialog() {
     this.modalRef = this.dialog.open(CadasterReportFormComponent, {
-      width: '600px',
-    })
+      width: '850px',
+    });
+    this.addCdrReport();
+    this.updateCdrReport();
+  }
+
+  addCdrReport() {
     this.modalRef.componentInstance.addCdrReport.subscribe((data: any) => {
       this.cadasterService
-        .addCadasterReport(data)
-        .subscribe((result) => this.refreshList())
-      this.modalRef.close()
-    })
+        .addCadasterReport({ id: 0, ...data })
+        .subscribe((result) => this.refreshList());
+      this.modalRef.close();
+    });
+  }
+
+  updateCdrReport() {
+    this.modalRef.componentInstance.updateCdrReport.subscribe((data: any) => {
+      const newData = { id: this.cdrReportId, ...data };
+      console.log(newData);
+
+      this.cadasterService
+        .updateCadasterReport(newData)
+        .subscribe((result) => this.refreshList());
+      this.modalRef.close();
+    });
+  }
+
+  onCellClicked(e: any, args: any) {
+    const item = this.gridObj.getDataItem(args.row);
+    this.cdrReportId = item.id;
   }
 
   prepareGrid() {
@@ -77,7 +101,9 @@ export class CadasterReportComponent implements OnInit {
         ADDRESS,
         REPORT_YEAR,
         REG_NUMBER,
-      }: any = translations
+        KIND,
+        VALIDATION,
+      }: any = translations;
 
       this.columnDefinitions = [
         {
@@ -87,6 +113,7 @@ export class CadasterReportComponent implements OnInit {
           filterable: true,
           sortable: true,
         },
+
         {
           id: 'namePlant',
           name: NAME_PLANT,
@@ -101,17 +128,11 @@ export class CadasterReportComponent implements OnInit {
           filterable: true,
           sortable: true,
         },
+
         {
-          id: 'oblastName',
-          name: OBLAST,
-          field: 'oblastName',
-          filterable: true,
-          sortable: true,
-        },
-        {
-          id: 'regionName',
-          name: REGION,
-          field: 'regionName',
+          id: 'validatorName',
+          name: VALIDATION,
+          field: 'validatorName',
           filterable: true,
           sortable: true,
         },
@@ -123,7 +144,27 @@ export class CadasterReportComponent implements OnInit {
           filterable: true,
           sortable: true,
         },
-
+        {
+          id: 'kindName',
+          name: KIND,
+          field: 'kindName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: Formatters.editIcon,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            this.openCdrReportDialog();
+            this.modalRef.componentInstance.editForm(this.cdrReportId);
+          },
+        },
         {
           id: 'action',
           field: 'action',
@@ -133,15 +174,12 @@ export class CadasterReportComponent implements OnInit {
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
-          formatter: () =>
-            `<div style='cursor: pointer; display:flex; justify-content:center; align-items:center; font-size:16px;'>
-           <i class="fa fa-cogs" aria-hidden="true"></i>
-            </div>`,
+          formatter: () => `<i class="fa fa-cog" style="cursor:pointer;"></i>`,
           onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
+            const id = args.dataContext.id;
             this.router.navigate(['../cadaster-report-list', id], {
               relativeTo: this.route,
-            })
+            });
           },
         },
 
@@ -155,27 +193,27 @@ export class CadasterReportComponent implements OnInit {
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
+            const id = args.dataContext.id;
             const dialogData = new ConfirmDialogModel(
               'Подтвердить действие',
-              'Вы уверены, что хотите удалить это?',
-            )
+              'Вы уверены, что хотите удалить это?'
+            );
             const dialogRef = this.dialog.open(ConfirmDialogComponent, {
               maxWidth: '400px',
               data: dialogData,
-            })
+            });
             dialogRef.afterClosed().subscribe((dialogResult) => {
               if (dialogResult) {
                 this.cadasterService.deleteCadasterReport(id).subscribe(() => {
-                  this.refreshList()
-                })
+                  this.refreshList();
+                });
               }
-            })
+            });
           },
         },
-      ]
-    })
+      ];
+    });
 
-    this.gridOptions = {}
+    this.gridOptions = {};
   }
 }

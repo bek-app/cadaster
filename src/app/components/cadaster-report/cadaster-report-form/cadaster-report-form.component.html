@@ -1,43 +1,64 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 matDialogTitle>{{ 'CDR_REPORT.TITLE' | translate }}</h2>
+  <h2 matDialogTitle>{{ "CDR_REPORT.TITLE" | translate }}</h2>
 
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>{{ 'CDR_REPORT.FORM.REPORT_YEAR' | translate }}</mat-label>
-      <input matInput readonly formControlName="reportYear" type="number" (change)="yearChange($event)" />
+      <mat-label>{{ "CDR_REPORT.FORM.REPORT_YEAR" | translate }}</mat-label>
+      <input
+        matInput
+        readonly
+        formControlName="reportYear"
+        type="number"
+        (change)="yearChange($event)"
+      />
       <mat-error>
-        {{ 'ERROR_MESSAGE' | translate }}
+        {{ "ERROR_MESSAGE" | translate }}
       </mat-error>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>{{ 'CDR_REPORT.FORM.NAME_PLANT' | translate }}</mat-label>
-      <mat-select
-        formControlName="plantId"
-        (ngModelChange)="plantChange($event)"
-      >
+      <mat-label>{{ "CDR_REPORT.FORM.NAME_PLANT" | translate }}</mat-label>
+      <mat-select formControlName="plantId">
         <mat-option *ngFor="let plant of cdrReportPlants" [value]="plant.id">
           {{ plant.namePlant }}
         </mat-option>
       </mat-select>
       <mat-error>
-        {{ 'ERROR_MESSAGE' | translate }}
+        {{ "ERROR_MESSAGE" | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ "CDR_REPORT.FORM.KIND" | translate }}</mat-label>
+      <mat-select formControlName="kindId">
+        <mat-option *ngFor="let kind of dicKinds" [value]="kind.id">
+          {{ kind.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error>
+        {{ "ERROR_MESSAGE" | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ "CDR_REPORT.FORM.VALIDATION" | translate }}</mat-label>
+      <mat-select formControlName="validatorId">
+        <mat-option *ngFor="let dicOrg of dicOrganizations" [value]="dicOrg.id">
+          {{ dicOrg.orgName }}
+        </mat-option>
+      </mat-select>
+      <mat-error>
+        {{ "ERROR_MESSAGE" | translate }}
       </mat-error>
     </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-    <button
-      mat-raised-button
-      mat-dialog-close
-      color="warn"
-      type="button"
-      (click)="hideCdrReportFormDialog()"
-    >
-      {{ 'CANCEL' | translate }}
+    <button mat-raised-button mat-dialog-close color="warn" type="button">
+      {{ "CANCEL" | translate }}
     </button>
     <button mat-raised-button color="primary" type="submit">
-      {{ 'SAVE' | translate }}
+      {{ "SAVE" | translate }}
     </button>
   </mat-dialog-actions>
 </form>

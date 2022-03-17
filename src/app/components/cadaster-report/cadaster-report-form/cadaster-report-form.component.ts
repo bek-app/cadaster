@@ -1,13 +1,16 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
-} from '@angular/forms'
-import { CadasterReportService } from 'src/app/services/cadaster-report.service'
-import { PlantService } from 'src/app/services/plant.service'
+} from '@angular/forms';
+import { Dictionary } from '@models/dictionary.model';
+import { DicOrganization } from '@models/dictionary/dic-org.model';
+import { DicKindReportService } from '@services/dictionary/dic-kind-report.service';
+import { DicOrganizationService } from '@services/dictionary/dic-org.service';
+import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 
 @Component({
   selector: 'app-cadaster-report-form',
@@ -15,56 +18,74 @@ import { PlantService } from 'src/app/services/plant.service'
   styleUrls: ['./cadaster-report-form.component.css'],
 })
 export class CadasterReportFormComponent implements OnInit {
-  form: FormGroup
-  submitted?: boolean
-  cdrReportPlants: any[] = []
-  @Output() addCdrReport: EventEmitter<any> = new EventEmitter()
+  form: FormGroup;
+  submitted?: boolean;
+  cdrReportPlants: any[] = [];
+  dicKinds: Dictionary[] = [];
+  dicOrganizations: DicOrganization[] = [];
+  isActive = false;
+  @Output() addCdrReport: EventEmitter<any> = new EventEmitter();
+  @Output() updateCdrReport: EventEmitter<any> = new EventEmitter();
   constructor(
     private fb: FormBuilder,
     private cdrReportService: CadasterReportService,
+    private dicKindReportService: DicKindReportService,
+    private dicOrganizationService: DicOrganizationService
   ) {
     this.form = this.fb.group({
       reportYear: new FormControl(2021, Validators.required),
       plantId: new FormControl('', Validators.required),
-    })
+      kindId: new FormControl('', Validators.required),
+      validatorId: new FormControl('', Validators.required),
+    });
   }
 
   ngOnInit(): void {
     this.cdrReportService
       .getCdrReportPlant(1, 2021)
       .subscribe((cdrReportPlants) => {
-        this.cdrReportPlants = cdrReportPlants
-      })
+        this.cdrReportPlants = cdrReportPlants;
+      });
+
+    this.dicKindReportService
+      .getDicKindReport()
+      .subscribe((kind) => (this.dicKinds = kind));
+
+    this.dicOrganizationService
+      .getDicOrganizations('validator')
+      .subscribe((organizations) => (this.dicOrganizations = organizations));
   }
 
   onSubmit() {
-    this.submitted = true
+    this.submitted = true;
     if (this.form.invalid) {
-      return
+      return;
     }
-
-    const data = {  id: 0, ...this.form.value }
-    this.addCdrReport.emit(data)
-    this.hideCdrReportFormDialog()
+    const data = { ...this.form.value };
+    !this.isActive
+      ? this.addCdrReport.emit(data)
+      : this.updateCdrReport.emit(data);
   }
 
   yearChange(event: any) {
-    const year = event.target.value
+    const year = event.target.value;
     this.cdrReportService
       .getCdrReportPlant(1, year)
       .subscribe((cdrReportPlants) => {
-        console.log(cdrReportPlants)
-        this.cdrReportPlants = cdrReportPlants
-      })
+        console.log(cdrReportPlants);
+        this.cdrReportPlants = cdrReportPlants;
+      });
   }
-  plantChange(event: any) {}
 
-  hideCdrReportFormDialog() {
-    this.submitted = false
-    this.form.reset()
+  editForm(id: number) {
+    this.isActive = true;
+    this.cdrReportService.getCadasterReportById(id).subscribe((data: any) => {
+      console.log(data);
+      this.form.patchValue(data);
+    });
   }
 
   get f(): { [key: string]: AbstractControl } {
-    return this.form.controls
+    return this.form.controls;
   }
 }

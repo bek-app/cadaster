@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import {
   AngularGridInstance,
   Column,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid'
-import { CadasterReportModel } from 'src/app/models/cadaster-report.model'
-import { CadasterReportService } from 'src/app/services/cadaster-report.service'
+} from 'angular-slickgrid';
+import { CadasterReportModel } from 'src/app/models/cadaster-report.model';
+import { CadasterReportService } from 'src/app/services/cadaster-report.service';
 @Component({
   selector: 'app-cadaster-report-check',
   templateUrl: './cadaster-report-check.component.html',
@@ -16,66 +16,66 @@ import { CadasterReportService } from 'src/app/services/cadaster-report.service'
   encapsulation: ViewEncapsulation.None,
 })
 export class CadasterReportCheckComponent implements OnInit {
-  angularGrid!: AngularGridInstance
-  columnDefinitions: Column[] = []
-  gridOptions: GridOption = {}
-  dataset: CadasterReportModel[] = []
-  gridObj: any
-  dataViewObj: any
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: CadasterReportModel[] = [];
+  gridObj: any;
+  dataViewObj: any;
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid
-    this.gridObj = angularGrid.slickGrid
-    this.dataViewObj = angularGrid.dataView
+    this.angularGrid = angularGrid;
+    this.gridObj = angularGrid.slickGrid;
+    this.dataViewObj = angularGrid.dataView;
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const statusDraft = 'status__draft'
+      const statusDraft = 'status__draft';
 
-      const statusProvided = 'status__provided'
+      const statusProvided = 'status__provided';
 
-      const statusApproved = 'status__approved'
+      const statusApproved = 'status__approved';
 
-      const statusExplanations = 'status__explanations'
+      const statusExplanations = 'status__explanations';
 
-      const statusIncomplete = 'status__incomplete'
+      const statusIncomplete = 'status__incomplete';
 
-      const statusNotCorrect = 'status__notCorrect'
+      const statusNotCorrect = 'status__notCorrect';
 
-      const item = this.dataViewObj.getItem(row)
+      const item = this.dataViewObj.getItem(row);
 
       switch (item.statusId) {
         case 1:
-          return { cssClasses: statusDraft }
+          return { cssClasses: statusDraft };
         case 2:
-          return { cssClasses: statusProvided }
+          return { cssClasses: statusProvided };
         case 3:
-          return { cssClasses: statusApproved }
+          return { cssClasses: statusApproved };
         case 4:
-          return { cssClasses: statusExplanations }
+          return { cssClasses: statusExplanations };
         case 5:
-          return { cssClasses: statusIncomplete }
+          return { cssClasses: statusIncomplete };
         case 6:
-          return { cssClasses: statusNotCorrect }
+          return { cssClasses: statusNotCorrect };
       }
-      return ''
-    }
+      return '';
+    };
   }
 
   constructor(
     private cadasterService: CadasterReportService,
     private router: Router,
     private route: ActivatedRoute,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid()
-    this.refreshList()
+    this.prepareGrid();
+    this.refreshList();
   }
 
   refreshList() {
     this.cadasterService
       .getCadasterReportList(0)
-      .subscribe((data) => (this.dataset = data))
+      .subscribe((data) => (this.dataset = data));
   }
 
   prepareGrid() {
@@ -90,7 +90,7 @@ export class CadasterReportCheckComponent implements OnInit {
         NAME_ORG,
         REG_NUMBER,
         STATUS_NAME,
-      } = translations
+      } = translations;
 
       this.columnDefinitions = [
         {
@@ -163,15 +163,17 @@ export class CadasterReportCheckComponent implements OnInit {
           excludeFromHeaderMenu: true,
           formatter: () => `<i class="fa fa-cog" style="cursor:pointer;"></i>`,
           onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id
+            const id = args.dataContext.id;
             this.router.navigate(['../cdr-report-check-list/', id], {
               relativeTo: this.route,
-            })
+            });
           },
         },
-      ]
-    })
+      ];
+    });
 
-    this.gridOptions = {}
+    this.gridOptions = {
+      enableRowSelection: true,
+    };
   }
 }
