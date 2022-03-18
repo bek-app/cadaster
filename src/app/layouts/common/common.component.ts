@@ -6,21 +6,35 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 @Component({
   selector: 'app-common',
   templateUrl: './common.component.html',
-  styleUrls: ['./common.component.css']
+  styleUrls: ['./common.component.css'],
 })
 export class CommonComponent implements OnInit {
-
   account: AccountModel | null;
-
-  constructor(private authService: AuthenticationService
-    , private router: Router) { 
+  hideMenuItem: boolean = false;
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router
+  ) {
     this.account = this.authService.getUserData();
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    const user = this.authService.getUserData();
+    const userInfo = this.authService.getUserData();
+    const role = userInfo?.roles?.[0];
+    if (role === 'declarant') {
+      this.hideMenuItem = true;
+    }
+    // if (Array.isArray(user?.roles)) {
+    //   user?.roles?.forEach((role: string) => {
+    //     console.log(role);
+    //   });
+    // }
+    console.log(this.account?.roles);
+  }
 
   logout() {
-    this.authService.logout().subscribe(r => {
+    this.authService.logout().subscribe((r) => {
       this.router.navigate(['/auth/login']);
     });
   }
