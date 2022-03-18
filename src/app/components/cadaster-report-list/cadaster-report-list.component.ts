@@ -92,8 +92,7 @@ export class CadasterReportListComponent implements OnInit, AfterViewInit {
                 src: 'report-plan',
                 name: PLAN,
               },
-            ];
-            console.log(this.kindId);
+            ]; 
 
             if (this.kindId == 1) {
               this.filteredRoute = this.cdrReportRoute.filter(

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute, Params } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
-import { CadasterReportService } from '@services/cadaster-report.service'
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { CadasterReportService } from '@services/cadaster-report.service';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -11,64 +11,64 @@ import {
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid'
-import { ReportCommentModel } from 'src/app/models/report-comment.model'
-import { ReportCommentService } from 'src/app/services/report-comment.service'
-import { ReportSharedService } from 'src/app/services/report-shared.service'
-import { ActualEmissionService } from '../../../services/actual-emission.service'
-import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
-import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
-import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter'
+} from 'angular-slickgrid';
+import { ReportCommentModel } from 'src/app/models/report-comment.model';
+import { ReportCommentService } from 'src/app/services/report-comment.service';
+import { ReportSharedService } from 'src/app/services/report-shared.service';
+import { ActualEmissionService } from '../../../services/actual-emission.service';
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
+import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 @Component({
   selector: 'app-report-actual-emission',
   templateUrl: './report-actual-emission.component.html',
   styleUrls: ['./report-actual-emission.component.css'],
 })
 export class ReportActualEmissionComponent implements OnInit {
-  angularGrid!: AngularGridInstance
-  columnDefinitions: Column[] = []
-  gridOptions: GridOption = {}
-  dataset: any[] = []
-  gridObj: any
-  dataViewObj: any
-  cdrReportId!: number
-  isExcludingChildWhenFiltering = false
-  isAutoApproveParentItemWhenTreeColumnIsValid = true
-  commentList: ReportCommentModel[] = []
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: any[] = [];
+  gridObj: any;
+  dataViewObj: any;
+  cdrReportId!: number;
+  isExcludingChildWhenFiltering = false;
+  isAutoApproveParentItemWhenTreeColumnIsValid = true;
+  commentList: ReportCommentModel[] = [];
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid
-    this.gridObj = angularGrid.slickGrid
-    this.dataViewObj = angularGrid.dataView
+    this.angularGrid = angularGrid;
+    this.gridObj = angularGrid.slickGrid;
+    this.dataViewObj = angularGrid.dataView;
 
     this.dataViewObj.getItemMetadata = (row: any) => {
-      const newCssClass = 'inactive__header'
-      const materialClass = 'sub__header-material'
-      const processClass = 'sub__header-process'
+      const newCssClass = 'inactive__header';
+      const materialClass = 'sub__header-material';
+      const processClass = 'sub__header-process';
 
-      const item = this.dataViewObj.getItem(row)
+      const item = this.dataViewObj.getItem(row);
 
       if (item.__hasChildren && item.__treeLevel === 0) {
         return {
           cssClasses: newCssClass,
-        }
+        };
       } else if (item.key == 'material') {
         return {
           cssClasses: materialClass,
-        }
+        };
       } else if (item.key == 'processes') {
         return {
           cssClasses: processClass,
-        }
-      } else return ''
-    }
+        };
+      } else return '';
+    };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.__hasChildren) {
-        return false
+        return false;
       }
-      return true
-    })
+      return true;
+    });
   }
 
   constructor(
@@ -78,42 +78,42 @@ export class ReportActualEmissionComponent implements OnInit {
     private translate: TranslateService,
     private commentService: ReportCommentService,
     private cadasterService: CadasterReportService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid()
+    this.prepareGrid();
     this.route.params.subscribe((param: Params) => {
-      this.cdrReportId = +param['id']
-      this.refreshList(this.cdrReportId)
-      this.getCommentList(this.cdrReportId)
-    })
+      this.cdrReportId = +param['id'];
+      this.refreshList(this.cdrReportId);
+      this.getCommentList(this.cdrReportId);
+    });
   }
 
   getCommentList(cdrReportId: number): void {
     this.commentService
       .getReportCommentList(cdrReportId, 'actual')
       .subscribe((data: any) => {
-        this.commentList = data
-      })
+        this.commentList = data;
+      });
   }
 
   refreshList(reportId: number) {
     this.actualEmissionService
       .getActualEmissionById(reportId)
       .subscribe((data) => {
-        let group: any[] = []
+        let group: any[] = [];
         data.forEach((items) => {
           items.processes.forEach((process: any) => {
             Object.assign(process, {
               processName: process.dicMaterialName,
-            })
-          })
+            });
+          });
           items.materials.forEach((material: any) => {
             Object.assign(material, {
               processName: material.dicMaterialName,
-            })
-          })
+            });
+          });
           group = [
             {
               id: '_' + Math.random().toString(36),
@@ -127,31 +127,31 @@ export class ReportActualEmissionComponent implements OnInit {
               group: [...items.processes],
               key: 'processes',
             },
-          ].sort((a, b) => (a.processName < b.processName ? 1 : -1))
-          Object.assign(items, { group })
-        })
+          ].sort((a, b) => (a.processName < b.processName ? 1 : -1));
+          Object.assign(items, { group });
+        });
+        console.log(data);
 
-        this.dataset = data
-      })
+        this.dataset = data;
+      });
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
     if (field !== 'processName') {
       for (const item in metadata.dataContext) {
         if (field === item) {
-          let controlValue = metadata.dataContext[item]
-          let newControlValue
+          let controlValue = metadata.dataContext[item];
+          let newControlValue;
 
           if (typeof controlValue === 'object' && controlValue !== null) {
-            newControlValue = controlValue.name
+            newControlValue = controlValue.name;
           } else if (controlValue === null) {
-            newControlValue = controlValue
-          } else newControlValue = controlValue.toString()
+            newControlValue = controlValue;
+          } else newControlValue = controlValue.toString();
 
           const comment: ReportCommentModel = {
             id: 0,
@@ -163,29 +163,28 @@ export class ReportActualEmissionComponent implements OnInit {
             isMark: true,
             isActive: true,
             reportId: this.cdrReportId,
-          }
+          };
 
-          this.sharedDataService.sendComment(comment)
+          this.sharedDataService.sendComment(comment);
         }
       }
     }
   }
 
   onCellChanged(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
 
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
 
     for (let item in metadata.dataContext) {
       if (field === item) {
-        let nameField = item[0].toUpperCase() + item.slice(1)
-        let valueField = metadata.dataContext[item]
-        let discriminator = metadata.dataContext.discriminator
+        let nameField = item[0].toUpperCase() + item.slice(1);
+        let valueField = metadata.dataContext[item];
+        let discriminator = metadata.dataContext.discriminator;
         if (typeof valueField === 'object') {
-          return
+          return;
         }
 
         const data = {
@@ -193,11 +192,20 @@ export class ReportActualEmissionComponent implements OnInit {
           nameField,
           valueField: valueField.toString(),
           discriminator,
-        }
+        };
 
-        this.actualEmissionService.addActualEmission(data).subscribe((res) => {
-          this.refreshList(this.cdrReportId)
-        })
+        this.actualEmissionService
+          .addActualEmission(data)
+          .subscribe((result) => {
+            console.log(result);
+
+            const { totalCo2, totalTon } = result;
+            this.angularGrid.gridService.addItem({
+              ...metadata.dataContext,
+              totalCo2,
+              totalTon,
+            });
+          });
       }
     }
   }
@@ -208,19 +216,19 @@ export class ReportActualEmissionComponent implements OnInit {
     value: any,
     columnDef: Column,
     dataContext: any,
-    grid?: any,
+    grid?: any
   ) => {
-    const { id } = dataContext
-    const { field } = columnDef
+    const { id } = dataContext;
+    const { field } = columnDef;
 
     const res = this.commentList.find((comment) => {
-      return comment.recordId === id.toString() && comment.controlId === field
-    })
+      return comment.recordId === id.toString() && comment.controlId === field;
+    });
     return {
       addClasses: res ? 'border' : '',
       text: value ? value : '',
-    }
-  }
+    };
+  };
 
   prepareGrid() {
     this.translate
@@ -241,7 +249,7 @@ export class ReportActualEmissionComponent implements OnInit {
           TOTAL_CO2,
           TOTAL_TON,
           TOTAL_GROUP,
-        } = translations
+        } = translations;
 
         this.columnDefinitions = [
           {
@@ -407,8 +415,8 @@ export class ReportActualEmissionComponent implements OnInit {
             filterable: true,
             sortable: true,
           },
-        ]
-      })
+        ];
+      });
 
     this.gridOptions = {
       enableFiltering: true,
@@ -419,8 +427,8 @@ export class ReportActualEmissionComponent implements OnInit {
         columnId: 'processName',
         childrenPropName: 'group',
         excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering,
-        autoApproveParentItemWhenTreeColumnIsValid: this
-          .isAutoApproveParentItemWhenTreeColumnIsValid,
+        autoApproveParentItemWhenTreeColumnIsValid:
+          this.isAutoApproveParentItemWhenTreeColumnIsValid,
       },
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
@@ -429,6 +437,6 @@ export class ReportActualEmissionComponent implements OnInit {
       presets: {
         treeData: { toggledItems: [{ itemId: 1, isCollapsed: true }] },
       },
-    }
+    };
   }
 }

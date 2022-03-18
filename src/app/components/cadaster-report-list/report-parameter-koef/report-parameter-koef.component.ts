@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -23,8 +23,6 @@ import { CustomInputEditorComponent } from '../../editors/custom-input-editor/cu
 import { ReportCommentService } from 'src/app/services/report-comment.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CadasterReportService } from '@services/cadaster-report.service';
-import { CadasterReportModel } from '@models/cadaster-report.model';
-import { map } from 'rxjs';
 @Component({
   selector: 'app-report-parameter-koef',
   templateUrl: './report-parameter-koef.component.html',
@@ -44,6 +42,7 @@ export class ReportParameterKoefComponent implements OnInit {
   commentList: any[] = [];
   kindId!: number;
   mappedColumnDefinitions: any;
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
@@ -81,10 +80,8 @@ export class ReportParameterKoefComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private angularUtilService: AngularUtilService,
     private sharedDataService: ReportSharedService,
-    private notificationService: NotificationService,
     private commentService: ReportCommentService,
-    private translate: TranslateService,
-    private cadasterService: CadasterReportService
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -101,11 +98,7 @@ export class ReportParameterKoefComponent implements OnInit {
 
     this.prepareGrid();
   }
-  // getKind() {
-  //   return this.cadasterService
-  //     .getCadasterReportById(this.cdrReportId)
-  //     .pipe(map((data: any) => data.kindId));
-  // }
+
   getCommentList(reportId: number): void {
     this.commentService
       .getReportCommentList(reportId, 'coeff')
@@ -284,14 +277,7 @@ export class ReportParameterKoefComponent implements OnInit {
 
         this.parameterKoefService
           .addParameterKoef(data)
-          .subscribe((result: any) => {
-            result.isSuccess
-              ? this.notificationService.success(
-                  '“Ваши данные сохранены”',
-                  'Done'
-                )
-              : this.notificationService.error(`${result.message}`);
-          });
+          .subscribe((result: any) => {});
       }
     }
   }
@@ -379,14 +365,7 @@ export class ReportParameterKoefComponent implements OnInit {
 
               this.parameterKoefService
                 .addParameterKoef(data)
-                .subscribe((result: any) => {
-                  result.isSuccess
-                    ? this.notificationService.success(
-                        '“Ваши данные сохранены”',
-                        'Done'
-                      )
-                    : this.notificationService.error(`${result.message}`);
-                });
+                .subscribe((result: any) => {});
             },
           },
 
@@ -807,24 +786,6 @@ export class ReportParameterKoefComponent implements OnInit {
           },
         ];
       });
-
-    // this.getKind().subscribe((kindId) => (this.kindId = kindId));
-
-    // if (this.kindId === 2) {
-    //   this.mappedColumnDefinitions = this.columnDefinitions.filter(
-    //     (col: any) =>
-    //       col.id !== 'koefOperatingWeight' &&
-    //       col.id !== 'koefOperatingWeightUnit'
-    //   );
-    // } else this.mappedColumnDefinitions = this.columnDefinitions;
-
-    // const newDefinitions = this.mappedColumnDefinitions.map(
-    //   (col: { id: string }) => {
-    //     return { columnId: col.id };
-    //   }
-    // );
-
-    // console.log(newDefinitions);
 
     this.gridOptions = {
       enableFiltering: true,
