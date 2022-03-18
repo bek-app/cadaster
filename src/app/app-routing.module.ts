@@ -33,9 +33,10 @@ import { UserFormComponent } from './components/administration/user-form/user-fo
 import { ParameterKoefSimpleComponent } from './components/cadaster-report-list/parameter-koef-simple/parameter-koef-simple.component';
 import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/carbon-unit-simple/carbon-unit-simple.component';
 import { ProfileComponent } from './components/authentication/profile/profile.component';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'common/plant', pathMatch: 'full' },
+  { path: '', redirectTo: 'common/home', pathMatch: 'full' },
 
   {
     path: 'auth',
@@ -73,6 +74,7 @@ const routes: Routes = [
           },
         ],
       },
+      { path: 'home', component: HomeComponent },
       {
         path: 'plant',
         component: PlantListComponent,

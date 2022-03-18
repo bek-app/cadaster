@@ -61,7 +61,8 @@ import { MtxSelectModule } from '@ng-matero/extensions/select';
 import { ParameterKoefSimpleComponent } from './components/cadaster-report-list/parameter-koef-simple/parameter-koef-simple.component';
 import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/carbon-unit-simple/carbon-unit-simple.component'
 import { MatTreeSelectInputModule } from 'mat-tree-select-input';
-import { ProfileComponent } from './components/authentication/profile/profile.component'
+import { ProfileComponent } from './components/authentication/profile/profile.component';
+import { HomeComponent } from './components/home/home.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -112,6 +113,7 @@ import { ProfileComponent } from './components/authentication/profile/profile.co
     ParameterKoefSimpleComponent,
     CarbonUnitSimpleComponent,
     ProfileComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
