@@ -13,6 +13,10 @@ export class SigndocService {
     return this.http.post<SignedDoc>(`${this.apiUrl}`, entity);
   }
 
+  checkSignedDoc(entityId: string) {
+    return this.http.get<boolean>(`${this.apiUrl}/sign/${entityId}`);
+  }
+
   getSignedDoc(id: string) {
     return this.http.get<SignedDoc>(`${this.apiUrl}/${id}`);
   }

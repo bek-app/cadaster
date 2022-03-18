@@ -70,4 +70,8 @@ export class CadasterReportService {
   deleteCadasterReport(id: number): Observable<CadasterReportModel> {
     return this.http.delete<CadasterReportModel>('api/KdrReport?id=' + id)
   }
+
+  getReportXml(id: number) {
+    return this.http.get<any>(`api/KdrReport/xml/${id}`);
+  }
 }

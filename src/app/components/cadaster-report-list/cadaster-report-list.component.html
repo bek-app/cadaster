@@ -37,7 +37,8 @@
     </a>
   </nav>
   <div class="btn">
-    <button mat-raised-button>Подписать и отправить</button>
+    <button mat-raised-button (click)="signAndSend()"  *ngIf="!isSigned">Подписать и отправить</button>
+    <mat-icon *ngIf="isSigned" class="color-orange">assignment_turned_in</mat-icon>
   </div>
 
   <router-outlet></router-outlet>
