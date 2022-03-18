@@ -60,7 +60,8 @@ import { MtxGridModule } from '@ng-matero/extensions/grid'
 import { MtxSelectModule } from '@ng-matero/extensions/select';
 import { ParameterKoefSimpleComponent } from './components/cadaster-report-list/parameter-koef-simple/parameter-koef-simple.component';
 import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/carbon-unit-simple/carbon-unit-simple.component'
-import { MatTreeSelectInputModule } from 'mat-tree-select-input'
+import { MatTreeSelectInputModule } from 'mat-tree-select-input';
+import { ProfileComponent } from './components/authentication/profile/profile.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -110,6 +111,7 @@ import { MatTreeSelectInputModule } from 'mat-tree-select-input'
     ConfirmDialogComponent,
     ParameterKoefSimpleComponent,
     CarbonUnitSimpleComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

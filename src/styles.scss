@@ -12,7 +12,6 @@ $theme: mat-light-theme($primary, $accent, $warn);
 @include material-extensions-experimental-theme($theme);
 
 .slickgrid-container {
-   
   .slick-preheader-panel {
     .slick-header-columns {
       .slick-header-column {
@@ -57,6 +56,9 @@ $theme: mat-light-theme($primary, $accent, $warn);
       }
     }
   }
+}
+.mat-option {
+  width: 100%;
 }
 
 .inactive__header {

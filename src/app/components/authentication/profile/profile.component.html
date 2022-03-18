@@ -1,0 +1,206 @@
+<div
+  class="container login-container"
+  fxLayout="row"
+  fxLayoutAlign="center center"
+>
+  <form
+    [formGroup]="registrationForm"
+    fxFlex="70%"
+    fxFlex.sm="50%"
+    fxFlex.xs="90%"
+  >
+    <mat-card>
+      <mat-card-title>Регистрация</mat-card-title>
+      <mat-card-subtitle>в систему КАДАСТР</mat-card-subtitle>
+
+      <div class="registration-content" fxLayout="row" fxLayoutGap="10px">
+        <mat-card-content fxFlex="50%">
+          <mat-form-field class="full-width">
+            <mat-label>БИН/ИИН</mat-label>
+            <input
+              id="organizationBinInput"
+              matInput
+              formControlName="organizationBin"
+              autocomplete="organizationBin"
+              type="text"
+            />
+            <mat-error
+              id="requiredIinError"
+              *ngIf="
+                registrationForm.controls['organizationBin'].hasError(
+                  'required'
+                )
+              "
+            >
+              Пожалуйста, введите значения
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-label>Организация/ФИО</mat-label>
+            <input
+              id="organizationNameInput"
+              matInput
+              formControlName="organizationName"
+              autocomplete="organizationName"
+              type="text"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>E-mail</mat-label>
+            <input
+              id="emailInput"
+              matInput
+              formControlName="email"
+              autocomplete="email"
+              type="text"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Телефон</mat-label>
+            <input
+              id="phoneInput"
+              matInput
+              formControlName="phone"
+              autocomplete="phone"
+              type="text"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Руководитель</mat-label>
+            <input
+              id="phoneInput"
+              matInput
+              formControlName="boss"
+              autocomplete="phone"
+              type="text"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Ответственное лицо</mat-label>
+            <input
+              id="phoneInput"
+              matInput
+              formControlName="responsible"
+              autocomplete="phone"
+              type="text"
+            />
+          </mat-form-field>
+
+          <input id="Certificate" formControlName="certificate" type="hidden" />
+        </mat-card-content>
+
+        <mat-card-content fxFlex="50%">
+          <mat-form-field>
+            <mat-label>
+              <mat-label>{{ "PLANT.FORM.OBLAST" | translate }}</mat-label>
+            </mat-label>
+            <mat-select
+              formControlName="oblastId"
+              (ngModelChange)="oblastChange($event)"
+            >
+              <mat-option *ngFor="let obl of oblast" [value]="obl.id">
+                {{ obl.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error>{{
+              "PLANT.FORM.VALIDATOR.OBLAST" | translate
+            }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              <mat-label>{{ "PLANT.FORM.REGION" | translate }}</mat-label>
+            </mat-label>
+            <mat-select
+              formControlName="regionId"
+              (ngModelChange)="regionChange($event)"
+            >
+              <mat-option *ngFor="let reg of region" [value]="reg.id">
+                {{ reg.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error>{{
+              "PLANT.FORM.VALIDATOR.REGION" | translate
+            }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              <mat-label>{{ "PLANT.FORM.SUBREGION" | translate }}</mat-label>
+            </mat-label>
+            <mat-select
+              formControlName="subRegionId"
+              (ngModelChange)="subRegionChange($event)"
+            >
+              <mat-option *ngFor="let subReg of subRegion" [value]="subReg.id">
+                {{ subReg.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              <mat-label>{{ "PLANT.FORM.VILLAGE" | translate }}</mat-label>
+            </mat-label>
+            <mat-select
+              formControlName="villageId"
+              (ngModelChange)="villageChange($event)"
+            >
+              <mat-option *ngFor="let vil of village" [value]="vil.id">
+                {{ vil.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              <mat-label> Адрес</mat-label>
+            </mat-label>
+            <input matInput formControlName="address" type="text" />
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Почтовый индекс</mat-label>
+            <input
+              id="phoneInput"
+              matInput
+              formControlName="postIndex"
+              autocomplete="phone"
+              type="text"
+            />
+          </mat-form-field>
+        </mat-card-content>
+      </div>
+
+      <ngx-mat-tree-select-input
+        [options]="dicOkeds"
+        [placeholder]="'Сфера деятельности'"
+        [controlName]="'okedId'"
+        [canSelectParentNode]="false"
+      >
+      </ngx-mat-tree-select-input>
+
+      <mat-card-actions class="login-actions">
+        <button
+          mat-raised-button
+          id="login"
+          color="primary"
+          [disabled]="registrationForm.invalid || loading"
+          (click)="register()"
+        >
+          Зарегистрироваться
+        </button>
+
+        <!-- <button mat-button id="resetPassword" (click)="toLogin()" type="button">
+          Вход
+        </button> -->
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  </form>
+</div>
