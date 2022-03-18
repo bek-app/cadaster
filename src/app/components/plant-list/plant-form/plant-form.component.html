@@ -1,22 +1,22 @@
 <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="dialog__title">
     <h2 mat-dialog-title>
-      {{ 'PLANT.TITLE' | translate }}
+      {{ "PLANT.TITLE" | translate }}
     </h2>
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>{{ 'PLANT.FORM.NAME' | translate }}</mat-label>
+      <mat-label>{{ "PLANT.FORM.NAME" | translate }}</mat-label>
       <input matInput formControlName="namePlant" type="text" />
       <mat-error>
-        {{ 'PLANT.FORM.VALIDATOR.NAME' | translate }}
+        {{ "PLANT.FORM.VALIDATOR.NAME" | translate }}
       </mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        <mat-label>{{ 'PLANT.FORM.OBLAST' | translate }}</mat-label>
+        <mat-label>{{ "PLANT.FORM.OBLAST" | translate }}</mat-label>
       </mat-label>
       <mat-select
         formControlName="oblastId"
@@ -26,12 +26,12 @@
           {{ obl.name }}
         </mat-option>
       </mat-select>
-      <mat-error>{{ 'PLANT.FORM.VALIDATOR.OBLAST' | translate }}</mat-error>
+      <mat-error>{{ "PLANT.FORM.VALIDATOR.OBLAST" | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        <mat-label>{{ 'PLANT.FORM.REGION' | translate }}</mat-label>
+        <mat-label>{{ "PLANT.FORM.REGION" | translate }}</mat-label>
       </mat-label>
       <mat-select
         formControlName="regionId"
@@ -41,12 +41,12 @@
           {{ reg.name }}
         </mat-option>
       </mat-select>
-      <mat-error>{{ 'PLANT.FORM.VALIDATOR.REGION' | translate }}</mat-error>
+      <mat-error>{{ "PLANT.FORM.VALIDATOR.REGION" | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        <mat-label>{{ 'PLANT.FORM.SUBREGION' | translate }}</mat-label>
+        <mat-label>{{ "PLANT.FORM.SUBREGION" | translate }}</mat-label>
       </mat-label>
       <mat-select
         formControlName="subRegionId"
@@ -60,7 +60,7 @@
 
     <mat-form-field>
       <mat-label>
-        <mat-label>{{ 'PLANT.FORM.VILLAGE' | translate }}</mat-label>
+        <mat-label>{{ "PLANT.FORM.VILLAGE" | translate }}</mat-label>
       </mat-label>
       <mat-select
         formControlName="villageId"
@@ -74,13 +74,33 @@
 
     <mat-form-field>
       <mat-label>
-        <mat-label>{{ 'PLANT.FORM.ADDRESS' | translate }}</mat-label>
+        <mat-label>{{ "PLANT.FORM.ADDRESS" | translate }}</mat-label>
       </mat-label>
       <input matInput formControlName="address" type="text" />
     </mat-form-field>
+    <div fxLayout="column">
+      <label fxFlex="100%">Координаты </label>
 
+      <div class="coords">
+        <mat-form-field fxFlex="50%">
+          <mat-label> X</mat-label>
+          <input matInput formControlName="lat" type="number" />
+          <mat-error>
+            {{ "PLANT.FORM.VALIDATOR.NAME" | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50%">
+          <mat-label>Y</mat-label>
+          <input matInput formControlName="lng" type="number" />
+          <mat-error>
+            {{ "PLANT.FORM.VALIDATOR.NAME" | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
     <mat-checkbox formControlName="inactive">
-      {{ 'PLANT.FORM.INACTIVE' | translate }}
+      {{ "PLANT.FORM.INACTIVE" | translate }}
     </mat-checkbox>
   </mat-dialog-content>
 
@@ -90,10 +110,10 @@
     *ngIf="!viewMode"
   >
     <button mat-raised-button mat-dialog-close color="warn">
-      {{ 'CANCEL' | translate }}
+      {{ "CANCEL" | translate }}
     </button>
     <button mat-raised-button color="primary" type="submit">
-      {{ 'SAVE' | translate }}
+      {{ "SAVE" | translate }}
     </button>
   </mat-dialog-actions>
 </form>
