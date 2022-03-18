@@ -30,7 +30,7 @@
 
     <mat-form-field>
       <mat-label>{{ "CDR_REPORT.FORM.KIND" | translate }}</mat-label>
-      <mat-select formControlName="kindId">
+      <mat-select formControlName="kindId" (ngModelChange)="kindChange($event)">
         <mat-option *ngFor="let kind of dicKinds" [value]="kind.id">
           {{ kind.name }}
         </mat-option>
@@ -40,17 +40,22 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>{{ "CDR_REPORT.FORM.VALIDATION" | translate }}</mat-label>
-      <mat-select formControlName="validatorId">
-        <mat-option *ngFor="let dicOrg of dicOrganizations" [value]="dicOrg.id">
-          {{ dicOrg.orgName }}
-        </mat-option>
-      </mat-select>
-      <mat-error>
-        {{ "ERROR_MESSAGE" | translate }}
-      </mat-error>
-    </mat-form-field>
+    <ng-container *ngIf="hideValidator">
+      <mat-form-field>
+        <mat-label>{{ "CDR_REPORT.FORM.VALIDATION" | translate }}</mat-label>
+        <mat-select formControlName="validatorId">
+          <mat-option
+            *ngFor="let dicOrg of dicOrganizations"
+            [value]="dicOrg.id"
+          >
+            {{ dicOrg.orgName }}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          {{ "ERROR_MESSAGE" | translate }}
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
   </mat-dialog-content>
 
   <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">

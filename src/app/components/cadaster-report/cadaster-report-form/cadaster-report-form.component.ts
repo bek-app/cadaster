@@ -24,8 +24,10 @@ export class CadasterReportFormComponent implements OnInit {
   dicKinds: Dictionary[] = [];
   dicOrganizations: DicOrganization[] = [];
   isActive = false;
+  hideValidator = true;
   @Output() addCdrReport: EventEmitter<any> = new EventEmitter();
   @Output() updateCdrReport: EventEmitter<any> = new EventEmitter();
+
   constructor(
     private fb: FormBuilder,
     private cdrReportService: CadasterReportService,
@@ -36,7 +38,7 @@ export class CadasterReportFormComponent implements OnInit {
       reportYear: new FormControl(2021, Validators.required),
       plantId: new FormControl('', Validators.required),
       kindId: new FormControl('', Validators.required),
-      validatorId: new FormControl('', Validators.required),
+      validatorId: new FormControl(),
     });
   }
 
@@ -65,6 +67,15 @@ export class CadasterReportFormComponent implements OnInit {
     !this.isActive
       ? this.addCdrReport.emit(data)
       : this.updateCdrReport.emit(data);
+  }
+
+  kindChange(value: number) {
+    if (value === 2) {
+      this.hideValidator = false;
+    } else {
+      this.hideValidator = true;
+      this.form.controls['validatorId'].setValidators(Validators.required);
+    }
   }
 
   yearChange(event: any) {
