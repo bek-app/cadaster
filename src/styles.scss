@@ -12,14 +12,14 @@ $theme: mat-light-theme($primary, $accent, $warn);
 @include material-extensions-experimental-theme($theme);
 
 .slickgrid-container {
-  box-sizing: border-box;
+   
   .slick-preheader-panel {
     .slick-header-columns {
       .slick-header-column {
         display: flex !important;
         justify-content: center !important;
-        border-right: 2px solid rgb(231, 228, 228) !important;
-        border-bottom: 2px solid rgb(231, 228, 228) !important;
+        border-right: 1px solid #9696 !important;
+        border-bottom: 1px solid #9696 !important;
         .slick-column-name {
         }
       }
@@ -29,8 +29,8 @@ $theme: mat-light-theme($primary, $accent, $warn);
   .slick-header {
     .slick-header-columns-left {
       .slick-header-column {
-        border-right: 2px solid rgb(231, 228, 228) !important;
-        border-top: 2px solid rgb(231, 228, 228) !important;
+        border-right: 1px solid #9696 !important;
+        border-top: 1px solid #9696 !important;
         .slick-column-name {
           font-size: 12px;
         }
@@ -44,14 +44,15 @@ $theme: mat-light-theme($primary, $accent, $warn);
     }
     .slick-row {
       .slick-cell {
-        border-right: 2px solid rgb(231, 228, 228) !important;
+        border-right: 1px solid #9696 !important;
+        border-bottom: 1px solid #9696 !important;
       }
       .slick-cell.active {
         box-shadow: none !important;
       }
       &:last-child {
         .slick-cell {
-          border-bottom: 2px solid rgb(231, 228, 228) !important;
+          // border-bottom: 1px solid #9696 !important;
         }
       }
     }

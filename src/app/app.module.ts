@@ -60,6 +60,7 @@ import { MtxGridModule } from '@ng-matero/extensions/grid'
 import { MtxSelectModule } from '@ng-matero/extensions/select';
 import { ParameterKoefSimpleComponent } from './components/cadaster-report-list/parameter-koef-simple/parameter-koef-simple.component';
 import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/carbon-unit-simple/carbon-unit-simple.component'
+import { MatTreeSelectInputModule } from 'mat-tree-select-input'
 @NgModule({
   declarations: [
     AppComponent,
@@ -124,6 +125,7 @@ import { CarbonUnitSimpleComponent } from './components/cadaster-report-list/car
     SlickGridModule,
     MtxGridModule,
     MtxSelectModule,
+    MatTreeSelectInputModule
   ],
   providers: [
     AuthGuard,
