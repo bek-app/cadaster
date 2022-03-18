@@ -1,6 +1,7 @@
 ::ng-deep.mat-form-field-appearance-standard .mat-form-field-flex {
   background: antiquewhite !important;
 }
+
 .report__header {
   padding: 15px;
   display: grid;
@@ -19,4 +20,16 @@
   padding-left: 5px;
   font-size: 18px;
   color: #2d8d90;
+}
+
+.btn {
+  position: absolute;
+  top: 70px;
+  right: 40px;
+  z-index: 1000;
+}
+
+.btn button {
+  background-color: #4bb543;
+  color: #fff
 }
