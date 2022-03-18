@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
       next: (data) => {
         this.loading = false;
         this.router.navigate(['/']);
-      }, 
+      },
       error: (error) => {
         this.loading = false;
         this.notificationService.error(error.error)
@@ -80,7 +80,7 @@ export class LoginComponent implements OnInit {
       next: (data) => {
         this.loading = false;
         this.router.navigate(['/']);
-      }, 
+      },
       error: (error) => {
         this.loading = false;
         if (error.status == 404) {
@@ -100,17 +100,25 @@ export class LoginComponent implements OnInit {
 
   chooseEcp() {
     getKeyInfoAuthCall((res: any) => {
+      debugger;
       const subjectAttrs = res.subjectDn.split(',');
       const iin = findSubjectAttr(subjectAttrs, 'SERIALNUMBER').substr(3);
       const email = findSubjectAttr(subjectAttrs, 'E');
       let cn = findSubjectAttr(subjectAttrs, 'CN');
       cn = cn || '';
+      var middleName = findSubjectAttr(subjectAttrs, 'G');
+      middleName = middleName || '';
+      let fullname = cn+' '+middleName;
       const bin = findSubjectAttr(subjectAttrs, 'OU');
-      if (bin) this.loginForm.controls.login.setValue(bin.substr(3));
-
-      let organizationName = findSubjectAttr(subjectAttrs, 'O');
-      if (organizationName) organizationName = organizationName.replace('\\','').replace('\\','');
-      this.loginForm.controls.organizationName.setValue(organizationName);
+      if (bin) {
+        this.loginForm.controls.login.setValue(bin.substr(3));
+        let organizationName = findSubjectAttr(subjectAttrs, 'O');
+        if (organizationName) organizationName = organizationName.replace('\\','').replace('\\','');
+        this.loginForm.controls.organizationName.setValue(organizationName);
+      }else {
+        this.loginForm.controls.login.setValue(iin);
+        this.loginForm.controls.organizationName.setValue(fullname);
+      }
 
       const pem = res['pem'];
       this.loginForm.controls.certificate.setValue(pem);

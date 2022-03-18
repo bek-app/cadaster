@@ -6,7 +6,7 @@
             <mat-card-subtitle>в систему Кадастр</mat-card-subtitle>
             <mat-card-content>
                 <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-                    <mat-tab label="Логин/пароль">         
+                    <mat-tab label="Логин/пароль">
                         <mat-form-field class="full-width">
                             <input id="loginInput" matInput placeholder="Логин" formControlName="login" autocomplete="login"
                                 type="text">
@@ -14,7 +14,7 @@
                                 Пожалуйста, введите значения
                             </mat-error>
                         </mat-form-field>
-        
+
                         <mat-form-field class="full-width">
                             <input id="passwordInput" matInput placeholder="Пароль" formControlName="password" type="password"
                                 autocomplete="current-password">
@@ -22,16 +22,16 @@
                                 Пожалуйста, введите значения
                             </mat-error>
                         </mat-form-field>
-        
-                        <div class="full-width">
+
+                        <!-- <div class="full-width">
                             <mat-slide-toggle formControlName="rememberMe" ngDefaultControl>Запомнить мой логин</mat-slide-toggle>
-                        </div>
+                        </div> -->
                     </mat-tab>
-                    <mat-tab label="ЭЦП"> 
+                    <mat-tab label="ЭЦП">
                         <button mat-flat-button id="btnEcp" class="mb-1" color="primary" (click)="chooseEcp()">
                             Выбрать ЭЦП
                         </button>
-        
+
                         <mat-form-field class="full-width">
                             <input id="loginInput" matInput placeholder="Логин" formControlName="login" autocomplete="login"
                                 type="text" readonly="true">
@@ -39,7 +39,7 @@
                                 Пожалуйста, введите значения
                             </mat-error>
                         </mat-form-field>
-        
+
                         <mat-form-field class="full-width">
                             <input id="organizationNameInput" matInput placeholder="Организация" formControlName="organizationName" autocomplete="organizationName"
                                 type="text" readonly="true">
@@ -52,9 +52,9 @@
                 <button mat-raised-button id="login" color="primary" [disabled]="loginForm.invalid || loading"
                     (click)="selectedTabIndex == 0 ? login() : loginByCert()">Войти</button>
 
-                <button mat-button id="registration" (click)="register()" type="button">
+                <!-- <button mat-button id="registration" (click)="register()" type="button">
                     Зарегестрироваться
-                </button>
+                </button> -->
             </mat-card-actions>
 
         </mat-card>

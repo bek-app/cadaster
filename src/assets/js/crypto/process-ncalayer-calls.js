@@ -8,7 +8,7 @@ function getActiveTokensBack(result) {
     if (result['code'] === "500") {
         alert(result['message']);
     } else if (result['code'] === "200") {
-        var listOfTokens = result['responseObject'];        
+        var listOfTokens = result['responseObject'];
         $('#storageSelect').empty();
         $('#storageSelect').append('<option value="PKCS12">PKCS12</option>');
         for (var i = 0; i < listOfTokens.length; i++) {
@@ -36,7 +36,7 @@ function getKeyInfoBack(result) {
     if (result['code'] === "500") {
         // alert(result['message']);
     } else if (result['code'] === "200") {
-        
+        debugger;
         var res = result['responseObject'];
         if (_afterSignFn) {
             _afterSignFn(res);
@@ -78,8 +78,8 @@ function getKeyInfoBack(result) {
                 var dateFrom = date.toLocaleDateString("ru-RU");
                 document.getElementById('signDateFrom').innerHTML = dateString;
                 document.getElementById('signDateFrom').value = dateString;
-                
-                document.getElementById('signDateFrom').dispatchEvent(eventInput);        
+
+                document.getElementById('signDateFrom').dispatchEvent(eventInput);
                 document.getElementById('signDateFrom').dispatchEvent(eventChange);
             }
 
@@ -89,17 +89,17 @@ function getKeyInfoBack(result) {
                 var dateFrom = date.toLocaleDateString("ru-RU");
                 document.getElementById('signDateTo').innerHTML = dateString;
                 document.getElementById('signDateTo').value = dateString;
-                
-                document.getElementById('signDateTo').dispatchEvent(eventInput);        
+
+                document.getElementById('signDateTo').dispatchEvent(eventInput);
                 document.getElementById('signDateTo').dispatchEvent(eventChange);
             }
-            
+
             var pem = res['pem'];
             if (document.getElementById('Certificate')) {
                 document.getElementById('Certificate').innerHTML = pem;
                 document.getElementById('Certificate').value = pem;
-                
-                document.getElementById('Certificate').dispatchEvent(eventInput);        
+
+                document.getElementById('Certificate').dispatchEvent(eventInput);
                 document.getElementById('Certificate').dispatchEvent(eventChange);
             }
         }
@@ -126,11 +126,11 @@ function signXmlBack(result) {
 	//$.unblockUI();
     if (result['code'] === "500") {
         if (result['message'] == 'action.canceled') {
-            
+
         } else {
             alert(result['message']);
         }
-        
+
         if (_errorSignFn)
             _errorSignFn(result);
     } else if (result['code'] === "200") {
@@ -179,7 +179,7 @@ function createCMSSignatureFromFileBack(result) {
 
 function createCAdESFromBase64Call(base64ToSign, flag, afterSignFn) {
     _afterSignFn = afterSignFn;
-    var selectedStorage = _selectedStorage;  
+    var selectedStorage = _selectedStorage;
     if (base64ToSign !== null && base64ToSign !== "") {
         createCAdESFromBase64(selectedStorage, "SIGNATURE", base64ToSign, flag, "createCAdESFromBase64Back");
     } else {
@@ -244,7 +244,7 @@ function fillPersonData(data) {
         document.getElementById('signIIN').innerHTML = iin;
         document.getElementById('signIIN').value = iin;
 
-        document.getElementById('signIIN').dispatchEvent(eventInput);        
+        document.getElementById('signIIN').dispatchEvent(eventInput);
         document.getElementById('signIIN').dispatchEvent(eventChange);
     }
 
@@ -252,22 +252,22 @@ function fillPersonData(data) {
         document.getElementById('UserName').innerHTML = iin;
         document.getElementById('UserName').value = iin;
 
-        document.getElementById('UserName').dispatchEvent(eventInput);        
+        document.getElementById('UserName').dispatchEvent(eventInput);
         document.getElementById('UserName').dispatchEvent(eventChange);
     }
 
     if (document.getElementById('signEmail')) {
         document.getElementById('signEmail').innerHTML = email;
         document.getElementById('signEmail').value = email;
-        
-        document.getElementById('signEmail').dispatchEvent(eventInput);        
+
+        document.getElementById('signEmail').dispatchEvent(eventInput);
         document.getElementById('signEmail').dispatchEvent(eventChange);
     }
     if (document.getElementById('signFIO')) {
         document.getElementById('signFIO').innerHTML = fullName;
         document.getElementById('signFIO').value = fullName;
-        
-        document.getElementById('signFIO').dispatchEvent(eventInput);        
+
+        document.getElementById('signFIO').dispatchEvent(eventInput);
         document.getElementById('signFIO').dispatchEvent(eventChange);
     }
 }
@@ -287,15 +287,15 @@ function fillOrgData(data) {
         if (document.getElementById('signBIN')) {
             document.getElementById('signBIN').innerHTML = bin;
             document.getElementById('signBIN').value = bin;
-            
-            document.getElementById('signBIN').dispatchEvent(eventInput);        
+
+            document.getElementById('signBIN').dispatchEvent(eventInput);
             document.getElementById('signBIN').dispatchEvent(eventChange);
         }
         if (document.getElementById('signCompanyName')) {
             document.getElementById('signCompanyName').innerHTML = organizationName.split('\\\"').join('\"');
             document.getElementById('signCompanyName').value = organizationName.split('\\\"').join('\"');
-            
-            document.getElementById('signCompanyName').dispatchEvent(eventInput);        
+
+            document.getElementById('signCompanyName').dispatchEvent(eventInput);
             document.getElementById('signCompanyName').dispatchEvent(eventChange);
         }
     }
