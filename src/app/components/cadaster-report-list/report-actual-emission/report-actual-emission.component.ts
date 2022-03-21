@@ -130,8 +130,7 @@ export class ReportActualEmissionComponent implements OnInit {
           ].sort((a, b) => (a.processName < b.processName ? 1 : -1));
           Object.assign(items, { group });
         });
-        console.log(data);
-
+ 
         this.dataset = data;
       });
   }

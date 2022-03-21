@@ -19,18 +19,11 @@ export class CommonComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.authService.getUserData();
     const userInfo = this.authService.getUserData();
     const role = userInfo?.roles?.[0];
     if (role === 'declarant') {
       this.hideMenuItem = true;
     }
-    // if (Array.isArray(user?.roles)) {
-    //   user?.roles?.forEach((role: string) => {
-    //     console.log(role);
-    //   });
-    // }
-    console.log(this.account?.roles);
   }
 
   logout() {
