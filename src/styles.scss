@@ -19,6 +19,8 @@ $theme: mat-light-theme($primary, $accent, $warn);
         justify-content: center !important;
         border-right: 1px solid #9696 !important;
         border-bottom: 1px solid #9696 !important;
+        box-sizing: content-box !important;
+
         .slick-column-name {
         }
       }
@@ -147,7 +149,6 @@ snack-bar-container.notification {
   }
 }
 
-
 .color-orange {
-  color: #FB8C00;
+  color: #fb8c00;
 }

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute, Params } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
-import { ReportCarbonUnitService } from '@services/report-corbon-unit.service'
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { ReportCarbonUnitService } from '@services/report-corbon-unit.service';
 import {
   AngularGridInstance,
   AngularUtilService,
@@ -10,39 +10,39 @@ import {
   Formatters,
   GridOption,
   OnEventArgs,
-} from 'angular-slickgrid'
-import { ReportCommentModel } from 'src/app/models/report-comment.model'
-import { ReportCommentService } from 'src/app/services/report-comment.service'
-import { ReportSharedService } from 'src/app/services/report-shared.service'
-import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input'
-import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component'
+} from 'angular-slickgrid';
+import { ReportCommentModel } from 'src/app/models/report-comment.model';
+import { ReportCommentService } from 'src/app/services/report-comment.service';
+import { ReportSharedService } from 'src/app/services/report-shared.service';
+import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
+import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
 @Component({
   selector: 'app-report-carbon-unit',
   templateUrl: './report-carbon-unit.component.html',
   styleUrls: ['./report-carbon-unit.component.css'],
 })
 export class ReportCarbonUnitComponent implements OnInit {
-  angularGrid!: AngularGridInstance
-  columnDefinitions: Column[] = []
-  gridOptions: GridOption = {}
-  dataset: any
-  gridObj: any
-  dataViewObj: any
-  cdrReportId!: number
-  isExcludingChildWhenFiltering = false
-  isAutoApproveParentItemWhenTreeColumnIsValid = true
-  commentList: ReportCommentModel[] = []
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: any;
+  gridObj: any;
+  dataViewObj: any;
+  cdrReportId!: number;
+  isExcludingChildWhenFiltering = false;
+  isAutoApproveParentItemWhenTreeColumnIsValid = true;
+  commentList: ReportCommentModel[] = [];
 
   angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid
-    this.gridObj = angularGrid.slickGrid
-    this.dataViewObj = angularGrid.dataView
+    this.angularGrid = angularGrid;
+    this.gridObj = angularGrid.slickGrid;
+    this.dataViewObj = angularGrid.dataView;
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
       if (args.item.discriminator === 'all') {
-        return false
+        return false;
       }
-      return true
-    })
+      return true;
+    });
   }
 
   constructor(
@@ -51,52 +51,51 @@ export class ReportCarbonUnitComponent implements OnInit {
     private commentService: ReportCommentService,
     private carbonUnitService: ReportCarbonUnitService,
     private angularUtilService: AngularUtilService,
-    private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.prepareGrid()
+    this.prepareGrid();
     this.activatedRoute.params.subscribe((param: Params) => {
-      this.cdrReportId = +param['id']
-      this.refreshList(this.cdrReportId)
-      this.getCommentList(this.cdrReportId)
-    })
+      this.cdrReportId = +param['id'];
+      this.refreshList(this.cdrReportId);
+      this.getCommentList(this.cdrReportId);
+    });
   }
 
   getCommentList(cdrReportId: number): void {
     this.commentService
       .getReportCommentList(cdrReportId, 'carbon-unit')
-      .subscribe((data: any) => (this.commentList = data))
+      .subscribe((data: any) => (this.commentList = data));
   }
 
   goToCadasterReports(id: number) {
-    this.cdrReportId = id
-    this.refreshList(id)
+    this.cdrReportId = id;
+    this.refreshList(id);
   }
 
   refreshList(reportId: number) {
     this.carbonUnitService
       .getReportCarbonUnitById(reportId)
-      .subscribe((data: any) => (this.dataset = data))
+      .subscribe((data: any) => (this.dataset = data));
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
     if (field !== 'kindName') {
       for (const item in metadata.dataContext) {
         if (field === item) {
-          let controlValue = metadata.dataContext[item]
-          let newControlValue
+          let controlValue = metadata.dataContext[item];
+          let newControlValue;
 
           if (typeof controlValue === 'object' && controlValue !== null) {
-            newControlValue = controlValue.name
+            newControlValue = controlValue.name;
           } else if (controlValue === null) {
-            newControlValue = controlValue
-          } else newControlValue = controlValue.toString()
+            newControlValue = controlValue;
+          } else newControlValue = controlValue.toString();
 
           const comment: ReportCommentModel = {
             id: 0,
@@ -108,29 +107,28 @@ export class ReportCarbonUnitComponent implements OnInit {
             isMark: true,
             isActive: true,
             reportId: this.cdrReportId,
-          }
+          };
 
-          this.sharedDataService.sendComment(comment)
+          this.sharedDataService.sendComment(comment);
         }
       }
     }
   }
 
   onCellChanged(e: Event, args: OnEventArgs) {
-    const metadata = this.angularGrid.gridService.getColumnFromEventArguments(
-      args,
-    )
+    const metadata =
+      this.angularGrid.gridService.getColumnFromEventArguments(args);
 
-    const { id } = metadata.dataContext
-    const { field } = metadata.columnDef
+    const { id } = metadata.dataContext;
+    const { field } = metadata.columnDef;
 
     for (let item in metadata.dataContext) {
       if (field === item) {
-        let nameField = item[0].toUpperCase() + item.slice(1)
-        let valueField = metadata.dataContext[item]
-        let discriminator = metadata.dataContext.discriminator
+        let nameField = item[0].toUpperCase() + item.slice(1);
+        let valueField = metadata.dataContext[item];
+        let discriminator = metadata.dataContext.discriminator;
         if (typeof valueField === 'object') {
-          return
+          return;
         }
 
         const data = {
@@ -138,11 +136,11 @@ export class ReportCarbonUnitComponent implements OnInit {
           nameField,
           valueField: valueField.toString(),
           discriminator,
-        }
+        };
 
         this.carbonUnitService.addReportCarbonUnit(data).subscribe((res) => {
-          this.refreshList(this.cdrReportId)
-        })
+          this.refreshList(this.cdrReportId);
+        });
       }
     }
   }
@@ -153,19 +151,19 @@ export class ReportCarbonUnitComponent implements OnInit {
     value: any,
     columnDef: Column,
     dataContext: any,
-    grid?: any,
+    grid?: any
   ) => {
-    const { id } = dataContext
-    const { field } = columnDef
+    const { id } = dataContext;
+    const { field } = columnDef;
 
     const res = this.commentList.find((comment) => {
-      return comment.recordId === id.toString() && comment.controlId === field
-    })
+      return comment.recordId === id.toString() && comment.controlId === field;
+    });
     return {
       addClasses: res ? 'border' : '',
       text: value ? value : '',
-    }
-  }
+    };
+  };
 
   prepareGrid() {
     this.translate.get('CDR_REPORTS.CARBON_UNIT').subscribe((translations) => {
@@ -183,7 +181,7 @@ export class ReportCarbonUnitComponent implements OnInit {
         ALIENATED_PLAN,
         TRANSFERRED,
         TRANSFERRED_PLAN,
-      } = translations
+      } = translations;
 
       this.columnDefinitions = [
         {
@@ -191,6 +189,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           name: TYPE_CARBON_UNIT,
           field: 'kindName',
           filterable: true,
+          minWidth: 300,
         },
 
         {
@@ -200,6 +199,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           columnGroup: RECEIVED_GROUP,
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -219,6 +219,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           columnGroup: RECEIVED_GROUP,
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -237,6 +238,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'balance',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -255,6 +257,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'additionalPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -273,6 +276,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'acquired',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -291,6 +295,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'acquiredPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -309,6 +314,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'planingOffset',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -327,6 +333,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'alienated',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -345,6 +352,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'alienatedPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -363,6 +371,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'transferred',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -381,6 +390,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           field: 'transferredPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -393,15 +403,16 @@ export class ReportCarbonUnitComponent implements OnInit {
             },
           },
         },
-      ]
-    })
+      ];
+    });
 
     this.gridOptions = {
       enableFiltering: false,
       showPreHeaderPanel: true,
+
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
       },
-    }
+    };
   }
 }

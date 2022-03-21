@@ -6,24 +6,11 @@
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}</mat-label>
-      <mtx-select
-        formControlName="dicProcessId"
-        [items]="dicProcessList"
-        bindValue="id"
-        bindLabel="name"
-        [hideSelected]="true"
-        [minTermLength]="2"
-        [multiple]="false"
-        typeToSearchText="Пожалуйста, введите 2 или более символов"
-        appendTo="body"
-      >
+      <mtx-select formControlName="dicProcessId" [items]="dicProcessList" bindValue="id" bindLabel="name"
+        [hideSelected]="true" [minTermLength]="2" [multiple]="false"
+        typeToSearchText="Пожалуйста, введите 2 или более символов" appendTo="body">
         <ng-template ng-footer-tmp>
-          <button
-            type="button"
-            mat-raised-button
-            color="primary"
-            (click)="openDicFormDialog('dicProcess')"
-          >
+          <button type="button" mat-raised-button color="primary" (click)="openDicFormDialog('dicProcess')">
             {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
@@ -35,56 +22,27 @@
       <mat-label>
         {{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}
       </mat-label>
-      <mtx-select
-        [items]="subProccessesList"
-        bindValue="id"
-        bindLabel="name"
-        [hideSelected]="true"
-        [minTermLength]="2"
-        [multiple]="true"
-        typeToSearchText="Пожалуйста, введите 2 или более символов"
-        formControlName="subProccesses"
-        [closeOnSelect]="false"
-        appendTo="body"
-      >
+      <mtx-select [items]="subProccessesList" bindValue="id" bindLabel="name" [hideSelected]="true" [minTermLength]="2"
+        [multiple]="true" typeToSearchText="Пожалуйста, введите 2 или более символов" formControlName="subProccesses"
+        [closeOnSelect]="false" appendTo="body">
         <ng-template ng-footer-tmp>
-          <button
-            type="button"
-            mat-raised-button
-            color="primary"
-            (click)="openDicFormDialog('dicSubProcess')"
-          >
+          <button type="button" mat-raised-button color="primary" (click)="openDicFormDialog('dicSubProcess')">
             {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
       </mtx-select>
 
-      <mat-error>{{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
         {{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}
       </mat-label>
-      <mtx-select
-        [items]="dicMaterialsList"
-        bindValue="id"
-        bindLabel="name"
-        [hideSelected]="true"
-        [minTermLength]="2"
-        [multiple]="true"
-        typeToSearchText="Пожалуйста, введите 2 или более символов"
-        formControlName="materials"
-        [closeOnSelect]="false"
-        appendTo="body"
-      >
+      <mtx-select [items]="dicMaterialsList" bindValue="id" bindLabel="name" [hideSelected]="true" [minTermLength]="2"
+        [multiple]="true" typeToSearchText="Пожалуйста, введите 2 или более символов" formControlName="materials"
+        [closeOnSelect]="false" appendTo="body">
         <ng-template ng-footer-tmp>
-          <button
-            type="button"
-            mat-raised-button
-            color="primary"
-            (click)="openDicFormDialog('dicMaterial')"
-          >
+          <button type="button" mat-raised-button color="primary" (click)="openDicFormDialog('dicMaterial')">
             {{ 'DIC_FORM.ADD_DIC' | translate }}
           </button>
         </ng-template>
@@ -133,11 +91,7 @@
     </mat-form-field> -->
   </mat-dialog-content>
 
-  <mat-dialog-actions
-    fxLayout="row"
-    fxLayoutAlign="end center"
-    *ngIf="!viewMode"
-  >
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center" *ngIf="!viewMode">
     <button type="button" mat-raised-button color="warn" mat-dialog-close>
       {{ 'CANCEL' | translate }}
     </button>
