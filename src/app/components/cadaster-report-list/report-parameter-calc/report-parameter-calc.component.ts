@@ -24,6 +24,7 @@ import { CustomInputEditorComponent } from '../../editors/custom-input-editor/cu
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
 import { ReportSharedService } from 'src/app/services/report-shared.service';
 import { TranslateService } from '@ngx-translate/core';
+import { CadasterReportService } from '@services/cadaster-report.service';
 
 @Component({
   selector: 'app-report-parameter-calc',
@@ -43,6 +44,7 @@ export class ReportParameterCalcComponent implements OnInit {
   cdrReportId!: number;
   dialogRef: any;
   commentList: ReportCommentModel[] = [];
+  statusId!: number;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -72,7 +74,7 @@ export class ReportParameterCalcComponent implements OnInit {
     };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (!args.item.__hasChildren) {
+      if (!args.item.__hasChildren || this.statusId > 1) {
         return true;
       }
       return false;
@@ -87,19 +89,29 @@ export class ReportParameterCalcComponent implements OnInit {
     private commentService: ReportCommentService,
     private notificationService: NotificationService,
     private sharedDataService: ReportSharedService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdrReportService: CadasterReportService
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(
       (res: any) => (this.dicUnitList = res.dicUnit)
     );
+
     this.prepareGrid();
     this.activatedRoute.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id'];
+
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
+
+    this.cdrReportService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((report: any) => {
+        const { statusId } = report;
+        this.statusId = statusId;
+      });
   }
 
   getCommentList(cdrReportId: number): void {
@@ -305,7 +317,7 @@ export class ReportParameterCalcComponent implements OnInit {
             name: PROCESS_NAME,
             field: 'processName',
             type: FieldType.string,
-            width: 150,
+            minWidth: 600,
             formatter: reportCadasterTreeFormatter,
             filterable: true,
             sortable: true,
@@ -333,6 +345,7 @@ export class ReportParameterCalcComponent implements OnInit {
             exportWithFormatter: true,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             customTooltip: {
               position: 'right-align',
               formatter: () =>
@@ -364,6 +377,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: VARIANT_A,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'q4Unit.name',
@@ -416,6 +430,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: VARIANT_A,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [
@@ -460,6 +475,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: VARIANT_A,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'q3Unit.name',
@@ -508,6 +524,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: VARIANT_A,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [
@@ -553,6 +570,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: 'Вариант Б',
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'slagCarbonUnit.name',
@@ -601,6 +619,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: VARIANT_B,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [
@@ -623,6 +642,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: 'Вариант Б',
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'slagAmountUnit.name',
@@ -670,6 +690,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: VARIANT_B,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [
@@ -692,6 +713,7 @@ export class ReportParameterCalcComponent implements OnInit {
             columnGroup: 'Вариант Б',
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'paramCalcUnit.name',
@@ -735,6 +757,7 @@ export class ReportParameterCalcComponent implements OnInit {
         ];
       });
     this.gridOptions = {
+      // gridHeight: '80vh',
       enableFiltering: true,
       showPreHeaderPanel: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected

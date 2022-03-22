@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { CadasterReportModel } from '@models/cadaster-report.model';
+import { ReportCarbonUnitModel } from '@models/report-carbon-unit.model';
 import { TranslateService } from '@ngx-translate/core';
+import { CadasterReportService } from '@services/cadaster-report.service';
 import { ReportCarbonUnitService } from '@services/report-corbon-unit.service';
 import {
   AngularGridInstance,
@@ -25,20 +28,21 @@ export class ReportCarbonUnitComponent implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
-  dataset: any;
+  dataset: ReportCarbonUnitModel[] = [];
   gridObj: any;
   dataViewObj: any;
   cdrReportId!: number;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   commentList: ReportCommentModel[] = [];
+  statusId!: number;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
     this.dataViewObj = angularGrid.dataView;
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.discriminator === 'all') {
+      if (args.item.discriminator === 'all' || this.statusId > 1) {
         return false;
       }
       return true;
@@ -51,16 +55,25 @@ export class ReportCarbonUnitComponent implements OnInit {
     private commentService: ReportCommentService,
     private carbonUnitService: ReportCarbonUnitService,
     private angularUtilService: AngularUtilService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private cdrReportService: CadasterReportService
   ) {}
 
   ngOnInit(): void {
     this.prepareGrid();
+
     this.activatedRoute.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id'];
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
+
+    this.cdrReportService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((report: any) => {
+        const { statusId } = report;
+        this.statusId = statusId;
+      });
   }
 
   getCommentList(cdrReportId: number): void {
@@ -77,7 +90,7 @@ export class ReportCarbonUnitComponent implements OnInit {
   refreshList(reportId: number) {
     this.carbonUnitService
       .getReportCarbonUnitById(reportId)
-      .subscribe((data: any) => (this.dataset = data));
+      .subscribe((data: ReportCarbonUnitModel[]) => (this.dataset = data));
   }
 
   onCellClicked(e: Event, args: OnEventArgs) {
@@ -199,7 +212,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           columnGroup: RECEIVED_GROUP,
           filterable: true,
           sortable: true,
-          minWidth: 300,
+          minWidth: 380,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -219,7 +232,7 @@ export class ReportCarbonUnitComponent implements OnInit {
           columnGroup: RECEIVED_GROUP,
           filterable: true,
           sortable: true,
-          minWidth: 300,
+          minWidth: 380,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],

@@ -1,16 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 matDialogTitle>{{ "CDR_REPORT.TITLE" | translate }}</h2>
+  <div class="dialog__title">
+    <h2 matDialogTitle>{{ "CDR_REPORT.TITLE" | translate }}</h2>
+    <span mat-dialog-close class="mdi mdi-close-outline"></span>
+  </div>
+
 
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ "CDR_REPORT.FORM.REPORT_YEAR" | translate }}</mat-label>
-      <input
-        matInput
-        readonly
-        formControlName="reportYear"
-        type="number"
-        (change)="yearChange($event)"
-      />
+      <input matInput readonly formControlName="reportYear" type="number" (change)="yearChange($event)" />
       <mat-error>
         {{ "ERROR_MESSAGE" | translate }}
       </mat-error>
@@ -44,10 +42,7 @@
       <mat-form-field>
         <mat-label>{{ "CDR_REPORT.FORM.VALIDATION" | translate }}</mat-label>
         <mat-select formControlName="validatorId">
-          <mat-option
-            *ngFor="let dicOrg of dicOrganizations"
-            [value]="dicOrg.id"
-          >
+          <mat-option *ngFor="let dicOrg of dicOrganizations" [value]="dicOrg.id">
             {{ dicOrg.orgName }}
           </mat-option>
         </mat-select>

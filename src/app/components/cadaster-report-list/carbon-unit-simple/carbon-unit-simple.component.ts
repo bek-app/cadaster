@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { CadasterReportService } from '@services/cadaster-report.service';
 import { ReportCarbonUnitService } from '@services/report-corbon-unit.service';
 import {
   AngularGridInstance,
@@ -32,13 +33,14 @@ export class CarbonUnitSimpleComponent implements OnInit {
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   commentList: ReportCommentModel[] = [];
+  statusId!: number;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
     this.dataViewObj = angularGrid.dataView;
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.discriminator === 'all') {
+      if (args.item.discriminator === 'all' || this.statusId > 1) {
         return false;
       }
       return true;
@@ -51,7 +53,8 @@ export class CarbonUnitSimpleComponent implements OnInit {
     private commentService: ReportCommentService,
     private carbonUnitService: ReportCarbonUnitService,
     private angularUtilService: AngularUtilService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private cdrReportService: CadasterReportService
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +64,13 @@ export class CarbonUnitSimpleComponent implements OnInit {
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
+
+    this.cdrReportService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((report: any) => {
+        const { statusId } = report;
+        this.statusId = statusId;
+      });
   }
 
   getCommentList(cdrReportId: number): void {
@@ -184,6 +194,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           name: TYPE_CARBON_UNIT,
           field: 'kindName',
           filterable: true,
+          minWidth: 300,
         },
 
         {
@@ -193,6 +204,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           columnGroup: RECEIVED_GROUP,
           filterable: true,
           sortable: true,
+          minWidth: 400,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -212,6 +224,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           columnGroup: RECEIVED_GROUP,
           filterable: true,
           sortable: true,
+          minWidth: 400,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -230,6 +243,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'balance',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -248,6 +262,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'additionalPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -266,6 +281,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'acquired',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -284,6 +300,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'acquiredPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -302,6 +319,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'planingOffset',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -320,6 +338,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'alienated',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -338,6 +357,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'alienatedPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -356,6 +376,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'transferred',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],
@@ -374,6 +395,7 @@ export class CarbonUnitSimpleComponent implements OnInit {
           field: 'transferredPlan',
           filterable: true,
           sortable: true,
+          minWidth: 300,
           formatter: Formatters.multiple,
           params: {
             formatters: [this.commentFormatter],

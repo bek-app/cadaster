@@ -37,6 +37,8 @@ export class ReportProductComponent implements OnInit {
   cdrReportId!: number;
   commentList: any[] = [];
   kindId!: number;
+  statusId!: number;
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
@@ -53,7 +55,7 @@ export class ReportProductComponent implements OnInit {
       }
     };
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
+      if (args.item.__hasChildren || this.statusId > 1) {
         return false;
       }
       return true;
@@ -67,7 +69,7 @@ export class ReportProductComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private angularUtilService: AngularUtilService,
     private activatedRoute: ActivatedRoute,
-    private cadasterService: CadasterReportService
+    private cdrReportService: CadasterReportService
   ) {}
 
   ngOnInit(): void {
@@ -78,9 +80,12 @@ export class ReportProductComponent implements OnInit {
       this.getCommentList(this.cdrReportId);
     });
 
-    this.cadasterService
+    this.cdrReportService
       .getCadasterReportById(this.cdrReportId)
-      .subscribe((result: any) => (this.kindId = result.kindId));
+      .subscribe((report: any) => {
+        this.kindId = report.kindId;
+        this.statusId = report.statusId;
+      });
   }
 
   getCommentList(cdrReportId: number): void {
