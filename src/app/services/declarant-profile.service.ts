@@ -22,7 +22,7 @@ export class DeclarantProfileService {
   }
 
   registerDeclarantProfile(data: any) {
-    return this.http.put<any>(
+    return this.http.post<any>(
       'api/DeclarantProfile/register',
       JSON.stringify(data),
       this.httpOptions

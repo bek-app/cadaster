@@ -207,6 +207,7 @@
           color="primary"
           type="button"
           (click)="editProfile()"
+          *ngIf="!isActive"
         >
           Редактировать
         </button>
@@ -215,6 +216,7 @@
           id="login"
           color="primary"
           [disabled]="registrationForm.invalid || loading"
+          *ngIf="isActive"
         >
           {{ "SAVE" | translate }}
         </button>

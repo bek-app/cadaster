@@ -11,9 +11,7 @@ import { DicKatoService } from '@services/dic-kato.service';
 import { DicOkedService } from '@services/dictionary/dic-oked.service';
 import { TreeData } from 'mat-tree-select-input';
 import { RegistrationRequestModel } from 'src/app/models/administration/registration-request.model';
-import { UserService } from 'src/app/services/administration/user/user.service';
 import { NotificationService } from 'src/app/services/notification.service';
-import { PasswordValidators } from 'src/app/validators/password-validators';
 
 @Component({
   selector: 'app-profile',
@@ -33,7 +31,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   villageName!: string;
   address: string = '';
   dicOkeds: TreeData[] = [];
-
+  isActive = false;
   constructor(
     private router: Router,
     private notificationService: NotificationService,
@@ -48,7 +46,6 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       organizationName: new FormControl({ value: '', disabled: true }, [
         Validators.required,
       ]),
-
       email: new FormControl('', [Validators.required, Validators.email]),
       phone: new FormControl('', [Validators.required]),
       oblastId: new FormControl('', Validators.required),
@@ -63,20 +60,12 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       isJur: new FormControl(true, Validators.required),
     });
   }
+
   ngAfterViewInit(): void {
     this.declarantProfileService.getDeclarantProfile().subscribe((result) => {
-      console.log(result);
-
       this.registrationForm.patchValue(result);
     });
   }
-
-  private confirmPasswordValidator = (control: AbstractControl) => {
-    return PasswordValidators.confirmPasswordByControlValidator(
-      control,
-      this.registrationForm.controls.password.value
-    );
-  };
 
   ngOnInit(): void {
     this.registrationForm.disable();
@@ -87,7 +76,6 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
     this.dicOkedService.getDicOked().subscribe((okeds) => {
       this.dicOkeds = okeds;
-      console.log(okeds);
     });
   }
 
@@ -206,22 +194,25 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
     this.declarantProfileService.registerDeclarantProfile(data).subscribe(
       (response) => {
-        if (response && response.succeeded) {
-          this.notificationService.success(
-            'Пользователь успешно зарегестрирован'
-          );
-          // this.router.navigate(['/auth/login']);
-        }
+        this.notificationService.success(
+          'Профиль успешно изменён'
+        );
+        this.registrationForm.disable();
+        this.isActive = false;
       },
       (error) => {
         this.notificationService.error(error);
       }
     );
   }
+
   editProfile() {
+    this.isActive = true;
     this.registrationForm.enable();
-    console.log(this.registrationForm.controls['okedId'].value);
+    this.registrationForm.controls['organizationBin'].disable();
+    this.registrationForm.controls['organizationName'].disable();
   }
+
   toLogin() {
     this.router.navigate(['/auth/login']);
   }
