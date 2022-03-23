@@ -6,6 +6,7 @@ import {
   AngularGridInstance,
   Column,
   FieldType,
+  Formatter,
   Formatters,
   GridOption,
   OnEventArgs,
@@ -126,6 +127,7 @@ export class CadasterReportComponent implements OnInit {
           field: 'reportYear',
           filterable: true,
           sortable: true,
+          width: 40,
         },
 
         {
@@ -197,7 +199,7 @@ export class CadasterReportComponent implements OnInit {
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
+          formatter: myCustomEditFormatter,
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
@@ -213,7 +215,7 @@ export class CadasterReportComponent implements OnInit {
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
+          formatter: myCustomDeleteFormatter,
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
@@ -245,6 +247,27 @@ export class CadasterReportComponent implements OnInit {
     this.gridOptions = {};
   }
 }
-function item(item: any) {
-  throw new Error('Function not implemented.');
-}
+ 
+const myCustomEditFormatter: Formatter = (
+  row: number,
+  cell: number,
+  value: any,
+  columnDef: Column,
+  dataContext: any,
+  grid?: any
+) =>
+  dataContext.statusId > 1
+    ? `<i style="display: none;"></i>`
+    : '<i class="fa fa-pencil pointer edit-icon"></i>';
+
+const myCustomDeleteFormatter: Formatter = (
+  row: number,
+  cell: number,
+  value: any,
+  columnDef: Column,
+  dataContext: any,
+  grid?: any
+) =>
+  dataContext.statusId > 1
+    ? `<i style="display: none;"></i>`
+    : '<i class="fa fa-trash pointer delete-icon"></i>';
