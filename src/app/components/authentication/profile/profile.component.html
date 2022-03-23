@@ -8,6 +8,7 @@
     fxFlex="70%"
     fxFlex.sm="50%"
     fxFlex.xs="90%"
+    (submit)="onSubmit()"
   >
     <mat-card>
       <mat-card-title>Регистрация</mat-card-title>
@@ -184,7 +185,10 @@
       >
       </ngx-mat-tree-select-input>
 
-      <mat-card-actions class="login-actions">
+      <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+        <button mat-raised-button color="primary" type="button">
+          Редактировать
+        </button>
         <button
           mat-raised-button
           id="login"
@@ -192,7 +196,7 @@
           [disabled]="registrationForm.invalid || loading"
           (click)="register()"
         >
-          Зарегистрироваться
+          {{ "SAVE" | translate }}
         </button>
 
         <!-- <button mat-button id="resetPassword" (click)="toLogin()" type="button">

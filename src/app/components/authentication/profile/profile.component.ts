@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DeclarantProfileService } from '@services/declarant-profile.service';
 import { DicKatoService } from '@services/dic-kato.service';
 import { DicOkedService } from '@services/dictionary/dic-oked.service';
 import { TreeData } from 'mat-tree-select-input';
@@ -38,11 +39,16 @@ export class ProfileComponent implements OnInit {
     private notificationService: NotificationService,
     private userService: UserService,
     private dicKatoService: DicKatoService,
-    private dicOkedService: DicOkedService
+    private dicOkedService: DicOkedService,
+    private declarantProfileService: DeclarantProfileService
   ) {
     this.registrationForm = new FormGroup({
-      organizationBin: new FormControl('', [Validators.required]),
-      organizationName: new FormControl('', [Validators.required]),
+      organizationBin: new FormControl({ value: '', disabled: true }, [
+        Validators.required,
+      ]),
+      organizationName: new FormControl({ value: '', disabled: true }, [
+        Validators.required,
+      ]),
       certificate: new FormControl({ value: '', disabled: true }, [
         Validators.required,
       ]),
@@ -76,29 +82,14 @@ export class ProfileComponent implements OnInit {
     this.dicOkedService.getDicOked().subscribe((oked) => {
       this.dicOkeds = oked;
     });
+
+    this.declarantProfileService.getDeclarantProfile().subscribe((result) => {
+      console.log(result);
+    });
   }
-
-  filter(array: TreeData[], text: string) {
-    console.log(text);
-
-    const getNodes = (
-      result: any[],
-      object: { name: string; children: any[] }
-    ) => {
-      if (object.name.toLowerCase().startsWith(text)) {
-        result.push(object);
-        return result;
-      }
-      if (Array.isArray(object.children)) {
-        const children = object.children.reduce(getNodes, []);
-        if (children.length) result.push({ ...object, children });
-      }
-      return result;
-    };
-
-    this.dicOkeds = array.reduce(getNodes, []);
+  onSubmit(){
+    
   }
-
   oblastChange(oblastId: number) {
     if (oblastId) {
       this.oblastName = this.oblast.find(
