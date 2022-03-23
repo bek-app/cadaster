@@ -17,13 +17,13 @@ export class DeclarantProfileService {
 
   getDeclarantProfile(): Observable<any[]> {
     return this.http
-      .get<any[]>('api/KdrReportDeclarantProfile')
+      .get<any[]>('api/DeclarantProfile')
       .pipe(map((data: any) => data));
   }
 
   registerDeclarantProfile(data: any) {
     return this.http.put<any>(
-      'api/KdrReportDeclarantProfile/register',
+      'api/DeclarantProfile/register',
       JSON.stringify(data),
       this.httpOptions
     );

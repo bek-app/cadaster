@@ -177,6 +177,22 @@
         </mat-card-content>
       </div>
 
+      <!-- <mat-form-field>
+        <mtx-select
+          [items]="dicOkeds"
+          bindValue="value"
+          bindLabel="name"
+          [hideSelected]="true"
+          formControlName="okedId"
+          appendTo="body"
+          groupBy="children"
+        >
+          <ng-template ng-optgroup-tmp let-item="item">
+            {{ item.name }}
+          </ng-template>
+        </mtx-select>
+      </mat-form-field> -->
+
       <ngx-mat-tree-select-input
         [options]="dicOkeds"
         [placeholder]="'Сфера деятельности'"
@@ -186,7 +202,12 @@
       </ngx-mat-tree-select-input>
 
       <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-        <button mat-raised-button color="primary" type="button">
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="editProfile()"
+        >
           Редактировать
         </button>
         <button
@@ -194,7 +215,6 @@
           id="login"
           color="primary"
           [disabled]="registrationForm.invalid || loading"
-          (click)="register()"
         >
           {{ "SAVE" | translate }}
         </button>

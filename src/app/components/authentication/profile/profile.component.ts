@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -20,7 +20,7 @@ import { PasswordValidators } from 'src/app/validators/password-validators';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, AfterViewInit {
   registrationForm: FormGroup;
   loading: boolean = false;
   oblast: any[] = [];
@@ -32,12 +32,11 @@ export class ProfileComponent implements OnInit {
   subRegionName!: string;
   villageName!: string;
   address: string = '';
-
   dicOkeds: TreeData[] = [];
+
   constructor(
     private router: Router,
     private notificationService: NotificationService,
-    private userService: UserService,
     private dicKatoService: DicKatoService,
     private dicOkedService: DicOkedService,
     private declarantProfileService: DeclarantProfileService
@@ -49,9 +48,7 @@ export class ProfileComponent implements OnInit {
       organizationName: new FormControl({ value: '', disabled: true }, [
         Validators.required,
       ]),
-      certificate: new FormControl({ value: '', disabled: true }, [
-        Validators.required,
-      ]),
+
       email: new FormControl('', [Validators.required, Validators.email]),
       phone: new FormControl('', [Validators.required]),
       oblastId: new FormControl('', Validators.required),
@@ -66,6 +63,13 @@ export class ProfileComponent implements OnInit {
       isJur: new FormControl(true, Validators.required),
     });
   }
+  ngAfterViewInit(): void {
+    this.declarantProfileService.getDeclarantProfile().subscribe((result) => {
+      console.log(result);
+
+      this.registrationForm.patchValue(result);
+    });
+  }
 
   private confirmPasswordValidator = (control: AbstractControl) => {
     return PasswordValidators.confirmPasswordByControlValidator(
@@ -75,21 +79,18 @@ export class ProfileComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.registrationForm.disable();
+
     this.dicKatoService.getDicKato(1).subscribe((oblast) => {
       this.oblast = oblast;
     });
 
-    this.dicOkedService.getDicOked().subscribe((oked) => {
-      this.dicOkeds = oked;
+    this.dicOkedService.getDicOked().subscribe((okeds) => {
+      this.dicOkeds = okeds;
+      console.log(okeds);
     });
+  }
 
-    this.declarantProfileService.getDeclarantProfile().subscribe((result) => {
-      console.log(result);
-    });
-  }
-  onSubmit(){
-    
-  }
   oblastChange(oblastId: number) {
     if (oblastId) {
       this.oblastName = this.oblast.find(
@@ -189,7 +190,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  register() {
+  onSubmit() {
     const regRequest = new RegistrationRequestModel();
 
     regRequest.organizationName =
@@ -203,22 +204,24 @@ export class ProfileComponent implements OnInit {
       organizationName: regRequest.organizationName,
     };
 
-    this.userService.register(data).subscribe(
+    this.declarantProfileService.registerDeclarantProfile(data).subscribe(
       (response) => {
         if (response && response.succeeded) {
           this.notificationService.success(
             'Пользователь успешно зарегестрирован'
           );
-          this.router.navigate(['/auth/login']);
+          // this.router.navigate(['/auth/login']);
         }
       },
       (error) => {
-        const err = error;
-        this.notificationService.error(error.error);
+        this.notificationService.error(error);
       }
     );
   }
-
+  editProfile() {
+    this.registrationForm.enable();
+    console.log(this.registrationForm.controls['okedId'].value);
+  }
   toLogin() {
     this.router.navigate(['/auth/login']);
   }
