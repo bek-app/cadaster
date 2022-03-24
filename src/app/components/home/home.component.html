@@ -4,28 +4,59 @@
       <ng-template matStepLabel>Регистрация установки</ng-template>
       <mat-list>
         <mat-list-item>1. Перейдите в раздел "Установки";</mat-list-item>
-        <mat-list-item>2. Зарегистрируйте установку, если его нет в списке. Нужно добавить через кнопку "Создать";
+        <mat-list-item
+          >2. Зарегистрируйте установку, если его нет в списке. Нужно добавить
+          через кнопку "Создать";
         </mat-list-item>
         <mat-list-item>3. Выделите нужную установку;</mat-list-item>
-        <mat-list-item>4. Внесите данные в разделе "Описание процессов". Через кнопку "Создать;"</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;4.1. Выберите основной производственный процесс. Если его нет в списке можно
-          добавить через кнопку "Добавить, если нет в списке";</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;4.2. Перечислите список подпроцессов. Если его нет в списке можно добавить
-          через кнопку "Добавить, если нет в списке";</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;4.3. Перечислите список сырья. Если его нет в списке можно добавить через
-          кнопку "Добавить, если нет в списке";</mat-list-item>
-        <mat-list-item>5. Внесите данные в разделе "Перечень продукции". Через кнопку "Создать";</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;5.1. Укажите вид продукции. Если его нет в списке можно добавить через кнопку
-          "Добавить, если нет в списке";</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;5.2. Укажите единицу измерение. Если его нет в списке можно добавить через
-          кнопку "Добавить, если нет в списке";</mat-list-item>
-        <mat-list-item>6. Внесите данные в разделе "Сфера деятельности". Через кнопку "Создать";</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;5.1. Укажите основную сферу и под сферу деятельности;</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;5.2. Укажите единицу измерение. Если его нет в списке можно добавить через
-          кнопку "Добавить, если нет в списке";</mat-list-item>
+        <mat-list-item
+          >4. Внесите данные в разделе "Описание процессов". Через кнопку
+          "Создать;"</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;4.1. Выберите основной производственный процесс.
+          Если его нет в списке можно добавить через кнопку "Добавить, если нет
+          в списке";</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;4.2. Перечислите список подпроцессов. Если его нет в
+          списке можно добавить через кнопку "Добавить, если нет в
+          списке";</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;4.3. Перечислите список сырья. Если его нет в списке
+          можно добавить через кнопку "Добавить, если нет в
+          списке";</mat-list-item
+        >
+        <mat-list-item
+          >5. Внесите данные в разделе "Перечень продукции". Через кнопку
+          "Создать";</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;5.1. Укажите вид продукции. Если его нет в списке
+          можно добавить через кнопку "Добавить, если нет в
+          списке";</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;5.2. Укажите единицу измерение. Если его нет в
+          списке можно добавить через кнопку "Добавить, если нет в
+          списке";</mat-list-item
+        >
+        <mat-list-item
+          >6. Внесите данные в разделе "Сфера деятельности". Через кнопку
+          "Создать";</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;5.1. Укажите основную сферу и под сферу
+          деятельности;</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;5.2. Укажите единицу измерение. Если его нет в
+          списке можно добавить через кнопку "Добавить, если нет в
+          списке";</mat-list-item
+        >
       </mat-list>
       <div>
-
         <button mat-raised-button color="primary" matStepperNext>Далее</button>
       </div>
     </form>
@@ -35,20 +66,42 @@
     <form [formGroup]="secondFormGroup">
       <mat-list>
         <mat-list-item>1. Перейдите в раздел "Отчеты";</mat-list-item>
-        <mat-list-item>2. Зарегистрируйте отчет, если его нет в списке. Нужно добавить через кнопку "Создать";
+        <mat-list-item
+          >2. Зарегистрируйте отчет, если его нет в списке. Нужно добавить через
+          кнопку "Создать";
         </mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;2.1. Выберите установку, по которой собираетесь сдавать отчет;</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;2.2. Укажите вид отчета;</mat-list-item>
-        <mat-list-item> &nbsp;&nbsp;&nbsp;2.3. . Если указан вид "отчет для субъекта квотирования, то нужно указать
-          Органа по валидации и верификации ";</mat-list-item>
-        <mat-list-item>3. Для заполнение отчета, нужно нажать на кнопку &nbsp;&nbsp;<i class="fa fa-cog"
-            style="cursor:pointer;"></i>&nbsp;&nbsp;;</mat-list-item>
-        <mat-list-item>4. В случаи если вам нужно поменять вид отчета или  Орган по валидации и верификации, нажмите кнопку редактировать
-          &nbsp;&nbsp;<i class="fa fa-pencil" style="cursor:pointer;"></i>&nbsp;&nbsp;;</mat-list-item>
-
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;2.1. Выберите установку, по которой собираетесь
+          сдавать отчет;</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;2.2. Укажите вид отчета;</mat-list-item
+        >
+        <mat-list-item>
+          &nbsp;&nbsp;&nbsp;2.3. . Если указан вид "отчет для субъекта
+          квотирования, то нужно указать Органа по валидации и верификации
+          ";</mat-list-item
+        >
+        <mat-list-item
+          >3. Для заполнение отчета, нужно нажать на кнопку &nbsp;&nbsp;<i
+            class="fa fa-cog"
+            style="cursor: pointer"
+          ></i
+          >&nbsp;&nbsp;;</mat-list-item
+        >
+        <mat-list-item
+          >4. В случаи если вам нужно поменять вид отчета или Орган по валидации
+          и верификации, нажмите кнопку редактировать &nbsp;&nbsp;<i
+            class="fa fa-pencil"
+            style="cursor: pointer"
+          ></i
+          >&nbsp;&nbsp;;</mat-list-item
+        >
       </mat-list>
       <div fxLayoutGap="10px">
-        <button mat-raised-button color="primary" matStepperPrevious>Назад</button>
+        <button mat-raised-button color="primary" matStepperPrevious>
+          Назад
+        </button>
         <button mat-raised-button color="primary" matStepperNext>Далее</button>
       </div>
     </form>
@@ -57,17 +110,29 @@
   <mat-step>
     <ng-template matStepLabel>Сдать отчет</ng-template>
     <mat-list>
-      <mat-list-item>1. Для того чтобы сдать отчет, нужно в форме отчета нажать кнопку "Подписать и отправить"
+      <mat-list-item
+        >1. Для того чтобы сдать отчет, нужно в форме отчета нажать кнопку
+        "Подписать и отправить"
       </mat-list-item>
-      <mat-list-item>2. Выберите ваше ЭЦП "RSA256..." и отправить</mat-list-item>
-      <mat-list-item>3. Помните!
-        после подписания отчета уже нельзя будет вносить изменения в отчет.
-        Исправления возможны только при возврате Отчета на доработку
+      <mat-list-item
+        >2. Выберите ваше ЭЦП "RSA256..." и отправить</mat-list-item
+      >
+      <mat-list-item
+        >3. Помните! после подписания отчета уже нельзя будет вносить изменения
+        в отчет. Исправления возможны только при возврате Отчета на доработку
       </mat-list-item>
-
     </mat-list>
     <div>
-      <button mat-raised-button color="primary" matStepperPrevious>Назад</button>
+      <button mat-raised-button color="primary" matStepperPrevious>
+        Назад
+      </button>
     </div>
   </mat-step>
 </mat-stepper>
+
+<div class="footer" #footer>
+  <p>Служба поддержки:</p>
+  <a href="tel:+7-707-777-6142">+7 707 777 6142</a>
+  <a href="tel:+7-705-119-9266"> +7 705 119 9266</a>
+  <a href="tel:+7-775-750-7045">+7 775 750 7045</a>
+</div>

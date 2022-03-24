@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { DeclarantProfileService } from '@services/declarant-profile.service';
 import { DicKatoService } from '@services/dic-kato.service';
 import { DicOkedService } from '@services/dictionary/dic-oked.service';
+import arrayTreeFilter from 'array-tree-filter';
 import { TreeData } from 'mat-tree-select-input';
 import { RegistrationRequestModel } from 'src/app/models/administration/registration-request.model';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -30,7 +31,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   subRegionName!: string;
   villageName!: string;
   address: string = '';
-  dicOkeds: TreeData[] = [];
+  dicOkeds: any[] = [];
   isActive = false;
   constructor(
     private router: Router,
@@ -62,9 +63,16 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.declarantProfileService.getDeclarantProfile().subscribe((result) => {
-      this.registrationForm.patchValue(result);
-    });
+    this.declarantProfileService
+      .getDeclarantProfile()
+      .subscribe((result: any) => {
+        const oked = this.findNode(result.okedId, this.dicOkeds);
+        this.registrationForm.patchValue(result);
+        console.log(oked);
+        console.log(this.dicOkeds);
+
+        this.registrationForm.controls['okedId'].setValue(oked);
+      });
   }
 
   ngOnInit(): void {
@@ -77,6 +85,19 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     this.dicOkedService.getDicOked().subscribe((okeds) => {
       this.dicOkeds = okeds;
     });
+  }
+
+  findNode(value: any, nodes: any[]): any {
+    let foundNodes = nodes.filter((e) => e.value === value);
+    console.log(foundNodes);
+
+    if (foundNodes[0]) {
+      return foundNodes[0];
+    } else {
+      for (let i = 0; i < nodes.length; i++) {
+        return this.findNode(value, nodes[i].children);
+      }
+    }
   }
 
   oblastChange(oblastId: number) {
@@ -194,9 +215,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
     this.declarantProfileService.registerDeclarantProfile(data).subscribe(
       (response) => {
-        this.notificationService.success(
-          'Профиль успешно изменён'
-        );
+        this.notificationService.success('Профиль успешно изменён');
         this.registrationForm.disable();
         this.isActive = false;
       },
@@ -212,8 +231,21 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     this.registrationForm.controls['organizationBin'].disable();
     this.registrationForm.controls['organizationName'].disable();
   }
+  filter(array: any[], text: any) {
+    const getNodes = (result: any[], object: { text: any; nodes: any[] }) => {
+      if (object.text === text) {
+        result.push(object);
+        return result;
+      }
+      if (Array.isArray(object.nodes)) {
+        const nodes = object.nodes.reduce(getNodes, []);
+        console.log(nodes);
 
-  toLogin() {
-    this.router.navigate(['/auth/login']);
+        if (nodes.length) result.push({ ...object, nodes });
+      }
+      return result;
+    };
+
+    return array.reduce(getNodes, []);
   }
 }
