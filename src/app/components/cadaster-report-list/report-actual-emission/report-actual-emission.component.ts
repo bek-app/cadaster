@@ -19,7 +19,8 @@ import { ActualEmissionService } from '../../../services/actual-emission.service
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
 import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
-import { CadasterReportModel } from 'src/app/models/cadaster-report.model';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 @Component({
   selector: 'app-report-actual-emission',
   templateUrl: './report-actual-emission.component.html',
@@ -37,6 +38,8 @@ export class ReportActualEmissionComponent implements OnInit {
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   commentList: ReportCommentModel[] = [];
   statusId!: number;
+  form: FormGroup;
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
@@ -79,8 +82,14 @@ export class ReportActualEmissionComponent implements OnInit {
     private translate: TranslateService,
     private commentService: ReportCommentService,
     private cdrReportService: CadasterReportService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      totalTon: new FormControl(),
+      totalCo2: new FormControl(),
+    });
+  }
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -94,6 +103,40 @@ export class ReportActualEmissionComponent implements OnInit {
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
+
+    this.form.controls.totalTon.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe((value) => {
+        const data = {
+          id: this.cdrReportId,
+          discriminator: 'actual-emission',
+          nameField: 'TotalTon',
+          valueField: value.toString(),
+        };
+
+        this.cdrReportService
+          .updateFieldCadasterReport(data)
+          .subscribe((result: any) => {
+            console.log(result);
+          });
+      });
+
+    this.form.controls.totalCo2.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe((value) => {
+        const data = {
+          id: this.cdrReportId,
+          discriminator: 'actual-emission',
+          nameField: 'TotalCo2',
+          valueField: value.toString(),
+        };
+
+        this.cdrReportService
+          .updateFieldCadasterReport(data)
+          .subscribe((result: any) => {
+            console.log(result);
+          });
+      });
   }
 
   getCommentList(cdrReportId: number): void {

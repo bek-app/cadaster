@@ -53,6 +53,8 @@ export class CadasterReportComponent implements OnInit {
 
   refreshList() {
     this.cadasterService.getCadasterReportList(0).subscribe((data) => {
+      console.log(data);
+
       this.dataset = data;
     });
   }
@@ -247,7 +249,7 @@ export class CadasterReportComponent implements OnInit {
     this.gridOptions = {};
   }
 }
- 
+
 const myCustomEditFormatter: Formatter = (
   row: number,
   cell: number,
