@@ -52,11 +52,9 @@ export class CadasterReportComponent implements OnInit {
   }
 
   refreshList() {
-    this.cadasterService.getCadasterReportList(0).subscribe((data) => {
-      console.log(data);
-
-      this.dataset = data;
-    });
+    this.cadasterService
+      .getCadasterReportList(0)
+      .subscribe((data) => (this.dataset = data));
   }
 
   openCdrReportDialog() {

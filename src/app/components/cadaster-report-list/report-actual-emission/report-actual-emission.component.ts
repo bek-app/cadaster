@@ -21,6 +21,7 @@ import { CustomInputEditorComponent } from '../../editors/custom-input-editor/cu
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { NotificationService } from '@services/notification.service';
 @Component({
   selector: 'app-report-actual-emission',
   templateUrl: './report-actual-emission.component.html',
@@ -83,7 +84,8 @@ export class ReportActualEmissionComponent implements OnInit {
     private commentService: ReportCommentService,
     private cdrReportService: CadasterReportService,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private notificationService: NotificationService
   ) {
     this.form = this.fb.group({
       totalTon: new FormControl(),
@@ -103,7 +105,9 @@ export class ReportActualEmissionComponent implements OnInit {
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
-
+    if (this.statusId > 1) {
+      this.form.disable();
+    }
     this.form.controls.totalTon.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((value) => {
@@ -116,9 +120,9 @@ export class ReportActualEmissionComponent implements OnInit {
 
         this.cdrReportService
           .updateFieldCadasterReport(data)
-          .subscribe((result: any) => {
-            console.log(result);
-          });
+          .subscribe(() =>
+            this.notificationService.success('Успешно добавлен')
+          );
       });
 
     this.form.controls.totalCo2.valueChanges
@@ -133,9 +137,9 @@ export class ReportActualEmissionComponent implements OnInit {
 
         this.cdrReportService
           .updateFieldCadasterReport(data)
-          .subscribe((result: any) => {
-            console.log(result);
-          });
+          .subscribe(() =>
+            this.notificationService.success('Успешно добавлен')
+          );
       });
   }
 
@@ -459,24 +463,24 @@ export class ReportActualEmissionComponent implements OnInit {
               },
             },
           },
-          {
-            id: 'totalTon',
-            name: TOTAL_TON,
-            field: 'totalTon',
-            columnGroup: TOTAL_GROUP,
-            filterable: true,
-            sortable: true,
-            minWidth: 250,
-          },
-          {
-            id: 'totalCo2',
-            name: TOTAL_CO2,
-            field: 'totalCo2',
-            columnGroup: TOTAL_GROUP,
-            filterable: true,
-            sortable: true,
-            minWidth: 250,
-          },
+          // {
+          //   id: 'totalTon',
+          //   name: TOTAL_TON,
+          //   field: 'totalTon',
+          //   columnGroup: TOTAL_GROUP,
+          //   filterable: true,
+          //   sortable: true,
+          //   minWidth: 250,
+          // },
+          // {
+          //   id: 'totalCo2',
+          //   name: TOTAL_CO2,
+          //   field: 'totalCo2',
+          //   columnGroup: TOTAL_GROUP,
+          //   filterable: true,
+          //   sortable: true,
+          //   minWidth: 250,
+          // },
         ];
       });
 

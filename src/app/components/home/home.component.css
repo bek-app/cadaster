@@ -1,4 +1,4 @@
-.footer {
+.content {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -12,7 +12,7 @@
   align-items: center;
 }
 
-.footer p {
+.content p {
   color: #fff;
   font-weight: bold;
   font-size: 16px;
@@ -20,8 +20,12 @@
 
 }
 
-.footer a {
+
+
+.content .contacts a {
   color: #fff;
-  padding: 2px;
+  padding: 5px;
   font-size: 14px;
+  font-weight: normal;
+  text-decoration: none;
 }
