@@ -101,15 +101,15 @@ export class ReportActualEmissionComponent implements OnInit {
       this.getCommentList(this.cdrReportId);
     });
 
-    if (this.statusId > 1) {
-      this.form.disable();
-    }
-
     this.cdrReportService
       .getCadasterReportById(this.cdrReportId)
       .subscribe((report: any) => {
         const { statusId, totalTon, totalCo2 } = report;
         this.statusId = statusId;
+        if (this.statusId > 1) {
+          this.form.disable();
+        }
+
         this.form.patchValue({ totalTon, totalCo2 }, { emitEvent: false });
       });
 
