@@ -97,17 +97,22 @@ export class ReportActualEmissionComponent implements OnInit {
     this.prepareGrid();
     this.route.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id'];
-
-      this.cdrReportService
-        .getCadasterReportById(this.cdrReportId)
-        .subscribe((report: any) => (this.statusId = report?.statusId));
-
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
+
     if (this.statusId > 1) {
       this.form.disable();
     }
+
+    this.cdrReportService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((report: any) => {
+        const { statusId, totalTon, totalCo2 } = report;
+        this.statusId = statusId;
+        this.form.patchValue({ totalTon, totalCo2 }, { emitEvent: false });
+      });
+
     this.form.controls.totalTon.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((value) => {
