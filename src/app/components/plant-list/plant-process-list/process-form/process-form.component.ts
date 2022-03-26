@@ -27,6 +27,10 @@ export class ProcessFormComponent implements OnInit {
   subProccessesList: Dictionary[] = [];
   dicDialogRef: any;
   viewMode = false;
+  items: Dictionary[] = [];
+
+  dicLabel: string = '';
+  dicControlName: string = '';
   @Output() addProcess: EventEmitter<any> = new EventEmitter();
   @Output() updateProcess: EventEmitter<any> = new EventEmitter();
 
@@ -39,8 +43,8 @@ export class ProcessFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       dicProcessId: new FormControl('', Validators.required),
-      subProccesses: new FormControl(''),
-      materials: new FormControl('', Validators.required),
+      subProccesses: new FormControl(),
+      materials: new FormControl(),
       // oddsLevel: new FormControl('', Validators.required),
       // amountConsumed: new FormControl(),
       // calculatingCalorific: new FormControl(),
@@ -54,12 +58,27 @@ export class ProcessFormComponent implements OnInit {
     this.getDicMaterial();
   }
 
+  itemChange(item: any) {
+    const value = item.value;
+    this.items = [];
+    if (value == 0) {
+      this.dicLabel = `Наименование процесса для столбца 4 таблиц 8,9`;
+      this.dicControlName = 'subProccesses';
+      this.items = this.subProccessesList;
+    } else if (value === 1) {
+      this.dicLabel = `Наименование топлива или сырья`;
+      this.dicControlName = 'materials';
+      this.items = this.dicMaterialsList;
+    }
+  }
+
   openDicFormDialog(name: string) {
     this.dicDialogRef = this.dicFormDialog.open(DicFormComponent, {
       width: '600px',
     });
+    console.log(name);
 
-    if (name === 'dicMaterial') {
+    if (name === 'materials') {
       this.dicDialogRef.componentInstance.dicTitle = 'Добавить материалы';
       this.dicDialogRef.componentInstance.dicLabel = 'Материал';
       this.dicMaterialAdded();
@@ -74,24 +93,25 @@ export class ProcessFormComponent implements OnInit {
     }
   }
 
-  dicMaterialAdded() {
-    this.dicDialogRef.componentInstance.dicAdded.subscribe(
-      (data: Dictionary) => {
-        this.dicMaterialService.addDicMaterial(data).subscribe((res) => {
-          this.getDicMaterial();
-          this.form.controls['materials'].setValue([res.id]);
-          this.dicDialogRef.close();
-        });
-      }
-    );
-  }
-
   dicProccessAdded() {
     this.dicDialogRef.componentInstance.dicAdded.subscribe(
       (data: Dictionary) => {
         this.dicProcessService.addDicProcess(data).subscribe((res) => {
           this.getDicProcess();
           this.form.controls['dicProcessId'].setValue(res.id);
+          this.dicDialogRef.close();
+        });
+      }
+    );
+  }
+
+  dicMaterialAdded() {
+    this.dicDialogRef.componentInstance.dicAdded.subscribe(
+      (data: Dictionary) => {
+        this.dicMaterialService.addDicMaterial(data).subscribe((res) => {
+          this.getDicMaterial();
+
+          this.form.controls['materials'].setValue([res.id]);
           this.dicDialogRef.close();
         });
       }
@@ -114,12 +134,14 @@ export class ProcessFormComponent implements OnInit {
     this.dicProcessService.getDicProcess().subscribe((res) => {
       this.dicProcessList = res;
       this.subProccessesList = res;
+      this.items = res;
     });
   }
 
   getDicMaterial() {
     this.dicMaterialService.getDicMaterial().subscribe((res) => {
       this.dicMaterialsList = res;
+      this.items = res;
     });
   }
 
@@ -129,6 +151,8 @@ export class ProcessFormComponent implements OnInit {
       return;
     }
     const data = { ...this.form.value };
+    console.log(data);
+
     !this.isActive ? this.addProcess.emit(data) : this.updateProcess.emit(data);
   }
 

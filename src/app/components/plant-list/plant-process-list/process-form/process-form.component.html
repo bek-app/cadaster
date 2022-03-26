@@ -1,40 +1,77 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="dialog__title">
-    <h2 mat-dialog-title>{{ 'PLANT.PROCESS.TITLE' | translate }}</h2>
+    <h2 mat-dialog-title>{{ "PLANT.PROCESS.TITLE" | translate }}</h2>
     <span mat-dialog-close class="mdi mdi-close-outline"></span>
   </div>
   <mat-dialog-content>
     <mat-form-field>
-      <mat-label>{{ 'PLANT.PROCESS.FORM.PROCESS_NAME' | translate }}</mat-label>
-      <mtx-select formControlName="dicProcessId" [items]="dicProcessList" bindValue="id" bindLabel="name"
-        [hideSelected]="true" [minTermLength]="2" [multiple]="false"
-        typeToSearchText="Пожалуйста, введите 2 или более символов" appendTo="body">
+      <mat-label>{{ "PLANT.PROCESS.FORM.PROCESS_NAME" | translate }}</mat-label>
+      <mtx-select
+        formControlName="dicProcessId"
+        [items]="dicProcessList"
+        bindValue="id"
+        bindLabel="name"
+        [hideSelected]="true"
+        [minTermLength]="2"
+        [multiple]="false"
+        typeToSearchText="Пожалуйста, введите 2 или более символов"
+        appendTo="body"
+      >
         <ng-template ng-footer-tmp>
-          <button type="button" mat-raised-button color="primary" (click)="openDicFormDialog('dicProcess')">
-            {{ 'DIC_FORM.ADD_DIC' | translate }}
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="openDicFormDialog('dicProcess')"
+          >
+            {{ "DIC_FORM.ADD_DIC" | translate }}
           </button>
         </ng-template>
       </mtx-select>
-      <mat-error>{{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}</mat-error>
+      <mat-error>{{ "PLANT.PROCESS.FORM.VALIDATOR" | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select (selectionChange)="itemChange($event)">
+        <mat-option [value]="0">
+          {{ "PLANT.PROCESS.FORM.SUBPROCESS_NAME" | translate }}</mat-option
+        >
+        <mat-option [value]="1">
+          {{ "PLANT.PROCESS.FORM.MATERIALS" | translate }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>
-        {{ 'PLANT.PROCESS.FORM.SUBPROCESS_NAME' | translate }}
+        {{ dicLabel }}
       </mat-label>
-      <mtx-select [items]="subProccessesList" bindValue="id" bindLabel="name" [hideSelected]="true" [minTermLength]="2"
-        [multiple]="true" typeToSearchText="Пожалуйста, введите 2 или более символов" formControlName="subProccesses"
-        [closeOnSelect]="false" appendTo="body">
+      <mtx-select
+        [items]="items"
+        bindValue="id"
+        bindLabel="name"
+        [hideSelected]="true"
+        [minTermLength]="2"
+        [multiple]="true"
+        typeToSearchText="Пожалуйста, введите 2 или более символов"
+        [formControlName]="dicControlName"
+        [closeOnSelect]="false"
+        appendTo="body"
+      >
         <ng-template ng-footer-tmp>
-          <button type="button" mat-raised-button color="primary" (click)="openDicFormDialog('dicSubProcess')">
-            {{ 'DIC_FORM.ADD_DIC' | translate }}
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="openDicFormDialog(dicControlName)"
+          >
+            {{ "DIC_FORM.ADD_DIC" | translate }}
           </button>
         </ng-template>
       </mtx-select>
-
     </mat-form-field>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-label>
         {{ 'PLANT.PROCESS.FORM.MATERIALS' | translate }}
       </mat-label>
@@ -50,7 +87,7 @@
       <mat-error>
         {{ 'PLANT.PROCESS.FORM.VALIDATOR' | translate }}
       </mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
 
     <!-- <mat-form-field>
       <mat-label>
@@ -91,12 +128,16 @@
     </mat-form-field> -->
   </mat-dialog-content>
 
-  <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center" *ngIf="!viewMode">
+  <mat-dialog-actions
+    fxLayout="row"
+    fxLayoutAlign="end center"
+    *ngIf="!viewMode"
+  >
     <button type="button" mat-raised-button color="warn" mat-dialog-close>
-      {{ 'CANCEL' | translate }}
+      {{ "CANCEL" | translate }}
     </button>
     <button type="submit" mat-raised-button color="primary">
-      {{ 'SAVE' | translate }}
+      {{ "SAVE" | translate }}
     </button>
   </mat-dialog-actions>
 </form>
