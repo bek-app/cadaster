@@ -88,9 +88,9 @@ export class CustomInputEditor implements Editor {
 
       // when our model (item object) changes, we'll call a save of the slickgrid editor
       this._subscriptions.push(
-        this.componentRef.instance.onItemChanged.subscribe((item: any) =>
-          this.save()
-        )
+        this.componentRef.instance.onItemChanged.subscribe((item: any) => {
+          this.save();
+        })
       );
     }
 
@@ -170,7 +170,7 @@ export class CustomInputEditor implements Editor {
 
   loadValue(item: any) {
     const itemObject = item && item[this.columnDef.field];
-    this.componentRef.instance.selectedItem = itemObject && itemObject;
+    this.componentRef.instance.selectedItem = itemObject;
   }
 
   serializeValue(): any {
@@ -179,10 +179,14 @@ export class CustomInputEditor implements Editor {
 
   isValueChanged() {
     return (
-      !(
+      (!(
         this.componentRef.instance.selectedItem === '' &&
         (this.defaultItem === null || this.defaultItem === undefined)
-      ) && this.componentRef.instance.selectedItem !== this.defaultItem
+      ) &&
+        this.componentRef.instance.selectedItem !== this.defaultItem) ||
+      (this.componentRef.instance.selectedItem === '' &&
+        (this.defaultItem === null || this.defaultItem === undefined) &&
+        this.componentRef.instance.selectedItem !== this.defaultItem)
     );
   }
 

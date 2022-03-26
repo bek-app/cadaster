@@ -254,19 +254,7 @@ export class ReportActualEmissionComponent implements OnInit {
         this.actualEmissionService
           .addActualEmission(data)
           .subscribe((result) => {
-            const { totalCo2, totalTon } = result;
-            this.angularGrid.gridService.addItem(
-              {
-                ...metadata.dataContext,
-                totalCo2,
-                totalTon,
-              },
-              {
-                highlightRow: false,
-                selectRow: true,
-                triggerEvent: true,
-              }
-            );
+            console.log(result);
           });
       }
     }
