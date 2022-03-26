@@ -13,7 +13,7 @@ export interface PlantProcessModel {
 
   dicProcessId: number;
   processName: string,
-
+  isMaterial:boolean
   subProccesses: Array<number>,
   subProccessList: string,
   subProccessNames: string

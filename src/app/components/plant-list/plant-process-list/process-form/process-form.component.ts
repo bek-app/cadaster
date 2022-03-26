@@ -31,7 +31,7 @@ export class ProcessFormComponent implements OnInit {
 
   dicLabel: string = '';
   dicControlName: string = '';
-  @Output() addProcess: EventEmitter<any> = new EventEmitter();
+   @Output() addProcess: EventEmitter<any> = new EventEmitter();
   @Output() updateProcess: EventEmitter<any> = new EventEmitter();
 
   constructor(
@@ -162,7 +162,17 @@ export class ProcessFormComponent implements OnInit {
 
   editForm(id: number) {
     this.isActive = true;
-    this.plantProcessService.getPlantProcessById(id).subscribe((data) => {
+    this.plantProcessService.getPlantProcessById(id).subscribe((data: any) => {
+      if (data.isMaterial) {
+        this.dicLabel = `Наименование процесса для столбца 4 таблиц 8,9`;
+        this.dicControlName = 'subProccesses';
+        this.items = this.subProccessesList;
+       } else {
+        this.dicLabel = `Наименование топлива или сырья`;
+        this.dicControlName = 'materials';
+        this.items = this.dicMaterialsList;
+      }
+
       this.form.patchValue(data);
     });
   }
