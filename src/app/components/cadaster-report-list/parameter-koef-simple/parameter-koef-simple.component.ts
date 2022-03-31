@@ -41,7 +41,8 @@ export class ParameterKoefSimpleComponent implements OnInit {
   cdrReportId!: number;
   commentList: any[] = [];
   kindId!: number;
-  mappedColumnDefinitions: any;
+  statusId!: number;
+
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
@@ -68,7 +69,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
       } else return '';
     };
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
+      if (args.item.__hasChildren || this.statusId > 1) {
         return false;
       }
       return true;
@@ -82,28 +83,29 @@ export class ParameterKoefSimpleComponent implements OnInit {
     private notificationService: NotificationService,
     private commentService: ReportCommentService,
     private translate: TranslateService,
-    private cadasterService: CadasterReportService
+    private cdrReportService: CadasterReportService
   ) {}
 
   ngOnInit(): void {
+    this.prepareGrid();
     this.activatedRoute.data.subscribe(
       (response: any) => (this.dicUnitList = response.dicUnit)
     );
 
     this.activatedRoute.params.subscribe((param: Params) => {
       this.cdrReportId = +param['id'];
-
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
 
-    this.prepareGrid();
+    this.cdrReportService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((report: any) => {
+        const { statusId } = report;
+        this.statusId = statusId;
+      });
   }
-  // getKind() {
-  //   return this.cadasterService
-  //     .getCadasterReportById(this.cdrReportId)
-  //     .pipe(map((data: any) => data.kindId));
-  // }
+
   getCommentList(reportId: number): void {
     this.commentService
       .getReportCommentList(reportId, 'coeff')
@@ -319,7 +321,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             name: PROCESS_NAME,
             field: 'processName',
             type: FieldType.string,
-            width: 170,
+            minWidth: 600,
             formatter: reportCadasterTreeFormatter,
             filterable: true,
           },
@@ -332,6 +334,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: MATERIAL_NAME,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -351,6 +354,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: MATERIAL_NAME,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'dicUnit.name',
@@ -396,6 +400,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -415,6 +420,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'koefLowerCalorificUnit.name',
@@ -456,6 +462,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -475,6 +482,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'koefCaseBurningUnit.name',
@@ -515,6 +523,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -534,6 +543,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'koefCo2Unit.name',
@@ -574,6 +584,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -593,6 +604,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'koefCh4Unit.name',
@@ -633,6 +645,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -652,6 +665,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'koefN2OUnit.name',
@@ -692,6 +706,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.multiple,
             params: {
               formatters: [this.koefCommentFormatter, Formatters.complexObject],
@@ -711,6 +726,7 @@ export class ParameterKoefSimpleComponent implements OnInit {
             columnGroup: COEF_USED_CALC,
             filterable: true,
             sortable: true,
+            minWidth: 300,
             formatter: Formatters.complexObject,
             params: {
               complexFieldLabel: 'koefPerfluorocarbonsUnit.name',
@@ -745,24 +761,6 @@ export class ParameterKoefSimpleComponent implements OnInit {
           },
         ];
       });
-
-    // this.getKind().subscribe((kindId) => (this.kindId = kindId));
-
-    // if (this.kindId === 2) {
-    //   this.mappedColumnDefinitions = this.columnDefinitions.filter(
-    //     (col: any) =>
-    //       col.id !== 'koefOperatingWeight' &&
-    //       col.id !== 'koefOperatingWeightUnit'
-    //   );
-    // } else this.mappedColumnDefinitions = this.columnDefinitions;
-
-    // const newDefinitions = this.mappedColumnDefinitions.map(
-    //   (col: { id: string }) => {
-    //     return { columnId: col.id };
-    //   }
-    // );
-
-    // console.log(newDefinitions);
 
     this.gridOptions = {
       enableFiltering: true,

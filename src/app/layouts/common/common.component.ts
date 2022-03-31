@@ -10,7 +10,11 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 })
 export class CommonComponent implements OnInit {
   account: AccountModel | null;
-  hideMenuItem: boolean = false;
+
+  isDeclarant = false;
+  isValidator = false;
+  isAdmin = false;
+
   constructor(
     private authService: AuthenticationService,
     private router: Router
@@ -19,18 +23,18 @@ export class CommonComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.authService.getUserData();
     const userInfo = this.authService.getUserData();
-    const role = userInfo?.roles?.[0];
-    if (role === 'declarant') {
-      this.hideMenuItem = true;
+    const roles = userInfo?.roles;
+
+    for (let role of roles!!) {
+      if (role === 'declarant') {
+        this.isDeclarant = true;
+      } else if (role == 'validator') {
+        this.isValidator = true;
+      } else if (role == 'administrator') {
+        this.isAdmin = true;
+      }
     }
-    // if (Array.isArray(user?.roles)) {
-    //   user?.roles?.forEach((role: string) => {
-    //     console.log(role);
-    //   });
-    // }
-    console.log(this.account?.roles);
   }
 
   logout() {

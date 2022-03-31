@@ -50,10 +50,6 @@ const routes: Routes = [
         path: 'registration',
         component: RegistrationComponent,
       },
-      {
-        path: 'profile',
-        component: ProfileComponent,
-      },
     ],
   },
   {
@@ -71,6 +67,10 @@ const routes: Routes = [
           {
             path: 'user',
             component: UserFormComponent,
+          },
+          {
+            path: 'profile',
+            component: ProfileComponent,
           },
         ],
       },

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -6,20 +6,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DeclarantProfileService } from '@services/declarant-profile.service';
 import { DicKatoService } from '@services/dic-kato.service';
 import { DicOkedService } from '@services/dictionary/dic-oked.service';
 import { TreeData } from 'mat-tree-select-input';
 import { RegistrationRequestModel } from 'src/app/models/administration/registration-request.model';
-import { UserService } from 'src/app/services/administration/user/user.service';
 import { NotificationService } from 'src/app/services/notification.service';
-import { PasswordValidators } from 'src/app/validators/password-validators';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, AfterViewInit {
   registrationForm: FormGroup;
   loading: boolean = false;
   oblast: any[] = [];
@@ -31,19 +30,20 @@ export class ProfileComponent implements OnInit {
   subRegionName!: string;
   villageName!: string;
   address: string = '';
-
-  dicOkeds: TreeData[] = [];
+  dicOkeds: any[] = [];
+  isActive = false;
   constructor(
     private router: Router,
     private notificationService: NotificationService,
-    private userService: UserService,
     private dicKatoService: DicKatoService,
-    private dicOkedService: DicOkedService
+    private dicOkedService: DicOkedService,
+    private declarantProfileService: DeclarantProfileService
   ) {
     this.registrationForm = new FormGroup({
-      organizationBin: new FormControl('', [Validators.required]),
-      organizationName: new FormControl('', [Validators.required]),
-      certificate: new FormControl({ value: '', disabled: true }, [
+      organizationBin: new FormControl({ value: '', disabled: true }, [
+        Validators.required,
+      ]),
+      organizationName: new FormControl({ value: '', disabled: true }, [
         Validators.required,
       ]),
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -61,42 +61,37 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  private confirmPasswordValidator = (control: AbstractControl) => {
-    return PasswordValidators.confirmPasswordByControlValidator(
-      control,
-      this.registrationForm.controls.password.value
-    );
-  };
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
+    this.registrationForm.disable();
     this.dicKatoService.getDicKato(1).subscribe((oblast) => {
       this.oblast = oblast;
     });
 
-    this.dicOkedService.getDicOked().subscribe((oked) => {
-      this.dicOkeds = oked;
+    this.dicOkedService.getDicOked().subscribe((okeds) => {
+      this.dicOkeds = okeds;
     });
+
+    this.declarantProfileService
+      .getDeclarantProfile()
+      .subscribe((result: any) => {
+        const oked = this.findNode(result.okedId, this.dicOkeds);
+        this.registrationForm.patchValue(result);
+        this.registrationForm.controls['okedId'].setValue(oked);
+      });
   }
 
-  filter(array: TreeData[], text: string) {
-    console.log(text);
-
-    const getNodes = (
-      result: any[],
-      object: { name: string; children: any[] }
-    ) => {
-      if (object.name.toLowerCase().startsWith(text)) {
-        result.push(object);
-        return result;
+  findNode(value: number, nodes: any[]): any {
+    let foundNodes = nodes.filter((e) => e.value === value);
+    if (foundNodes[0]) {
+      return foundNodes[0];
+    } else {
+      for (let i = 0; i < nodes.length; i++) {
+        const foundNode = this.findNode(value, nodes[i].children);
+        if (foundNode) return foundNode;
       }
-      if (Array.isArray(object.children)) {
-        const children = object.children.reduce(getNodes, []);
-        if (children.length) result.push({ ...object, children });
-      }
-      return result;
-    };
-
-    this.dicOkeds = array.reduce(getNodes, []);
+    }
   }
 
   oblastChange(oblastId: number) {
@@ -198,7 +193,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  register() {
+  onSubmit() {
     const regRequest = new RegistrationRequestModel();
 
     regRequest.organizationName =
@@ -212,23 +207,39 @@ export class ProfileComponent implements OnInit {
       organizationName: regRequest.organizationName,
     };
 
-    this.userService.register(data).subscribe(
+    this.declarantProfileService.registerDeclarantProfile(data).subscribe(
       (response) => {
-        if (response && response.succeeded) {
-          this.notificationService.success(
-            'Пользователь успешно зарегестрирован'
-          );
-          this.router.navigate(['/auth/login']);
-        }
+        this.notificationService.success('Профиль успешно изменён');
+        this.registrationForm.disable();
+        this.isActive = false;
       },
       (error) => {
-        const err = error;
-        this.notificationService.error(error.error);
+        this.notificationService.error(error);
       }
     );
   }
 
-  toLogin() {
-    this.router.navigate(['/auth/login']);
+  editProfile() {
+    this.isActive = true;
+    this.registrationForm.enable();
+    this.registrationForm.controls['organizationBin'].disable();
+    this.registrationForm.controls['organizationName'].disable();
+  }
+  filter(array: any[], text: any) {
+    const getNodes = (result: any[], object: { text: any; nodes: any[] }) => {
+      if (object.text === text) {
+        result.push(object);
+        return result;
+      }
+      if (Array.isArray(object.nodes)) {
+        const nodes = object.nodes.reduce(getNodes, []);
+        console.log(nodes);
+
+        if (nodes.length) result.push({ ...object, nodes });
+      }
+      return result;
+    };
+
+    return array.reduce(getNodes, []);
   }
 }

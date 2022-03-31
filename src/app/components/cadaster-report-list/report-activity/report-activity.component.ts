@@ -38,6 +38,7 @@ export class ReportActivityComponent implements OnInit {
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   commentList: ReportCommentModel[] = [];
   kindId!: number;
+  statusId!: number;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -67,7 +68,7 @@ export class ReportActivityComponent implements OnInit {
     };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
+      if (args.item.__hasChildren || this.statusId > 1) {
         return false;
       }
       return true;
@@ -94,7 +95,11 @@ export class ReportActivityComponent implements OnInit {
 
     this.cadasterService
       .getCadasterReportById(this.cdrReportId)
-      .subscribe((result: any) => (this.kindId = result.kindId));
+      .subscribe((report: any) => {
+        const { kindId, statusId } = report;
+        this.kindId = kindId;
+        this.statusId = statusId;
+      });
   }
 
   getCommentList(cdrReportId: number): void {

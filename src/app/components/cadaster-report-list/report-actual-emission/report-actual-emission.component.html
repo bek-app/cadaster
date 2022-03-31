@@ -1,6 +1,24 @@
 <div class="report-item-header">
-  <h4>{{ 'CDR_REPORTS.ACTUAL_EMISSION.TITLE' | translate }}</h4>
+  <h4>{{ "CDR_REPORTS.ACTUAL_EMISSION.TITLE" | translate }}</h4>
 </div>
+
+<form class="form" [formGroup]="form">
+  <mat-form-field appearance="fill">
+    <mat-label
+      >Общий объем (парниковых газов в эквиваленте тонны двуокиси углерода по
+      установке)
+    </mat-label>
+    <input matInput type="number" formControlName="totalTon" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label
+      >Общий объем (выбросов двуокиси углерода по установке)
+    </mat-label>
+    <input matInput type="number" formControlName="totalCo2" />
+  </mat-form-field>
+</form>
+
 <angular-slickgrid
   gridId="actual-emission"
   [columnDefinitions]="columnDefinitions"

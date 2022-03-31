@@ -188,7 +188,7 @@ export class CustomSelectEditor implements Editor {
   applyValue(item: any, state: any) {
     // console.log(item);
     // console.log(state);
-     item[this.columnDef.field] = state;
+    item[this.columnDef.field] = state;
   }
 
   getValue() {
@@ -208,10 +208,14 @@ export class CustomSelectEditor implements Editor {
 
   isValueChanged() {
     return (
-      !(
+      (!(
         this.componentRef.instance.selectedId === '' &&
         (this.defaultId === null || this.defaultId === undefined)
-      ) && this.componentRef.instance.selectedId !== this.defaultId
+      ) &&
+        this.componentRef.instance.selectedId !== this.defaultId) ||
+      (this.componentRef.instance.selectedId === '' &&
+        (this.defaultId === null || this.defaultId === undefined) &&
+        this.componentRef.instance.selectedId !== this.defaultId)
     );
   }
 

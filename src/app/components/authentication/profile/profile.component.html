@@ -8,6 +8,7 @@
     fxFlex="70%"
     fxFlex.sm="50%"
     fxFlex.xs="90%"
+    (submit)="onSubmit()"
   >
     <mat-card>
       <mat-card-title>Регистрация</mat-card-title>
@@ -176,23 +177,49 @@
         </mat-card-content>
       </div>
 
+      <!-- <mat-form-field>
+        <mtx-select
+          [items]="dicOkeds"
+          bindValue="value"
+          bindLabel="name"
+          [hideSelected]="true"
+          formControlName="okedId"
+          appendTo="body"
+          groupBy="children"
+        >
+          <ng-template ng-optgroup-tmp let-item="item">
+            {{ item.name }}
+          </ng-template>
+        </mtx-select>
+      </mat-form-field> -->
+
       <ngx-mat-tree-select-input
         [options]="dicOkeds"
         [placeholder]="'Сфера деятельности'"
         [controlName]="'okedId'"
         [canSelectParentNode]="false"
+
       >
       </ngx-mat-tree-select-input>
 
       <mat-card-actions class="login-actions">
         <button
           mat-raised-button
+          color="primary"
+          type="button"
+          (click)="editProfile()"
+          *ngIf="!isActive"
+        >
+          Редактировать
+        </button>
+        <button
+          mat-raised-button
           id="login"
           color="primary"
           [disabled]="registrationForm.invalid || loading"
-          (click)="register()"
+          *ngIf="isActive"
         >
-          Зарегистрироваться
+          {{ "SAVE" | translate }}
         </button>
 
         <!-- <button mat-button id="resetPassword" (click)="toLogin()" type="button">

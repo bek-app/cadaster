@@ -24,8 +24,8 @@
 
 .btn {
   position: absolute;
-  top: 70px;
-  right: 40px;
+  top: 15px;
+  right: 100px;
   z-index: 1000;
 }
 

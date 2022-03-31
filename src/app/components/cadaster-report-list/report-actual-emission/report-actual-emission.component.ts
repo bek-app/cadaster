@@ -19,6 +19,9 @@ import { ActualEmissionService } from '../../../services/actual-emission.service
 import { CustomInputEditor } from '../../editors/custom-input-editor/custom-input';
 import { CustomInputEditorComponent } from '../../editors/custom-input-editor/custom-input-editor.component';
 import { reportCadasterTreeFormatter } from '../../formatters/reportCadasterTreeFormatter';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { NotificationService } from '@services/notification.service';
 @Component({
   selector: 'app-report-actual-emission',
   templateUrl: './report-actual-emission.component.html',
@@ -35,6 +38,8 @@ export class ReportActualEmissionComponent implements OnInit {
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   commentList: ReportCommentModel[] = [];
+  statusId!: number;
+  form: FormGroup;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -64,7 +69,7 @@ export class ReportActualEmissionComponent implements OnInit {
     };
 
     this.gridObj.onBeforeEditCell.subscribe((e: any, args: any) => {
-      if (args.item.__hasChildren) {
+      if (args.item.__hasChildren || this.statusId > 1) {
         return false;
       }
       return true;
@@ -77,9 +82,16 @@ export class ReportActualEmissionComponent implements OnInit {
     private sharedDataService: ReportSharedService,
     private translate: TranslateService,
     private commentService: ReportCommentService,
-    private cadasterService: CadasterReportService,
-    private route: ActivatedRoute
-  ) {}
+    private cdrReportService: CadasterReportService,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private notificationService: NotificationService
+  ) {
+    this.form = this.fb.group({
+      totalTon: new FormControl(),
+      totalCo2: new FormControl(),
+    });
+  }
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -88,6 +100,52 @@ export class ReportActualEmissionComponent implements OnInit {
       this.refreshList(this.cdrReportId);
       this.getCommentList(this.cdrReportId);
     });
+
+    this.cdrReportService
+      .getCadasterReportById(this.cdrReportId)
+      .subscribe((report: any) => {
+        const { statusId, totalTon, totalCo2 } = report;
+        this.statusId = statusId;
+        if (this.statusId > 1) {
+          this.form.disable();
+        }
+
+        this.form.patchValue({ totalTon, totalCo2 }, { emitEvent: false });
+      });
+
+    this.form.controls.totalTon.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe((value) => {
+        const data = {
+          id: this.cdrReportId,
+          discriminator: 'actual-emission',
+          nameField: 'TotalTon',
+          valueField: value.toString(),
+        };
+
+        this.cdrReportService
+          .updateFieldCadasterReport(data)
+          .subscribe(() =>
+            this.notificationService.success('Успешно добавлен')
+          );
+      });
+
+    this.form.controls.totalCo2.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe((value) => {
+        const data = {
+          id: this.cdrReportId,
+          discriminator: 'actual-emission',
+          nameField: 'TotalCo2',
+          valueField: value.toString(),
+        };
+
+        this.cdrReportService
+          .updateFieldCadasterReport(data)
+          .subscribe(() =>
+            this.notificationService.success('Успешно добавлен')
+          );
+      });
   }
 
   getCommentList(cdrReportId: number): void {
@@ -130,7 +188,6 @@ export class ReportActualEmissionComponent implements OnInit {
           ].sort((a, b) => (a.processName < b.processName ? 1 : -1));
           Object.assign(items, { group });
         });
-        console.log(data);
 
         this.dataset = data;
       });
@@ -197,19 +254,7 @@ export class ReportActualEmissionComponent implements OnInit {
         this.actualEmissionService
           .addActualEmission(data)
           .subscribe((result) => {
-            const { totalCo2, totalTon } = result;
-            this.angularGrid.gridService.addItem(
-              {
-                ...metadata.dataContext,
-                totalCo2,
-                totalTon,
-              },
-              {
-                highlightRow: false,
-                selectRow: true,
-                triggerEvent: true,
-              }
-            );
+            console.log(result);
           });
       }
     }
@@ -262,7 +307,7 @@ export class ReportActualEmissionComponent implements OnInit {
             name: PROCESS_NAME,
             field: 'processName',
             type: FieldType.string,
-            width: 170,
+            minWidth: 600,
             formatter: reportCadasterTreeFormatter,
             filterable: true,
             sortable: true,
@@ -274,6 +319,7 @@ export class ReportActualEmissionComponent implements OnInit {
             field: 'carbonDioxide',
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject, this.commentFormatter],
@@ -294,6 +340,7 @@ export class ReportActualEmissionComponent implements OnInit {
             columnGroup: METHAN_COLUMN_GROUP,
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject],
@@ -314,6 +361,7 @@ export class ReportActualEmissionComponent implements OnInit {
             columnGroup: METHAN_COLUMN_GROUP,
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject],
@@ -334,6 +382,7 @@ export class ReportActualEmissionComponent implements OnInit {
             columnGroup: NITROUS_COLUMN_GROUP,
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject],
@@ -353,6 +402,7 @@ export class ReportActualEmissionComponent implements OnInit {
             columnGroup: NITROUS_COLUMN_GROUP,
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject],
@@ -372,6 +422,7 @@ export class ReportActualEmissionComponent implements OnInit {
             columnGroup: PERFLUORO_CARBON_COLUMN_GROUP,
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject],
@@ -392,6 +443,7 @@ export class ReportActualEmissionComponent implements OnInit {
 
             filterable: true,
             sortable: true,
+            minWidth: 200,
             formatter: Formatters.multiple,
             params: {
               formatters: [Formatters.complexObject],
@@ -404,22 +456,24 @@ export class ReportActualEmissionComponent implements OnInit {
               },
             },
           },
-          {
-            id: 'totalTon',
-            name: TOTAL_TON,
-            field: 'totalTon',
-            columnGroup: TOTAL_GROUP,
-            filterable: true,
-            sortable: true,
-          },
-          {
-            id: 'totalCo2',
-            name: TOTAL_CO2,
-            field: 'totalCo2',
-            columnGroup: TOTAL_GROUP,
-            filterable: true,
-            sortable: true,
-          },
+          // {
+          //   id: 'totalTon',
+          //   name: TOTAL_TON,
+          //   field: 'totalTon',
+          //   columnGroup: TOTAL_GROUP,
+          //   filterable: true,
+          //   sortable: true,
+          //   minWidth: 250,
+          // },
+          // {
+          //   id: 'totalCo2',
+          //   name: TOTAL_CO2,
+          //   field: 'totalCo2',
+          //   columnGroup: TOTAL_GROUP,
+          //   filterable: true,
+          //   sortable: true,
+          //   minWidth: 250,
+          // },
         ];
       });
 

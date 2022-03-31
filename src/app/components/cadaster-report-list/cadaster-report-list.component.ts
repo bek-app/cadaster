@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SignedDoc } from '@models/register/signed-doc.model';
 import { TranslateService } from '@ngx-translate/core';
 import { SigndocService } from '@services/signdoc/signdoc.service';
@@ -7,7 +7,6 @@ import { CadasterReportService } from 'src/app/services/cadaster-report.service'
 
 declare const webSocket_init: any;
 declare const signXmlCall: any;
-
 
 @Component({
   selector: 'app-cadaster-report-list',
@@ -25,6 +24,7 @@ export class CadasterReportListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private translate: TranslateService,
     private cadasterService: CadasterReportService,
     private signdocService: SigndocService
@@ -103,7 +103,7 @@ export class CadasterReportListComponent implements OnInit, AfterViewInit {
                 src: 'report-plan',
                 name: PLAN,
               },
-            ]; 
+            ];
 
             if (this.kindId == 1) {
               this.filteredRoute = this.cdrReportRoute.filter(
@@ -123,24 +123,31 @@ export class CadasterReportListComponent implements OnInit, AfterViewInit {
           });
       });
 
-    this.signdocService.checkSignedDoc(this.cdrReportId.toString()).subscribe(r => {
-      this.isSigned = r;
-    })
+    this.signdocService
+      .checkSignedDoc(this.cdrReportId.toString())
+      .subscribe((r) => {
+        this.isSigned = r;
+      });
   }
 
   signAndSend() {
     webSocket_init();
-    this.cadasterService.getReportXml(this.cdrReportId).subscribe(reportXml => {
-      signXmlCall((signedXml: string) => {
-        const signedDoc = new SignedDoc('00000000-0000-0000-0000-000000000000'
-        , 'KdrReport'
-        , signedXml
-        , 'KdrReport'
-        , this.cdrReportId.toString());
-        this.signdocService.saveSignedDoc(signedDoc).subscribe(r => {
-          this.isSigned = true;
-        })
-      }, reportXml.data);
-    });
+    this.cadasterService
+      .getReportXml(this.cdrReportId)
+      .subscribe((reportXml) => {
+        signXmlCall((signedXml: string) => {
+          const signedDoc = new SignedDoc(
+            '00000000-0000-0000-0000-000000000000',
+            'KdrReport',
+            signedXml,
+            'KdrReport',
+            this.cdrReportId.toString()
+          );
+          this.signdocService.saveSignedDoc(signedDoc).subscribe((r) => {
+            this.isSigned = true;
+            this.router.navigate(['common/cadaster-report']);
+          });
+        }, reportXml.data);
+      });
   }
 }

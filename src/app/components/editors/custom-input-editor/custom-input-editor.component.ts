@@ -44,10 +44,10 @@ export class CustomInputEditorComponent implements OnInit {
 
   onChange(event: any) {
     let value = event.target.value;
-
     this.selectedItem = value;
     this.onItemChanged.next(value);
   }
+
   openCommentDialog() {
     this.dialogRef = this.dialog.open(ReportCommentEditorComponent, {
       autoFocus: true,

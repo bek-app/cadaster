@@ -6,6 +6,7 @@ import {
   AngularGridInstance,
   Column,
   FieldType,
+  Formatter,
   Formatters,
   GridOption,
   OnEventArgs,
@@ -31,7 +32,7 @@ export class CadasterReportComponent implements OnInit {
   gridObj: any;
   dataViewObj: any;
   modalRef: any;
-
+  statusId!: number;
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
@@ -51,11 +52,9 @@ export class CadasterReportComponent implements OnInit {
   }
 
   refreshList() {
-    this.cadasterService.getCadasterReportList(0).subscribe((data) => {
-      console.log(data);
-
-      this.dataset = data;
-    });
+    this.cadasterService
+      .getCadasterReportList(0)
+      .subscribe((data) => (this.dataset = data));
   }
 
   openCdrReportDialog() {
@@ -103,6 +102,7 @@ export class CadasterReportComponent implements OnInit {
         REG_NUMBER,
         KIND,
         VALIDATION,
+        STATUS_NAME,
       }: any = translations;
 
       this.columnDefinitions = [
@@ -127,6 +127,7 @@ export class CadasterReportComponent implements OnInit {
           field: 'reportYear',
           filterable: true,
           sortable: true,
+          width: 40,
         },
 
         {
@@ -152,25 +153,35 @@ export class CadasterReportComponent implements OnInit {
           sortable: true,
         },
         {
-          id: 'edit',
+          id: 'statusName',
+          name: STATUS_NAME,
+          field: 'statusName',
+          filterable: true,
+          sortable: true,
+        },
+        {
+          id: 'view',
           field: 'id',
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
-          formatter: Formatters.editIcon,
           minWidth: 30,
           maxWidth: 30,
+          formatter: () =>
+            `<span class="mdi mdi-loupe" style="cursor:pointer;"></span>`,
           onCellClick: (e: Event, args: OnEventArgs) => {
             this.openCdrReportDialog();
             this.modalRef.componentInstance.editForm(this.cdrReportId);
+            this.modalRef.componentInstance.form.disable();
+            this.modalRef.componentInstance.viewMode = true;
           },
         },
+
         {
           id: 'action',
           field: 'action',
-          width: 30,
           minWidth: 30,
-          maxWidth: 40,
+          maxWidth: 30,
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
@@ -182,33 +193,52 @@ export class CadasterReportComponent implements OnInit {
             });
           },
         },
-
+        {
+          id: 'edit',
+          field: 'id',
+          excludeFromColumnPicker: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          formatter: myCustomEditFormatter,
+          minWidth: 30,
+          maxWidth: 30,
+          onCellClick: (e: Event, args: OnEventArgs) => {
+            if (args.dataContext.statusId <= 1) {
+              this.openCdrReportDialog();
+              this.modalRef.componentInstance.editForm(this.cdrReportId);
+            }
+          },
+        },
         {
           id: 'delete',
           field: 'id',
           excludeFromColumnPicker: true,
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
-          formatter: Formatters.deleteIcon,
+          formatter: myCustomDeleteFormatter,
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {
-            const id = args.dataContext.id;
-            const dialogData = new ConfirmDialogModel(
-              'Подтвердить действие',
-              'Вы уверены, что хотите удалить это?'
-            );
-            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-              maxWidth: '400px',
-              data: dialogData,
-            });
-            dialogRef.afterClosed().subscribe((dialogResult) => {
-              if (dialogResult) {
-                this.cadasterService.deleteCadasterReport(id).subscribe(() => {
-                  this.refreshList();
-                });
-              }
-            });
+            if (args.dataContext.statusId <= 1) {
+              const id = args.dataContext.id;
+              const dialogData = new ConfirmDialogModel(
+                'Подтвердить действие',
+                'Вы уверены, что хотите удалить это?'
+              );
+              const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                maxWidth: '400px',
+                data: dialogData,
+              });
+              dialogRef.afterClosed().subscribe((dialogResult) => {
+                if (dialogResult) {
+                  this.cadasterService
+                    .deleteCadasterReport(id)
+                    .subscribe(() => {
+                      this.refreshList();
+                    });
+                }
+              });
+            }
           },
         },
       ];
@@ -217,3 +247,27 @@ export class CadasterReportComponent implements OnInit {
     this.gridOptions = {};
   }
 }
+
+const myCustomEditFormatter: Formatter = (
+  row: number,
+  cell: number,
+  value: any,
+  columnDef: Column,
+  dataContext: any,
+  grid?: any
+) =>
+  dataContext.statusId > 1
+    ? `<i style="display: none;"></i>`
+    : '<i class="fa fa-pencil pointer edit-icon"></i>';
+
+const myCustomDeleteFormatter: Formatter = (
+  row: number,
+  cell: number,
+  value: any,
+  columnDef: Column,
+  dataContext: any,
+  grid?: any
+) =>
+  dataContext.statusId > 1
+    ? `<i style="display: none;"></i>`
+    : '<i class="fa fa-trash pointer delete-icon"></i>';

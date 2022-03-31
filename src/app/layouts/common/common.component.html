@@ -1,21 +1,17 @@
 <div class="container">
   <mat-toolbar color="primary" class="toolbar">
     <mat-toolbar-row>
-      <a
-        mat-button
-        routerLink="/common/home"
-        class="nav-link"
-    
-      >
+      <a mat-button routerLink="/common/home" class="nav-link">
         <h1>Кадастр</h1>
       </a>
       <a
         mat-button
         [matMenuTriggerFor]="menuAdministration"
-        *ngIf="!hideMenuItem"
+        *ngIf="(!isDeclarant && !isValidator) || isAdmin"
       >
         Администрирование
       </a>
+
       <mat-menu #menuAdministration="matMenu">
         <a
           mat-button
@@ -29,6 +25,7 @@
       </mat-menu>
 
       <a
+        *ngIf="!isValidator"
         mat-button
         routerLink="/common/plant"
         class="nav-link"
@@ -37,7 +34,9 @@
       >
         Установки
       </a>
+
       <a
+        *ngIf="!isValidator"
         mat-button
         routerLink="/common/cadaster-report"
         class="nav-link"
@@ -48,7 +47,7 @@
       </a>
 
       <a
-        *ngIf="!hideMenuItem"
+        *ngIf="!isDeclarant || isValidator"
         mat-button
         routerLink="/common/cadaster-report-check"
         class="nav-link"
@@ -66,13 +65,14 @@
           {{ account ? account.name : "Не найден" }}
         </span>
       </button>
+
       <mat-menu
         #userMenu="matMenu"
         xPosition="before"
         yPosition="above"
         [overlapTrigger]="false"
       >
-        <a mat-menu-item [routerLink]="['/auth/profile']">
+        <a mat-menu-item [routerLink]="['/common/administration/profile']">
           <mat-icon>person</mat-icon>
           <span>Профайл</span>
         </a>

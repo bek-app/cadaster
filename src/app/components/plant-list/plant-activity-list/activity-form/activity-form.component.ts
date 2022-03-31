@@ -6,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms'
-import { DicActivityService } from 'src/app/services/dic-activity.service'
+import { DicActivityService } from '@services/dictionary/dic-activity.service'
 import { DicUnitService } from 'src/app/services/dic-unit.service'
 import { PlantActivityService } from 'src/app/services/plant-activity.service'
 
